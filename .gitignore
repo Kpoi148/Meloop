@@ -1,0 +1,28 @@
+# Dart / Flutter tooling
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+coverage/
+.flutter-plugins
+.flutter-plugins-dependencies
+.flutter_tool_state
+
+# Android build output and local configuration
+app/android/.gradle/
+app/android/local.properties
+app/android/**/GeneratedPluginRegistrant.java
+app/android/key.properties
+
+# IDE and OS files
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
