@@ -16,3 +16,5 @@ Phạm vi hiện tại:
 - `app/`: một project Flutter Android duy nhất.
 
 Đọc `app/README.md` để hiểu ranh giới của project Flutter.
+
+Quy tắc làm việc cho agent nằm ở [`AGENTS.md`](AGENTS.md); phần giải thích chi tiết ở [`AGENT_GUIDELINES.md`](AGENT_GUIDELINES.md).
