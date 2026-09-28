@@ -1,0 +1,48 @@
+name: meloop
+description: "Meloop Android — Tempo theme and shared UI."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_svg: ^2.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icons/
+    - assets/icons/mood-1.svg
+    - assets/icons/mood-2.svg
+    - assets/icons/mood-3.svg
+    - assets/icons/mood-4.svg
+    - assets/icons/mood-5.svg
+    - assets/illustrations/fidelity-welcome.png
+    - assets/illustrations/fidelity-setup.png
+    - assets/illustrations/fidelity-timer.png
+    - assets/illustrations/instruments-v2.png
+    - assets/illustrations/tools-v2.png
+    - assets/illustrations/illustrations.png
+  fonts:
+    - family: Be Vietnam Pro
+      fonts:
+        - asset: assets/fonts/be-vietnam-pro-400.ttf
+          weight: 400
+        - asset: assets/fonts/be-vietnam-pro-500.ttf
+          weight: 500
+        - asset: assets/fonts/be-vietnam-pro-600.ttf
+          weight: 600
+        - asset: assets/fonts/be-vietnam-pro-700.ttf
+          weight: 700
