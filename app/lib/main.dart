@@ -1,2 +1,7 @@
-// Điểm khởi chạy Flutter của Meloop sẽ được triển khai trong bước khởi tạo app.
-// Cấu trúc frontend/backend đã được chuẩn bị trong các thư mục bên cạnh.
+import 'package:flutter/material.dart';
+
+import 'app/meloop_app.dart';
+import 'frontend/showcase/welcome_example.dart';
+
+// Backend controllers will be injected by the feature work. No seeded journal.
+void main() => runApp(const MeloopApp(home: WelcomeExample()));
