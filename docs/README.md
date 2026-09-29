@@ -4,3 +4,4 @@ Chứa tài liệu yêu cầu, kiến trúc, quyết định kỹ thuật, kiể
 
 - [`FE_SHARED_UI.md`](FE_SHARED_UI.md): task 10, theme Tempo, thành phần và ví dụ cho Wei.
 - [`FE_UI_VALIDATION.md`](FE_UI_VALIDATION.md): kết quả kiểm chứng UI của lần bàn giao.
+- [`FE_RIVERPOD.md`](FE_RIVERPOD.md): quản lý trạng thái frontend, cấp dependency qua app và nối backend sau.

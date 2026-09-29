@@ -2,6 +2,8 @@
 
 Hướng dẫn FE/Wei. Widget nhận callback/controller qua constructor; không gọi SQLite, file hay audio trực tiếp.
 
+Frontend hiện dùng Riverpod cho trạng thái showcase và thao tác lưu form. Callback qua constructor vẫn được hỗ trợ; có thể cấp dependency chung qua app. Xem [FE_RIVERPOD.md](FE_RIVERPOD.md).
+
 ## Nguồn và phạm vi
 
 Đã đối chiếu README, AGENT_GUIDELINES, Report 1 và SRS Report 2, đặc biệt 5.2.2 và CR01–CR06. Nguồn thiết kế là prototype `meloop-tempo-html`: `style.css` cộng lớp ghi đè cuối `fidelity.css`. Bản tham chiếu công khai: [Tempo](https://huyth96.github.io/meloop-tempo-html/).

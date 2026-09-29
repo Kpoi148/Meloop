@@ -4,8 +4,8 @@ import '../components/meloop_ui.dart';
 import 'session_form_example.dart';
 
 class SetupExample extends StatefulWidget {
-  const SetupExample({super.key, required this.onSave});
-  final Future<void> Function(SessionFormValues) onSave;
+  const SetupExample({super.key, this.onSave});
+  final Future<void> Function(SessionFormValues)? onSave;
   @override
   State<SetupExample> createState() => _SetupExampleState();
 }
