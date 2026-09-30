@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../l10n/l10n.dart';
 import '../../theme/tokens/tempo_tokens.dart';
 import '../inputs/meloop_field.dart';
 import '../layout/meloop_icon.dart';
@@ -29,7 +30,7 @@ class MeloopRating extends FormField<int> {
                  for (var i = 1; i <= 5; i++)
                    Expanded(
                      child: Semantics(
-                       label: '$label $i trên 5',
+                       label: field.context.l10n.ratingSemantics(label, i),
                        selected: field.value == i,
                        button: true,
                        child: Material(
@@ -94,7 +95,9 @@ class MeloopRating extends FormField<int> {
              ),
              const SizedBox(height: TempoSpace.xs),
              Text(
-               mood ? '1 · Không vui → 5 · Rất vui. Bấm lại để bỏ chọn.' : '1 · Khó tập trung → 5 · Rất tập trung. Bấm lại để bỏ chọn.',
+               mood
+                   ? field.context.l10n.moodRatingHint
+                   : field.context.l10n.focusRatingHint,
                style: TempoType.caption.copyWith(color: TempoColors.muted),
              ),
            ],

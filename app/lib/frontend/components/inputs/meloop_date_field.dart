@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/l10n.dart';
 import '../../theme/tokens/tempo_tokens.dart';
 import '../layout/meloop_icon.dart';
 import 'meloop_field.dart';
@@ -32,7 +33,7 @@ class MeloopDateField extends StatelessWidget {
           final day = DateUtils.dateOnly(value);
           return day.isBefore(DateTime(2000)) ||
                   day.isAfter(DateUtils.dateOnly(DateTime.now()))
-              ? 'Chọn ngày từ 01/01/2000 đến hôm nay.'
+              ? context.l10n.validDateRange
               : null;
         },
         builder: (field) => InkWell(

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
+import '../frontend/application/app_settings_controller.dart';
 import '../frontend/theme/meloop_theme.dart';
+import '../l10n/app_localizations.dart';
 
 class MeloopApp extends StatelessWidget {
   const MeloopApp({
@@ -18,15 +19,28 @@ class MeloopApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ProviderScope(
     overrides: overrides,
-    child: MaterialApp(
-      title: 'Meloop',
+    child: _MeloopMaterialApp(home: home, builder: builder),
+  );
+}
+
+class _MeloopMaterialApp extends ConsumerWidget {
+  const _MeloopMaterialApp({required this.home, this.builder});
+
+  final Widget home;
+  final TransitionBuilder? builder;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(appLocaleProvider).value ?? const Locale('vi');
+    return MaterialApp(
+      onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       debugShowCheckedModeBanner: false,
       theme: MeloopTheme.light,
       builder: builder,
-      locale: const Locale('vi'),
-      supportedLocales: const [Locale('vi'), Locale('en')],
-      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      locale: locale,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
       home: home,
-    ),
-  );
+    );
+  }
 }

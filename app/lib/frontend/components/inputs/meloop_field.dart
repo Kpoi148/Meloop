@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/l10n.dart';
 import '../../theme/tokens/tempo_tokens.dart';
 
 enum MeloopInputType { text, multiline, integer, decimal, email, phone }
@@ -16,25 +17,28 @@ class MeloopFieldLabel extends StatelessWidget {
   final MeloopFieldRequirement requirement;
 
   @override
-  Widget build(BuildContext context) => Text.rich(
-    TextSpan(
-      children: [
-        TextSpan(text: label, style: TempoType.label),
-        TextSpan(
-          text: requirement == MeloopFieldRequirement.required
-              ? ' *'
-              : ' (tùy chọn)',
-          style: TempoType.caption.copyWith(
-            color: requirement == MeloopFieldRequirement.required
-                ? TempoColors.error
-                : TempoColors.muted,
+  Widget build(BuildContext context) {
+    final strings = context.l10n;
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(text: label, style: TempoType.label),
+          TextSpan(
+            text: requirement == MeloopFieldRequirement.required
+                ? strings.requiredSuffix
+                : strings.optionalSuffix,
+            style: TempoType.caption.copyWith(
+              color: requirement == MeloopFieldRequirement.required
+                  ? TempoColors.error
+                  : TempoColors.muted,
+            ),
           ),
-        ),
-      ],
-    ),
-    semanticsLabel:
-        '$label, ${requirement == MeloopFieldRequirement.required ? 'bắt buộc' : 'tùy chọn'}',
-  );
+        ],
+      ),
+      semanticsLabel:
+          '$label, ${requirement == MeloopFieldRequirement.required ? strings.requiredSemantics : strings.optionalSemantics}',
+    );
+  }
 }
 
 class MeloopField extends StatelessWidget {
@@ -102,7 +106,7 @@ class MeloopField extends StatelessWidget {
         validator: (value) {
           if (requirement == MeloopFieldRequirement.required &&
               (value ?? '').trim().isEmpty) {
-            return 'Vui lòng nhập ${label.toLowerCase()}.';
+            return context.l10n.requiredField(label.toLowerCase());
           }
           return validator?.call(value);
         },

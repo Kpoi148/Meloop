@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../../l10n/l10n.dart';
 import '../../theme/tokens/tempo_tokens.dart';
 import '../buttons/meloop_button.dart';
 import '../feedback/meloop_feedback.dart';
@@ -11,26 +12,28 @@ Future<bool> showMeloopConfirm(
   BuildContext context, {
   required String title,
   required String message,
-  String confirmLabel = 'Xác nhận',
-  String cancelLabel = 'Hủy',
+  String? confirmLabel,
+  String? cancelLabel,
   bool destructive = false,
   FutureOr<void> Function()? onConfirm,
-  String failureMessage = 'Chưa thể hoàn tất. Vui lòng thử lại.',
-}) async =>
-    await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => _MeloopConfirm(
-        title: title,
-        message: message,
-        confirmLabel: confirmLabel,
-        cancelLabel: cancelLabel,
-        destructive: destructive,
-        onConfirm: onConfirm,
-        failureMessage: failureMessage,
-      ),
-    ) ??
-    false;
+  String? failureMessage,
+}) async {
+  final strings = context.l10n;
+  return await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => _MeloopConfirm(
+          title: title,
+          message: message,
+          confirmLabel: confirmLabel ?? strings.confirm,
+          cancelLabel: cancelLabel ?? strings.cancel,
+          destructive: destructive,
+          onConfirm: onConfirm,
+          failureMessage: failureMessage ?? strings.genericFailure,
+        ),
+      ) ??
+      false;
+}
 
 class _MeloopConfirm extends StatefulWidget {
   const _MeloopConfirm({
@@ -103,7 +106,7 @@ class _MeloopConfirmState extends State<_MeloopConfirm> {
                   label: widget.confirmLabel,
                   onPressed: _confirm,
                   isLoading: _busy,
-                  loadingLabel: 'Đang xử lý…',
+                  loadingLabel: context.l10n.processing,
                   style: widget.destructive
                       ? MeloopButtonStyle.danger
                       : MeloopButtonStyle.primary,

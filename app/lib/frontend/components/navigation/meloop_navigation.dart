@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/l10n.dart';
 import '../../theme/tokens/tempo_tokens.dart';
 import '../layout/meloop_icon.dart';
 
@@ -48,7 +49,7 @@ class MeloopTopBar extends StatelessWidget {
         if (centerWordmark) const SizedBox(width: TempoSize.touchTarget),
         if (onBack != null)
           IconButton(
-            tooltip: 'Quay lại',
+            tooltip: context.l10n.back,
             onPressed: onBack,
             icon: const MeloopIcon(MeloopIcons.back),
           ),
@@ -88,102 +89,108 @@ class MeloopBottomNavigation extends StatelessWidget {
     super.key,
     required this.selectedIndex,
     required this.onSelected,
-    this.items = defaults,
+    this.items,
   });
-  static const defaults = [
-    MeloopNavItem('Trang chủ', MeloopIcons.home),
-    MeloopNavItem('Buổi luyện', MeloopIcons.book),
-    MeloopNavItem('Tiến độ', MeloopIcons.chart),
-    MeloopNavItem('Cài đặt', MeloopIcons.settings),
-  ];
   final int selectedIndex;
   final ValueChanged<int> onSelected;
-  final List<MeloopNavItem> items;
+  final List<MeloopNavItem>? items;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-    decoration: const BoxDecoration(
-      color: TempoColors.paper,
-      border: Border(top: BorderSide(color: TempoColors.line)),
-    ),
-    child: SafeArea(
-      top: false,
-      child: Center(
-        heightFactor: 1,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: TempoSize.contentMaxWidth,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (var i = 0; i < items.length; i++)
-                  Expanded(
-                    child: Semantics(
-                      selected: selectedIndex == i,
-                      button: true,
-                      child: InkWell(
-                        onTap: () => onSelected(i),
-                        borderRadius: BorderRadius.circular(TempoRadius.field),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 2,
-                            vertical: 4,
+  Widget build(BuildContext context) {
+    final resolvedItems =
+        items ??
+        [
+          MeloopNavItem(context.l10n.navHome, MeloopIcons.home),
+          MeloopNavItem(context.l10n.navHistory, MeloopIcons.book),
+          MeloopNavItem(context.l10n.navProgress, MeloopIcons.chart),
+          MeloopNavItem(context.l10n.navSettings, MeloopIcons.settings),
+        ];
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: TempoColors.paper,
+        border: Border(top: BorderSide(color: TempoColors.line)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Center(
+          heightFactor: 1,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: TempoSize.contentMaxWidth,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (var i = 0; i < resolvedItems.length; i++)
+                    Expanded(
+                      child: Semantics(
+                        selected: selectedIndex == i,
+                        button: true,
+                        child: InkWell(
+                          onTap: () => onSelected(i),
+                          borderRadius: BorderRadius.circular(
+                            TempoRadius.field,
                           ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                width: 38,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  color: selectedIndex == i
-                                      ? TempoColors.yellow
-                                      : null,
-                                  borderRadius: BorderRadius.circular(
-                                    TempoRadius.pill,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 2,
+                              vertical: 4,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 38,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    color: selectedIndex == i
+                                        ? TempoColors.yellow
+                                        : null,
+                                    borderRadius: BorderRadius.circular(
+                                      TempoRadius.pill,
+                                    ),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: MeloopIcon(
+                                    resolvedItems[i].icon,
+                                    size: TempoSize.navigationIcon,
                                   ),
                                 ),
-                                alignment: Alignment.center,
-                                child: MeloopIcon(
-                                  items[i].icon,
-                                  size: TempoSize.navigationIcon,
+                                const SizedBox(height: TempoSpace.xs),
+                                Text(
+                                  resolvedItems[i].label,
+                                  textAlign: TextAlign.center,
+                                  style: TempoType.caption.copyWith(
+                                    fontWeight: selectedIndex == i
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: TempoSpace.xs),
-                              Text(
-                                items[i].label,
-                                textAlign: TextAlign.center,
-                                style: TempoType.caption.copyWith(
-                                  fontWeight: selectedIndex == i
-                                      ? FontWeight.w700
-                                      : FontWeight.w500,
+                                const SizedBox(height: TempoSpace.sm),
+                                Container(
+                                  width: 35,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                    color: selectedIndex == i
+                                        ? TempoColors.yellow
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(3),
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: TempoSpace.sm),
-                              Container(
-                                width: 35,
-                                height: 4,
-                                decoration: BoxDecoration(
-                                  color: selectedIndex == i
-                                      ? TempoColors.yellow
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(3),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
