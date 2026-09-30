@@ -27,3 +27,7 @@ Hướng dẫn tokens, component, ví dụ cho Wei và kiểm chứng: [`../docs
 ## SQLite journal
 
 `JournalDatabase.open()` tại `lib/backend/database/` cung cấp schema v1 gồm 9 bảng cục bộ, không seed. DB chưa được nối vào entry point hoặc form. Android backup tự động đã được tắt; thanh toán để giai đoạn sau. Xem [`../docs/DB_MIGRATION_PLAN.md`](../docs/DB_MIGRATION_PLAN.md).
+
+## Xem thử màn hồ sơ nhạc cụ
+
+Chạy `flutter run -t lib/main_profile_preview.dart` để dùng các màn chọn, tạo, đổi tên và xóa hồ sơ theo Tempo. Dữ liệu xem thử chỉ ở bộ nhớ, không phải service lưu trữ. Cách nối service hồ sơ cục bộ và phạm vi kiểm chứng nằm trong [`../docs/FE_INSTRUMENT_PROFILES.md`](../docs/FE_INSTRUMENT_PROFILES.md).
