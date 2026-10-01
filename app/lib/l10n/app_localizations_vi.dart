@@ -811,4 +811,92 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get previewResetFailed =>
       'Chưa thể xóa dữ liệu. Hồ sơ của bạn vẫn được giữ. Hãy thử lại.';
+
+  @override
+  String get startPracticeFailed =>
+      'Chưa thể bắt đầu buổi luyện. Nội dung vẫn được giữ. Vui lòng thử lại.';
+
+  @override
+  String get practiceActionFailed =>
+      'Chưa thể cập nhật buổi luyện. Vui lòng thử lại.';
+
+  @override
+  String get openCurrentPractice => 'Mở buổi luyện hiện tại';
+
+  @override
+  String get timerTools => 'Công cụ';
+
+  @override
+  String get savedPracticeDetails => 'Chi tiết buổi luyện';
+
+  @override
+  String get noPracticeNotes => 'Chưa có ghi chú.';
+
+  @override
+  String get practiceToolsHeading => 'Những người bạn\ncủa buổi luyện.';
+
+  @override
+  String get practiceToolsSubtitle => 'Tìm đúng nhịp. Lắng nghe kỹ hơn.';
+
+  @override
+  String get metronomeTool => 'Máy đếm nhịp';
+
+  @override
+  String get pitchTool => 'Kiểm tra cao độ';
+
+  @override
+  String get recordPracticeTool => 'Ghi âm luyện tập';
+
+  @override
+  String get practiceToolUnavailable =>
+      'Công cụ này chưa khả dụng. Bạn vẫn có thể tiếp tục buổi luyện.';
+
+  @override
+  String get renamePractice => 'Đổi tên buổi luyện';
+
+  @override
+  String get cancelPractice => 'Hủy buổi luyện';
+
+  @override
+  String get cancelPracticeTitle => 'Hủy buổi luyện?';
+
+  @override
+  String get cancelPracticeMessage =>
+      'Buổi luyện chưa lưu và các bản ghi âm của buổi này sẽ bị xóa.';
+
+  @override
+  String get keepPracticing => 'Tiếp tục luyện';
+
+  @override
+  String get metronomeToolHint => 'Giữ nhịp, theo cách của bạn.';
+
+  @override
+  String get pitchToolHint => 'Lắng nghe từng nốt.';
+
+  @override
+  String get recordTool => 'Ghi âm';
+
+  @override
+  String get recordToolHint => 'Giữ lại một khoảnh khắc.';
+
+  @override
+  String get recordingsTool => 'Bản ghi âm';
+
+  @override
+  String get recordingsToolHint => 'Nghe lại hành trình.';
+
+  @override
+  String get practiceToolsFree => 'Các công cụ luôn miễn phí.';
+
+  @override
+  String get practiceToolsTimingHint =>
+      'Một công cụ âm thanh hoạt động mỗi lúc; bộ đếm giờ vẫn tiếp tục.';
+
+  @override
+  String get practiceNotRated => 'Chưa đánh giá';
+
+  @override
+  String practiceRating(int value) {
+    return '$value / 5';
+  }
 }

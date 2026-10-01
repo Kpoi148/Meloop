@@ -10,4 +10,10 @@ Task 10 có `shared_ui_smoke_test.dart`: mở form trên Android, lỗi bắt bu
 flutter test integration_test/shared_ui_smoke_test.dart -d emulator-5554
 ```
 
-Thay device ID bằng thiết bị Android được liệt kê trong `flutter devices`. Audio, quyền, timer và lưu trữ sẽ có kiểm thử riêng khi các task đó triển khai.
+Thay device ID bằng thiết bị Android được liệt kê trong `flutter devices`. Audio, quyền và lưu trữ sẽ có kiểm thử riêng khi các task đó triển khai.
+
+Task 16 có `practice_session_smoke_test.dart`: tạo từ icon Buổi luyện, nhập bằng IME Android, Pause/Resume, Finish → Review → Save và chống gửi trùng. Timer do service xem thử cung cấp; dữ liệu chỉ ở bộ nhớ, không ghi nhật ký của thiết bị.
+
+```powershell
+flutter test integration_test/practice_session_smoke_test.dart -d <android-device>
+```

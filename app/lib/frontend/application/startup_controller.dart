@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../components/layout/meloop_art.dart';
+import 'practice_session_provider.dart';
 
 class PreviewInstrumentProfile {
   const PreviewInstrumentProfile({
@@ -25,6 +26,8 @@ class PreviewPracticeDraft {
     this.accumulatedSeconds = 0,
     this.isRunning = false,
     this.wasRecovered = false,
+    this.sessionId,
+    this.startedAt,
   });
 
   final String profileId;
@@ -32,6 +35,8 @@ class PreviewPracticeDraft {
   final int accumulatedSeconds;
   final bool isRunning;
   final bool wasRecovered;
+  final String? sessionId;
+  final DateTime? startedAt;
 
   PreviewPracticeDraft copyWith({
     String? title,
@@ -44,6 +49,8 @@ class PreviewPracticeDraft {
     accumulatedSeconds: accumulatedSeconds ?? this.accumulatedSeconds,
     isRunning: isRunning ?? this.isRunning,
     wasRecovered: wasRecovered ?? this.wasRecovered,
+    sessionId: sessionId,
+    startedAt: startedAt,
   );
 }
 
@@ -110,6 +117,7 @@ class MeloopShellState {
     required this.destination,
     this.selectedTab = 0,
     this.requiresProfileSelection = false,
+    this.sessions = const [],
   });
 
   final List<PreviewInstrumentProfile> profiles;
@@ -118,6 +126,7 @@ class MeloopShellState {
   final StartupDestination destination;
   final int selectedTab;
   final bool requiresProfileSelection;
+  final List<SavedPracticeSession> sessions;
 
   PreviewInstrumentProfile? get selectedProfile {
     for (final profile in profiles) {
@@ -135,6 +144,7 @@ class MeloopShellState {
     StartupDestination? destination,
     int? selectedTab,
     bool? requiresProfileSelection,
+    List<SavedPracticeSession>? sessions,
   }) => MeloopShellState(
     profiles: profiles ?? this.profiles,
     selectedProfileId: clearSelectedProfile
@@ -145,6 +155,7 @@ class MeloopShellState {
     selectedTab: selectedTab ?? this.selectedTab,
     requiresProfileSelection:
         requiresProfileSelection ?? this.requiresProfileSelection,
+    sessions: sessions ?? this.sessions,
   );
 }
 
@@ -159,7 +170,45 @@ final meloopShellControllerProvider =
 
 class MeloopShellController extends Notifier<MeloopShellState> {
   @override
-  MeloopShellState build() => _fromSnapshot(ref.read(startupSnapshotProvider));
+  MeloopShellState build() {
+    final initial = _fromSnapshot(ref.read(startupSnapshotProvider));
+    final service = ref.read(practiceSessionServiceProvider);
+    if (service == null) return initial;
+    final subscription = service.changes.listen((value) {
+      if (ref.mounted) state = _withPractice(state, value);
+    });
+    ref.onDispose(subscription.cancel);
+    return _withPractice(initial, service.current);
+  }
+
+  MeloopShellState _withPractice(
+    MeloopShellState shell,
+    PracticeSessionState value,
+  ) {
+    final draft = value.draft;
+    return shell.copyWith(
+      selectedProfileId: shell.profiles.any((p) => p.id == draft?.profileId)
+          ? draft?.profileId
+          : null,
+      clearDraft: draft == null,
+      draft: draft == null
+          ? null
+          : PreviewPracticeDraft(
+              sessionId: draft.id,
+              profileId: draft.profileId,
+              title: draft.title,
+              startedAt: draft.startedAt,
+              accumulatedSeconds: draft.elapsed.inSeconds,
+              isRunning: draft.isRunning,
+              wasRecovered: draft.wasRecovered,
+            ),
+      sessions: value.sessions,
+    );
+  }
+
+  PracticeSessionService get _practice =>
+      ref.read(practiceSessionServiceProvider) ??
+      (throw StateError('Practice session service has not been configured'));
 
   MeloopShellState _fromSnapshot(StartupSnapshot snapshot) {
     final profiles = List<PreviewInstrumentProfile>.unmodifiable(
@@ -253,42 +302,17 @@ class MeloopShellController extends Notifier<MeloopShellState> {
     );
   }
 
-  void startDraft(String title) {
+  Future<void> startDraft(String title) async {
     final profile = state.selectedProfile;
-    if (profile == null || state.draft != null) return;
-    state = state.copyWith(
-      draft: PreviewPracticeDraft(
-        profileId: profile.id,
-        title: title,
-        isRunning: true,
-      ),
-      destination: StartupDestination.recoveredTimer,
-    );
+    if (profile == null) return;
+    await _practice.start(profileId: profile.id, title: title);
+    if (ref.mounted) showTimer();
   }
 
-  void checkpointDraft({required int seconds, required bool isRunning}) {
-    final draft = state.draft;
-    if (draft == null) return;
-    state = state.copyWith(
-      draft: draft.copyWith(
-        accumulatedSeconds: seconds.clamp(0, 86400),
-        isRunning: isRunning,
-        wasRecovered: false,
-      ),
-    );
-  }
+  Future<void> pauseDraft() => _practice.pause();
 
-  void finishDraft() {
-    final draft = state.draft;
-    if (draft == null) return;
-    state = state.copyWith(draft: draft.copyWith(isRunning: false));
-  }
-
-  void completeDraft() {
-    state = state.copyWith(
-      clearDraft: true,
-      selectedTab: 0,
-      destination: StartupDestination.main,
-    );
+  Future<void> discardDraft() async {
+    await _practice.discard();
+    if (ref.mounted) selectTab(1);
   }
 }

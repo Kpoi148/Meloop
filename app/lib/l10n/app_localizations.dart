@@ -1597,6 +1597,168 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Chưa thể xóa dữ liệu. Hồ sơ của bạn vẫn được giữ. Hãy thử lại.'**
   String get previewResetFailed;
+
+  /// No description provided for @startPracticeFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể bắt đầu buổi luyện. Nội dung vẫn được giữ. Vui lòng thử lại.'**
+  String get startPracticeFailed;
+
+  /// No description provided for @practiceActionFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể cập nhật buổi luyện. Vui lòng thử lại.'**
+  String get practiceActionFailed;
+
+  /// No description provided for @openCurrentPractice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở buổi luyện hiện tại'**
+  String get openCurrentPractice;
+
+  /// No description provided for @timerTools.
+  ///
+  /// In vi, this message translates to:
+  /// **'Công cụ'**
+  String get timerTools;
+
+  /// No description provided for @savedPracticeDetails.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chi tiết buổi luyện'**
+  String get savedPracticeDetails;
+
+  /// No description provided for @noPracticeNotes.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có ghi chú.'**
+  String get noPracticeNotes;
+
+  /// No description provided for @practiceToolsHeading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Những người bạn\ncủa buổi luyện.'**
+  String get practiceToolsHeading;
+
+  /// No description provided for @practiceToolsSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tìm đúng nhịp. Lắng nghe kỹ hơn.'**
+  String get practiceToolsSubtitle;
+
+  /// No description provided for @metronomeTool.
+  ///
+  /// In vi, this message translates to:
+  /// **'Máy đếm nhịp'**
+  String get metronomeTool;
+
+  /// No description provided for @pitchTool.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kiểm tra cao độ'**
+  String get pitchTool;
+
+  /// No description provided for @recordPracticeTool.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ghi âm luyện tập'**
+  String get recordPracticeTool;
+
+  /// No description provided for @practiceToolUnavailable.
+  ///
+  /// In vi, this message translates to:
+  /// **'Công cụ này chưa khả dụng. Bạn vẫn có thể tiếp tục buổi luyện.'**
+  String get practiceToolUnavailable;
+
+  /// No description provided for @renamePractice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đổi tên buổi luyện'**
+  String get renamePractice;
+
+  /// No description provided for @cancelPractice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hủy buổi luyện'**
+  String get cancelPractice;
+
+  /// No description provided for @cancelPracticeTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hủy buổi luyện?'**
+  String get cancelPracticeTitle;
+
+  /// No description provided for @cancelPracticeMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Buổi luyện chưa lưu và các bản ghi âm của buổi này sẽ bị xóa.'**
+  String get cancelPracticeMessage;
+
+  /// No description provided for @keepPracticing.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếp tục luyện'**
+  String get keepPracticing;
+
+  /// No description provided for @metronomeToolHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giữ nhịp, theo cách của bạn.'**
+  String get metronomeToolHint;
+
+  /// No description provided for @pitchToolHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lắng nghe từng nốt.'**
+  String get pitchToolHint;
+
+  /// No description provided for @recordTool.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ghi âm'**
+  String get recordTool;
+
+  /// No description provided for @recordToolHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giữ lại một khoảnh khắc.'**
+  String get recordToolHint;
+
+  /// No description provided for @recordingsTool.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bản ghi âm'**
+  String get recordingsTool;
+
+  /// No description provided for @recordingsToolHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nghe lại hành trình.'**
+  String get recordingsToolHint;
+
+  /// No description provided for @practiceToolsFree.
+  ///
+  /// In vi, this message translates to:
+  /// **'Các công cụ luôn miễn phí.'**
+  String get practiceToolsFree;
+
+  /// No description provided for @practiceToolsTimingHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Một công cụ âm thanh hoạt động mỗi lúc; bộ đếm giờ vẫn tiếp tục.'**
+  String get practiceToolsTimingHint;
+
+  /// No description provided for @practiceNotRated.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa đánh giá'**
+  String get practiceNotRated;
+
+  /// No description provided for @practiceRating.
+  ///
+  /// In vi, this message translates to:
+  /// **'{value} / 5'**
+  String practiceRating(int value);
 }
 
 class _AppLocalizationsDelegate

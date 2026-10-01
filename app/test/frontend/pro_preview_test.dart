@@ -141,7 +141,7 @@ void main() {
         tester.element(find.byType(MeloopUiShowcase)),
       );
       final shell = container.read(meloopShellControllerProvider.notifier);
-      shell.startDraft('Luyện nhịp');
+      await shell.startDraft('Luyện nhịp');
       shell.selectTab(3);
       await tester.pumpAndSettle();
       await tap(tester, find.byKey(const Key('explore-pro')));

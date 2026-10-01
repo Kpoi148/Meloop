@@ -6,8 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../l10n/l10n.dart';
 import '../application/app_settings_controller.dart';
 import '../application/instrument_profile_service.dart';
+import '../application/practice_session_provider.dart';
 import '../application/startup_controller.dart';
 import '../components/meloop_ui.dart';
+import '../practice/practice_duration.dart';
+import '../practice/saved_practice_page.dart';
+import '../theme/tokens/practice_tokens.dart';
 import 'component_catalog.dart';
 import 'home_example.dart';
 import 'instrument_profile_preview.dart';
@@ -49,11 +53,42 @@ class MeloopUiShowcase extends ConsumerStatefulWidget {
   ConsumerState<MeloopUiShowcase> createState() => _MeloopUiShowcaseState();
 }
 
-class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
+class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase>
+    with WidgetsBindingObserver {
   final _search = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden) {
+      unawaited(_pauseInBackground());
+    }
+  }
+
+  Future<void> _pauseInBackground() async {
+    try {
+      await ref.read(practiceSessionServiceProvider)?.pause();
+    } catch (_) {
+      if (mounted) {
+        MeloopNotifications.show(
+          context,
+          context.l10n.practiceActionFailed,
+          kind: MeloopNoticeKind.error,
+        );
+      }
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _search.dispose();
     super.dispose();
   }
@@ -92,14 +127,33 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
     ),
   );
 
-  void _setup(PreviewInstrumentProfile profile) => Navigator.of(context).push(
-    MaterialPageRoute<void>(
-      builder: (_) => SetupExample(
-        profile: profile,
-        onStart: ref.read(meloopShellControllerProvider.notifier).startDraft,
+  void _setup(PreviewInstrumentProfile profile) {
+    if (ref.read(practiceSessionServiceProvider)?.current.draft != null) {
+      ref.read(meloopShellControllerProvider.notifier).showTimer();
+      return;
+    }
+    final container = ProviderScope.containerOf(context);
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => UncontrolledProviderScope(
+          container: container,
+          child: SetupExample(
+            profile: profile,
+            onStart: ref
+                .read(meloopShellControllerProvider.notifier)
+                .startDraft,
+          ),
+        ),
       ),
-    ),
-  );
+    );
+  }
+
+  void _saved(SavedPracticeSession session, PreviewInstrumentProfile profile) =>
+      Navigator.of(context).push<void>(
+        MaterialPageRoute(
+          builder: (_) => SavedPracticePage(session: session, profile: profile),
+        ),
+      );
 
   void _profiles() => Navigator.of(context).push(
     MaterialPageRoute<void>(
@@ -173,6 +227,27 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
       return const SizedBox.shrink();
     }
     return MeloopPage(
+      floatingActionButton: shell.selectedTab == 1
+          ? SizedBox.square(
+              dimension: PracticeTempo.fabSize,
+              child: FloatingActionButton(
+                key: const Key('create-practice-session'),
+                tooltip: shell.draft == null
+                    ? context.l10n.createPractice
+                    : context.l10n.openCurrentPractice,
+                backgroundColor: TempoColors.teal,
+                foregroundColor: TempoColors.white,
+                elevation: 0,
+                highlightElevation: 0,
+                shape: const CircleBorder(),
+                onPressed: () => _setup(profile),
+                child: const MeloopIcon(
+                  MeloopIcons.plus,
+                  color: TempoColors.white,
+                ),
+              ),
+            )
+          : null,
       bottomNavigation: MeloopBottomNavigation(
         selectedIndex: shell.selectedTab,
         onSelected: shellController.selectTab,
@@ -182,6 +257,10 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
           showSampleData: widget.profile == null,
           profile: profile,
           draft: shell.draft,
+          savedSessions: shell.sessions
+              .where((s) => s.profileId == profile.id)
+              .toList(),
+          onOpenSaved: (session) => _saved(session, profile),
           onCreate: () => shell.draft == null
               ? _setup(profile)
               : shellController.showTimer(),
@@ -205,6 +284,10 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
   ) {
     final strings = context.l10n;
     if (widget.profile case final profile?) {
+      final sessions = shell.sessions
+          .where((s) => s.profileId == profile.id)
+          .toList()
+          .reversed;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: TempoSpace.page,
@@ -221,17 +304,15 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
                   .read(meloopShellControllerProvider.notifier)
                   .showTimer,
             ),
-          MeloopStateView(
-            state: MeloopViewState.empty,
-            title: strings.noPracticeSessions,
-            message: strings.profileSessionsEmptyMessage,
-          ),
-          MeloopButton(
-            label: strings.createPractice,
-            onPressed: () => shell.draft == null
-                ? _setup(shell.selectedProfile!)
-                : ref.read(meloopShellControllerProvider.notifier).showTimer(),
-          ),
+          if (sessions.isEmpty)
+            MeloopStateView(
+              state: MeloopViewState.empty,
+              title: strings.noPracticeSessions,
+              message: strings.profileSessionsEmptyMessage,
+            ),
+          for (final session in sessions)
+            _savedCard(session, shell.selectedProfile!),
+          const SizedBox(height: PracticeTempo.fabClearance),
         ],
       );
     }
@@ -298,22 +379,44 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
               ],
             ),
           ),
-        MeloopButton(
-          label: shell.draft == null
-              ? strings.createPractice
-              : strings.continuePractice,
-          icon: shell.draft == null ? MeloopIcons.plus : MeloopIcons.play,
-          onPressed: () => shell.draft == null
-              ? _setup(shell.selectedProfile!)
-              : ref.read(meloopShellControllerProvider.notifier).showTimer(),
-        ),
+        for (final session
+            in shell.sessions
+                .where((s) => s.profileId == shell.selectedProfileId)
+                .toList()
+                .reversed)
+          _savedCard(session, shell.selectedProfile!),
         Text(
           strings.showcaseSaveCount(state.saveCount),
           style: TempoType.caption,
         ),
+        const SizedBox(height: PracticeTempo.fabClearance),
       ],
     );
   }
+
+  Widget _savedCard(
+    SavedPracticeSession session,
+    PreviewInstrumentProfile profile,
+  ) => MeloopCard(
+    child: InkWell(
+      onTap: () => _saved(session, profile),
+      child: Padding(
+        padding: const EdgeInsets.all(TempoSpace.sm),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: TempoSpace.sm,
+          children: [
+            Text(session.values.title, style: TempoType.title),
+            Text(
+              '${MaterialLocalizations.of(context).formatMediumDate(session.values.date)} · ${formatPracticeDuration(Duration(seconds: session.values.durationSeconds))}',
+            ),
+            if (session.values.practiced.isNotEmpty)
+              Text(session.values.practiced),
+          ],
+        ),
+      ),
+    ),
+  );
 
   Widget _progress() {
     final strings = context.l10n;

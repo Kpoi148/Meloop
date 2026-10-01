@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../l10n/l10n.dart';
 import '../application/startup_controller.dart';
+import '../../shared/practice/practice_session_service.dart';
+import '../practice/practice_duration.dart';
 import '../components/meloop_ui.dart';
 import 'preview_copy.dart';
 
@@ -16,6 +18,8 @@ class HomeExample extends StatelessWidget {
     this.draft,
     this.onInstrument,
     this.showSampleData = true,
+    this.savedSessions = const [],
+    this.onOpenSaved,
   });
   final VoidCallback onCreate, onHistory;
   final VoidCallback? onCatalog;
@@ -23,6 +27,8 @@ class HomeExample extends StatelessWidget {
   final PreviewPracticeDraft? draft;
   final VoidCallback? onInstrument;
   final bool showSampleData;
+  final List<SavedPracticeSession> savedSessions;
+  final ValueChanged<SavedPracticeSession>? onOpenSaved;
   @override
   Widget build(BuildContext context) {
     final strings = context.l10n;
@@ -129,6 +135,34 @@ class HomeExample extends StatelessWidget {
         const SizedBox(height: TempoSpace.sm),
         if (showSampleData)
           const _RecentCard()
+        else if (savedSessions.isNotEmpty)
+          MeloopCard(
+            child: InkWell(
+              onTap: () => onOpenSaved?.call(savedSessions.last),
+              child: Padding(
+                padding: const EdgeInsets.all(TempoSpace.sm),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: TempoSpace.sm,
+                  children: [
+                    Text(
+                      savedSessions.last.values.title,
+                      style: TempoType.section,
+                    ),
+                    Text(
+                      formatPracticeDuration(
+                        Duration(
+                          seconds: savedSessions.last.values.durationSeconds,
+                        ),
+                      ),
+                    ),
+                    if (savedSessions.last.values.next.isNotEmpty)
+                      Text(savedSessions.last.values.next),
+                  ],
+                ),
+              ),
+            ),
+          )
         else
           MeloopStateView(
             state: MeloopViewState.empty,

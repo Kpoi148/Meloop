@@ -817,4 +817,92 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get previewResetFailed =>
       'Could not delete data. Your profiles are still safe. Please try again.';
+
+  @override
+  String get startPracticeFailed =>
+      'Could not start practice. Your input is still here. Please try again.';
+
+  @override
+  String get practiceActionFailed =>
+      'Could not update practice. Please try again.';
+
+  @override
+  String get openCurrentPractice => 'Open current practice session';
+
+  @override
+  String get timerTools => 'Tools';
+
+  @override
+  String get savedPracticeDetails => 'Practice session details';
+
+  @override
+  String get noPracticeNotes => 'No notes yet.';
+
+  @override
+  String get practiceToolsHeading => 'Companions\nfor your practice.';
+
+  @override
+  String get practiceToolsSubtitle => 'Find your rhythm. Listen more closely.';
+
+  @override
+  String get metronomeTool => 'Metronome';
+
+  @override
+  String get pitchTool => 'Check pitch';
+
+  @override
+  String get recordPracticeTool => 'Record practice audio';
+
+  @override
+  String get practiceToolUnavailable =>
+      'This tool is not available yet. You can continue your practice session.';
+
+  @override
+  String get renamePractice => 'Rename practice session';
+
+  @override
+  String get cancelPractice => 'Discard practice session';
+
+  @override
+  String get cancelPracticeTitle => 'Discard practice session?';
+
+  @override
+  String get cancelPracticeMessage =>
+      'The unsaved session and its recordings will be deleted.';
+
+  @override
+  String get keepPracticing => 'Keep practicing';
+
+  @override
+  String get metronomeToolHint => 'Keep time, your way.';
+
+  @override
+  String get pitchToolHint => 'Listen to every note.';
+
+  @override
+  String get recordTool => 'Record';
+
+  @override
+  String get recordToolHint => 'Keep a moment.';
+
+  @override
+  String get recordingsTool => 'Recordings';
+
+  @override
+  String get recordingsToolHint => 'Listen to your journey.';
+
+  @override
+  String get practiceToolsFree => 'Practice tools are always free.';
+
+  @override
+  String get practiceToolsTimingHint =>
+      'One audio tool runs at a time; the practice timer continues.';
+
+  @override
+  String get practiceNotRated => 'Not rated';
+
+  @override
+  String practiceRating(int value) {
+    return '$value / 5';
+  }
 }

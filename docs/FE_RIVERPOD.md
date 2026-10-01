@@ -27,7 +27,7 @@ MeloopApp(
 
 Dependency lưu buổi luyện mặc định báo lỗi khi chưa được cấu hình. Luồng UI hiện tại giữ hồ sơ qua lần mở app bằng bộ lưu thử cục bộ; nhật ký nghiệp vụ chưa được nối.
 
-`InstrumentProfilePreview` cấp controller và dependency lưu buổi luyện mẫu trong một scope theo profile ID. Mô phỏng có độ trễ và bộ đếm lưu mẫu, không ghi nhật ký thật. `lib/main.dart` là điểm khởi chạy duy nhất. Chạy:
+`InstrumentProfilePreview` cấp shell controller trong scope theo profile ID và service buổi luyện trên scope của bản xem thử để giữ duy nhất một timer. Mô phỏng lưu có độ trễ và bộ đếm lưu mẫu, không ghi nhật ký thật. `lib/main.dart` là điểm khởi chạy duy nhất. Chạy:
 
 ```powershell
 cd app
@@ -44,7 +44,9 @@ flutter run
 - Sau khi provider bị giải phóng, Future hoàn tất không ghi vào state hoặc yêu cầu đóng một màn khác.
 - Ô nhập, focus, date/mood và validation tại trường vẫn là trạng thái cục bộ của widget. Không đưa mọi trạng thái widget dùng chung vào provider toàn cục.
 
-`SessionFormExample` và `SetupExample` vẫn nhận callback `onSave` để các ví dụ component cũ hoạt động. Nếu truyền callback, callback đó được ưu tiên; nếu không, form nhận callback qua `sessionFormSaveProvider`. `SessionFormValues` vẫn được export từ file form để giữ tương thích import cũ.
+`SessionFormExample` vẫn nhận callback `onSave` để các ví dụ component cũ hoạt động. Nếu truyền callback, callback đó được ưu tiên; nếu không, form nhận callback qua `sessionFormSaveProvider`. `SessionFormValues` vẫn được export từ file form để giữ tương thích import cũ.
+
+Task 16 thay luồng setup: `SetupExample` nhận `Future<void> Function(String)` qua `onStart`, chờ Start service thành công rồi mở timer; không đi thẳng vào form lưu. `SessionFormExample` thêm `initialDate` và `onSaved` để chuyển trực tiếp sang chi tiết sau khi lưu. `MeloopShellController` chiếu stream service, không tự đếm giờ. Xem [`FE_PRACTICE_SESSION.md`](FE_PRACTICE_SESSION.md) cho contract và giới hạn adapter bộ nhớ.
 
 ## Kiểm chứng
 

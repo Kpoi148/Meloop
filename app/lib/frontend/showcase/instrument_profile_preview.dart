@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../application/instrument_profile_service.dart';
+import '../application/practice_session_provider.dart';
 import '../application/session_form_controller.dart';
 import '../application/startup_controller.dart';
 import '../components/meloop_ui.dart';
 import '../profiles/instrument_profiles_feature.dart';
 import 'preview_data_reset_button.dart';
 import 'profile_preview_service.dart';
+import 'practice_preview_service.dart';
 import 'meloop_ui_showcase.dart';
 import 'pro_preview_page.dart';
 import 'showcase_controller.dart';
@@ -39,7 +41,19 @@ class _InstrumentProfilePreviewState extends State<InstrumentProfilePreview> {
   @override
   Widget build(BuildContext context) => ProviderScope(
     key: ValueKey(_generation),
-    overrides: [instrumentProfileServiceProvider.overrideWithValue(_service)],
+    overrides: [
+      instrumentProfileServiceProvider.overrideWithValue(_service),
+      showcaseControllerProvider.overrideWith(ShowcaseController.new),
+      practiceSessionServiceProvider.overrideWith((ref) {
+        final service = PracticePreviewService(
+          onSave: (values) => ref
+              .read(showcaseControllerProvider.notifier)
+              .simulateSave(values),
+        );
+        ref.onDispose(service.dispose);
+        return service;
+      }),
+    ],
     child: _ProfilePreview(
       onReset: _reset,
       onEnablePro: _service.enableProPreview,
@@ -163,7 +177,6 @@ class _ProfilePreviewState extends ConsumerState<_ProfilePreview> {
             selectedProfileId: _selected!.id,
           ),
         ),
-        showcaseControllerProvider.overrideWith(ShowcaseController.new),
         sessionFormSaveProvider.overrideWith(
           (ref) =>
               (values) => ref

@@ -45,7 +45,7 @@ void main() {
           ),
         ),
         'welcome': const WelcomeExample(),
-        'setup': SetupExample(onSave: (_) async {}),
+        'setup': const SetupExample(),
         'form': SessionFormExample(onSave: (_) async {}),
         'settings': MeloopPage(
           bottomNavigation: MeloopBottomNavigation(

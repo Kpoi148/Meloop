@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../frontend/application/app_settings_controller.dart';
+import '../frontend/application/practice_session_provider.dart';
+import '../frontend/application/session_form_controller.dart';
+import '../frontend/application/startup_controller.dart';
+import '../frontend/showcase/practice_preview_service.dart';
 import '../frontend/theme/meloop_theme.dart';
 import '../l10n/app_localizations.dart';
 
@@ -12,13 +16,27 @@ class MeloopApp extends StatelessWidget {
     required this.home,
     this.builder,
     this.overrides = const [],
+    this.practiceSessionService,
   });
   final Widget home;
   final TransitionBuilder? builder;
   final List<Override> overrides;
+  final PracticeSessionService? practiceSessionService;
   @override
   Widget build(BuildContext context) => ProviderScope(
-    overrides: overrides,
+    overrides: [
+      // The current entry is an FE preview. Production replaces this adapter.
+      practiceSessionServiceProvider.overrideWith((ref) {
+        if (practiceSessionService != null) return practiceSessionService;
+        final service = PracticePreviewService.fromSnapshot(
+          ref.read(startupSnapshotProvider),
+          onSave: (values) => ref.read(sessionFormSaveProvider)(values),
+        );
+        ref.onDispose(service.dispose);
+        return service;
+      }),
+      ...overrides,
+    ],
     child: _MeloopMaterialApp(home: home, builder: builder),
   );
 }

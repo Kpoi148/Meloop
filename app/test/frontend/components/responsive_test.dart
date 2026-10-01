@@ -50,7 +50,7 @@ void main() {
               ),
             ),
             const WelcomeExample(),
-            SetupExample(onSave: (_) async {}),
+            const SetupExample(),
             SessionFormExample(onSave: (_) async {}),
             MeloopPage(
               bottomNavigation: MeloopBottomNavigation(

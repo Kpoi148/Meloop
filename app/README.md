@@ -24,6 +24,10 @@ Hướng dẫn tokens, component, ví dụ cho Wei và kiểm chứng: [`../docs
 
 `MeloopApp` khởi tạo `ProviderScope`; `MeloopShellController` quản lý điều hướng, tab và buổi luyện mẫu; controller showcase quản lý tìm kiếm và trạng thái lưu form. App cấp dependency qua `overrides`, showcase dùng bộ xử lý giả riêng. Callback `onSave` của component vẫn được hỗ trợ. Ngôn ngữ được lưu cục bộ bằng `SqliteAppSettingsStore`. Hướng dẫn nối backend sau và kiểm thử: [`../docs/FE_RIVERPOD.md`](../docs/FE_RIVERPOD.md).
 
+## Tạo buổi luyện và đếm giờ (task 16)
+
+Trong tab **Buổi luyện**, bấm icon **+** phía trên thanh điều hướng để nhập tên và bắt đầu. Nếu có buổi chưa lưu, mở lại buổi đó. Timer hiển thị snapshot service; **Kết thúc** mở màn xem lại, **Lưu buổi luyện** mở chi tiết ngay. Bản FE hiện cấp `PracticePreviewService` trong bộ nhớ, chờ service nghiệp vụ UC-04; công cụ chuyển cùng session ID qua port. Chi tiết phạm vi, cách nối và kiểm chứng: [`../docs/FE_PRACTICE_SESSION.md`](../docs/FE_PRACTICE_SESSION.md).
+
 ## SQLite journal
 
 `JournalDatabase.open()` tại `lib/backend/database/` cung cấp schema v1 gồm 9 bảng cục bộ, không seed. Entry point dùng bảng preferences để lưu ngôn ngữ; form và nhật ký nghiệp vụ chưa được nối. Android backup tự động đã được tắt; thanh toán để giai đoạn sau. Xem [`../docs/DB_MIGRATION_PLAN.md`](../docs/DB_MIGRATION_PLAN.md).

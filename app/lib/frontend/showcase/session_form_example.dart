@@ -16,10 +16,14 @@ class SessionFormExample extends ConsumerStatefulWidget {
     this.onSave,
     this.initialTitle = '',
     this.initialDurationSeconds = 60,
+    this.initialDate,
+    this.onSaved,
   });
   final SessionFormSave? onSave;
   final String initialTitle;
   final int initialDurationSeconds;
+  final DateTime? initialDate;
+  final VoidCallback? onSaved;
   @override
   ConsumerState<SessionFormExample> createState() => _SessionFormExampleState();
 }
@@ -41,7 +45,9 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
   final _difficulty = TextEditingController();
   final _next = TextEditingController();
   final _titleFocus = FocusNode();
-  DateTime _date = DateUtils.dateOnly(DateTime.now());
+  late DateTime _date = DateUtils.dateOnly(
+    widget.initialDate ?? DateTime.now(),
+  );
   int? _mood, _focus;
   String? _durationError;
   bool _confirmingBack = false;
@@ -56,7 +62,7 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
       _next.text.isNotEmpty ||
       _mood != null ||
       _focus != null ||
-      _date != DateUtils.dateOnly(DateTime.now()) ||
+      _date != DateUtils.dateOnly(widget.initialDate ?? DateTime.now()) ||
       _hours.text != '${widget.initialDurationSeconds ~/ 3600}' ||
       _minutes.text != '${widget.initialDurationSeconds % 3600 ~/ 60}' ||
       _seconds.text != '${widget.initialDurationSeconds % 60}';
@@ -91,7 +97,9 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
         ? 0
         : h * 3600 + m * 60 + s;
     setState(() {
-      _durationError = total < 1 || total > 86400
+      _durationError =
+          total < PracticeSessionLimits.minDurationSeconds ||
+              total > PracticeSessionLimits.maxDurationSeconds
           ? context.l10n.durationRange
           : null;
     });
@@ -115,7 +123,13 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
       ),
       onSave: widget.onSave,
     );
-    if (saved && mounted) Navigator.of(context).pop();
+    if (saved && mounted) {
+      if (widget.onSaved case final onSaved?) {
+        onSaved();
+      } else {
+        Navigator.of(context).pop();
+      }
+    }
   }
 
   Future<void> _back() async {

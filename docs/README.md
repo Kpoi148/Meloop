@@ -8,3 +8,4 @@ Chứa tài liệu yêu cầu, kiến trúc, quyết định kỹ thuật, kiể
 - [`FE_UI_VALIDATION.md`](FE_UI_VALIDATION.md): kết quả kiểm chứng UI của lần bàn giao.
 - [`FE_RIVERPOD.md`](FE_RIVERPOD.md): quản lý trạng thái frontend, cấp dependency qua app và nối backend sau.
 - [`FE_INSTRUMENT_PROFILES.md`](FE_INSTRUMENT_PROFILES.md): task 14, luồng hồ sơ nhạc cụ và bản xem thử FE.
+- [`FE_PRACTICE_SESSION.md`](FE_PRACTICE_SESSION.md): task 16, UC-04, timer lấy state từ service, review trước lưu và điểm nối backend.

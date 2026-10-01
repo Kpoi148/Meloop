@@ -224,7 +224,7 @@ void main() {
       tester.element(find.byType(MeloopUiShowcase)),
     );
     final controller = container.read(meloopShellControllerProvider.notifier);
-    controller.startDraft('Luyện hợp âm');
+    await controller.startDraft('Luyện hợp âm');
     controller.showMain();
     await tester.pumpAndSettle();
     await tapVisible(tester, find.byKey(const Key('choose-profile')));
@@ -238,7 +238,8 @@ void main() {
       container.read(meloopShellControllerProvider).selectedProfileId,
     );
     expect(container.read(showcaseControllerProvider).saveCount, 0);
-    controller.completeDraft();
+    await controller.discardDraft();
+    controller.selectTab(0);
     await tester.pumpAndSettle();
     await tapVisible(tester, find.byKey(const Key('choose-profile')));
     expect(find.byType(InstrumentProfilesFeature), findsOneWidget);

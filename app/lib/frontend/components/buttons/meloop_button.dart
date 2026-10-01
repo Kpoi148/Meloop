@@ -20,6 +20,8 @@ class MeloopButton extends StatefulWidget {
     this.fullWidth = true,
     this.onError,
     this.prominent = false,
+    this.borderRadius = TempoRadius.button,
+    this.minimumHeight,
   });
 
   final String label;
@@ -30,6 +32,8 @@ class MeloopButton extends StatefulWidget {
   final String? loadingLabel;
   final bool fullWidth;
   final bool prominent;
+  final double borderRadius;
+  final double? minimumHeight;
   final void Function(Object error, StackTrace stackTrace)? onError;
 
   @override
@@ -83,16 +87,17 @@ class _MeloopButtonState extends State<MeloopButton> {
             disabledBackgroundColor: background.withValues(alpha: .5),
             minimumSize: Size(
               TempoSize.touchTarget,
-              widget.prominent
-                  ? TempoSize.prominentButtonMinHeight
-                  : TempoSize.buttonMinHeight,
+              widget.minimumHeight ??
+                  (widget.prominent
+                      ? TempoSize.prominentButtonMinHeight
+                      : TempoSize.buttonMinHeight),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 13),
             textStyle: widget.prominent
                 ? TempoType.prominentButton
                 : TempoType.button,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(TempoRadius.button),
+              borderRadius: BorderRadius.circular(widget.borderRadius),
               side: widget.style == MeloopButtonStyle.outline
                   ? const BorderSide(color: TempoColors.fieldBorder)
                   : BorderSide.none,
