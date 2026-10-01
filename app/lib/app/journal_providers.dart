@@ -5,6 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../backend/database/journal_database_owner.dart';
 import '../backend/database/journal_database.dart';
 import '../backend/journal/sqlite_journal_readers.dart';
+import '../backend/journal/sqlite_practice_timer_store.dart';
+import '../backend/journal/practice_timer.dart';
+import '../backend/journal/practice_screen_awake.dart';
+import '../shared/journal/practice_timer_service.dart';
 import '../backend/settings/sqlite_app_settings_store.dart';
 import '../shared/journal/journal_readers.dart';
 import '../shared/journal/journal_runtime.dart';
@@ -29,6 +33,24 @@ final journalClockProvider = Provider<JournalClock>(
 final journalIdentifiersProvider = Provider<JournalIdentifiers>(
   (ref) => const UuidJournalIdentifiers(),
 );
+final journalMonotonicClockProvider = Provider<MonotonicClock>(
+  (ref) => StopwatchMonotonicClock(),
+);
+final journalScreenAwakeProvider = Provider<PracticeScreenAwake>(
+  (ref) => AndroidPracticeScreenAwake(),
+);
+final journalPracticeTimerProvider = Provider<PracticeTimerService>((ref) {
+  final timer = PracticeTimer(
+    store: SqlitePracticeTimerStore(
+      owner: ref.watch(journalDatabaseOwnerProvider),
+      clock: ref.watch(journalClockProvider),
+    ),
+    clock: ref.watch(journalMonotonicClockProvider),
+    screenAwake: ref.watch(journalScreenAwakeProvider),
+  );
+  ref.onDispose(() => unawaited(timer.close()));
+  return timer;
+});
 final journalProfileReaderProvider = Provider<JournalProfileReader>(
   (ref) => SqliteJournalProfileReader(ref.watch(journalDatabaseOwnerProvider)),
 );

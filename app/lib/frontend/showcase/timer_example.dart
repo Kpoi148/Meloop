@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
+import '../../shared/journal/journal_models.dart';
+import '../../shared/journal/journal_text.dart';
+import '../../shared/journal/practice_timer_service.dart';
+import '../application/practice_timer_service.dart';
 import '../application/session_form_controller.dart';
 import '../application/startup_controller.dart';
 import '../components/meloop_ui.dart';
@@ -23,15 +27,27 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
   late int _seconds;
   late bool _running;
   String? _draftProfileId;
+  PracticeTimerService? _journal;
+
+  Future<void> _journalAction(Future<void> Function() action) async {
+    try {
+      await action();
+    } catch (_) {
+      /* The service publishes retained values and Retry state. */
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     final draft = ref.read(meloopShellControllerProvider).draft;
+    if (draft?.sessionId != null) {
+      _journal = ref.read(practiceTimerServiceProvider);
+    }
     _seconds = draft?.accumulatedSeconds ?? 0;
     _running = !widget.readOnly && (draft?.isRunning ?? false);
     _draftProfileId = draft?.profileId;
-    _syncTicker();
+    if (_journal == null) _syncTicker();
   }
 
   @override
@@ -42,26 +58,44 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
       _seconds = draft.accumulatedSeconds;
       _running = draft.isRunning;
       _draftProfileId = draft.profileId;
-      _syncTicker();
+      if (_journal == null) _syncTicker();
     }
   }
 
   @override
   void dispose() {
     _ticker?.cancel();
+    final journal = _journal;
+    if (journal?.snapshot?.state == PracticeState.running) {
+      unawaited(_journalAction(journal!.pause));
+    }
     super.dispose();
   }
 
   void _syncTicker() {
     _ticker?.cancel();
     if (!_running) return;
-    _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
+    _ticker = Timer.periodic(PracticeRules.timerRefreshInterval, (_) {
       if (!mounted) return;
-      setState(() => _seconds = (_seconds + 1).clamp(0, 86400));
+      setState(
+        () => _seconds = (_seconds + 1).clamp(
+          0,
+          PracticeRules.maximumDuration.inSeconds,
+        ),
+      );
     });
   }
 
-  void _toggle() {
+  Future<void> _toggle() async {
+    final journal = _journal;
+    if (journal != null) {
+      await _journalAction(
+        journal.snapshot?.state == PracticeState.running
+            ? journal.pause
+            : journal.resume,
+      );
+      return;
+    }
     setState(() => _running = !_running);
     _syncTicker();
     ref
@@ -69,7 +103,21 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
         .checkpointDraft(seconds: _seconds, isRunning: _running);
   }
 
-  void _back() {
+  Future<void> _back() async {
+    if (_journal != null) {
+      await _journalAction(_journal!.pause);
+      if (!mounted || _journal!.snapshot?.failed == true) return;
+      final timer = _journal!.snapshot!;
+      ref
+          .read(meloopShellControllerProvider.notifier)
+          .checkpointDraft(
+            seconds:
+                timer.elapsedMilliseconds ~/ Duration.millisecondsPerSecond,
+            isRunning: false,
+          );
+      ref.read(meloopShellControllerProvider.notifier).showMain();
+      return;
+    }
     _running = false;
     _syncTicker();
     final controller = ref.read(meloopShellControllerProvider.notifier);
@@ -91,7 +139,10 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
           sessionId: ref.read(meloopShellControllerProvider).draft?.sessionId,
           initialTitle:
               ref.read(meloopShellControllerProvider).draft?.title ?? '',
-          initialDurationSeconds: _seconds.clamp(1, 86400),
+          initialDurationSeconds: _seconds.clamp(
+            1,
+            PracticeRules.maximumDuration.inSeconds,
+          ),
           onSave: (values) async {
             await ref.read(sessionFormSaveProvider)(values);
             shell.completeDraft();
@@ -101,10 +152,10 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
     );
   }
 
-  String _duration() {
-    final hours = _seconds ~/ 3600;
-    final minutes = _seconds % 3600 ~/ 60;
-    final seconds = _seconds % 60;
+  String _duration(int elapsedSeconds) {
+    final hours = elapsedSeconds ~/ 3600;
+    final minutes = elapsedSeconds % 3600 ~/ 60;
+    final seconds = elapsedSeconds % 60;
     final core =
         '${minutes.toString().padLeft(2, '0')}:'
         '${seconds.toString().padLeft(2, '0')}';
@@ -115,6 +166,17 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
   Widget build(BuildContext context) {
     final state = ref.watch(meloopShellControllerProvider);
     final draft = state.draft;
+    if (_journal != null) ref.watch(practiceTimerSnapshotProvider);
+    final timer = _journal?.snapshot;
+    final seconds = timer == null
+        ? _seconds
+        : timer.elapsedMilliseconds ~/ Duration.millisecondsPerSecond;
+    final running = timer == null
+        ? _running
+        : timer.state == PracticeState.running;
+    final review = timer == null
+        ? draft?.isReview == true
+        : timer.state == PracticeState.review;
     final profile = state.profiles
         .where((p) => p.id == draft?.profileId)
         .firstOrNull;
@@ -171,8 +233,23 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
                 message:
                     '${strings.recoveredDraftTitle}\n${strings.recoveredDraftMessage}',
               ),
-            if (widget.readOnly)
+            if (widget.readOnly && _journal == null)
               MeloopNotice(message: strings.journalRecoveryPending),
+            if (_journal != null && timer?.failed == true) ...[
+              MeloopNotice(
+                message: strings.timerCheckpointFailed,
+                kind: MeloopNoticeKind.error,
+              ),
+              MeloopButton(
+                label: strings.retry,
+                loadingLabel: strings.retrying,
+                onPressed: timer!.busy
+                    ? null
+                    : () => _journalAction(_journal!.retry),
+              ),
+            ],
+            if (_journal != null)
+              MeloopNotice(message: strings.timerReviewPending),
             Stack(
               alignment: Alignment.center,
               children: [
@@ -183,34 +260,44 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
                 Column(
                   children: [
                     Text(
-                      draft.isReview
+                      review
                           ? strings.journalReviewState
-                          : _running
+                          : running
                           ? strings.timerRunning
                           : strings.timerPaused,
                       style: TempoType.label,
                     ),
-                    Text(_duration(), style: TempoType.metric),
+                    Text(_duration(seconds), style: TempoType.metric),
                     Text(strings.practiceTime, style: TempoType.caption),
                   ],
                 ),
               ],
             ),
             MeloopButton(
-              label: _running ? strings.pause : strings.resume,
-              icon: _running ? MeloopIcons.pause : MeloopIcons.play,
-              onPressed: widget.readOnly ? null : _toggle,
+              label: running ? strings.pause : strings.resume,
+              icon: running ? MeloopIcons.pause : MeloopIcons.play,
+              loadingLabel: strings.processing,
+              onPressed: _journal != null
+                  ? (widget.readOnly ||
+                            timer?.busy == true ||
+                            timer?.failed == true ||
+                            review
+                        ? null
+                        : _toggle)
+                  : widget.readOnly
+                  ? null
+                  : _toggle,
             ),
             MeloopButton(
               label: strings.practiceTools,
               icon: MeloopIcons.music,
               style: MeloopButtonStyle.soft,
-              onPressed: widget.readOnly ? null : () {},
+              onPressed: widget.readOnly || _journal != null ? null : () {},
             ),
             MeloopButton(
               label: strings.finish,
               style: MeloopButtonStyle.orange,
-              onPressed: widget.readOnly ? null : _finish,
+              onPressed: widget.readOnly || _journal != null ? null : _finish,
             ),
           ],
         ),

@@ -6,6 +6,7 @@ import '../backend/journal/sqlite_instrument_profile_service.dart';
 import '../backend/journal/sqlite_journal_bootstrap.dart';
 import '../backend/journal/sqlite_practice_start_service.dart';
 import '../frontend/application/practice_start_service.dart';
+import '../frontend/application/practice_timer_service.dart';
 import '../frontend/application/instrument_profile_service.dart';
 import '../frontend/profiles/journal_profile_entry.dart';
 
@@ -18,6 +19,7 @@ import '../frontend/showcase/profile_preview_service.dart';
 import '../frontend/showcase/profile_preview_storage.dart';
 import 'meloop_app.dart';
 import 'journal_providers.dart';
+import 'journal_practice_lifecycle.dart';
 import 'profile_preview_storage.dart';
 
 MeloopApp createProfilePreviewApp({
@@ -44,11 +46,14 @@ void runProfilePreviewApp() {
   runApp(createProfilePreviewApp());
 }
 
-/// Profile storage is real; practice/session screens remain FE previews until
-/// their journal integration steps. Preview snapshots are never imported.
+/// Profiles, Start and timer use journal storage; Review/Save are integrated
+/// separately. Preview snapshots are never imported.
 MeloopApp createJournalProfileApp({List<Override> overrides = const []}) =>
     MeloopApp(
       overrides: [
+        practiceTimerServiceProvider.overrideWith(
+          (ref) => ref.watch(journalPracticeTimerProvider),
+        ),
         appSettingsStoreProvider.overrideWith(
           (ref) => ref.watch(journalSettingsStoreProvider),
         ),
@@ -57,7 +62,7 @@ MeloopApp createJournalProfileApp({List<Override> overrides = const []}) =>
         ),
         ...overrides,
       ],
-      home: const _JournalProfiles(),
+      home: const JournalPracticeLifecycle(child: _JournalProfiles()),
     );
 
 class _JournalProfiles extends ConsumerWidget {

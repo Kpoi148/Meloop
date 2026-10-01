@@ -979,4 +979,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get practiceStartFailed =>
       'Could not start practice. Your title is retained; please try again.';
+
+  @override
+  String get timerCheckpointFailed =>
+      'Practice paused after an error. The latest time has not been confirmed saved; please retry.';
+
+  @override
+  String get timerReviewPending =>
+      'You can pause or resume practice. Finishing and saving are not available in this version yet.';
 }

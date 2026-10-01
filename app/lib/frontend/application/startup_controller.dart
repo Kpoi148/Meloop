@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../shared/journal/journal_text.dart';
+
 import '../components/layout/meloop_art.dart';
 
 class PreviewInstrumentProfile {
@@ -293,7 +295,10 @@ class MeloopShellController extends Notifier<MeloopShellState> {
     if (draft == null) return;
     state = state.copyWith(
       draft: draft.copyWith(
-        accumulatedSeconds: seconds.clamp(0, 86400),
+        accumulatedSeconds: seconds.clamp(
+          0,
+          PracticeRules.maximumDuration.inSeconds,
+        ),
         isRunning: isRunning,
         wasRecovered: false,
       ),
