@@ -957,4 +957,22 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get previewResetFailed =>
       'Could not delete data. Your profiles are still safe. Please try again.';
+
+  @override
+  String get profilesLoading => 'Opening profiles…';
+
+  @override
+  String get journalReviewState => 'In review';
+
+  @override
+  String get profilesLoadFailed => 'Could not open profiles on this device.';
+
+  @override
+  String get journalRecoveryPending =>
+      'This practice is kept on your device. You can browse or add profiles; resuming or saving this practice is not available in this version yet.';
+
+  @override
+  String continueInstrumentPractice(String instrument) {
+    return 'Continue · $instrument';
+  }
 }

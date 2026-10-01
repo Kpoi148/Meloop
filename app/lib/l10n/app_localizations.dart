@@ -1819,6 +1819,36 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Chưa thể xóa dữ liệu. Hồ sơ của bạn vẫn được giữ. Hãy thử lại.'**
   String get previewResetFailed;
+
+  /// No description provided for @profilesLoading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang mở hồ sơ…'**
+  String get profilesLoading;
+
+  /// No description provided for @journalReviewState.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang rà soát'**
+  String get journalReviewState;
+
+  /// No description provided for @profilesLoadFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể mở hồ sơ trên thiết bị.'**
+  String get profilesLoadFailed;
+
+  /// No description provided for @journalRecoveryPending.
+  ///
+  /// In vi, this message translates to:
+  /// **'Buổi luyện vẫn được giữ trên thiết bị. Bạn có thể xem hoặc thêm hồ sơ; chưa thể tiếp tục hay lưu buổi này ở phiên bản hiện tại.'**
+  String get journalRecoveryPending;
+
+  /// No description provided for @continueInstrumentPractice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếp tục · {instrument}'**
+  String continueInstrumentPractice(String instrument);
 }
 
 class _AppLocalizationsDelegate

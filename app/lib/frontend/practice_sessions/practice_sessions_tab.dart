@@ -380,7 +380,11 @@ class _DraftCard extends StatelessWidget {
             children: [
               Text(strings.unfinishedPractice, style: TempoType.label),
               Text(
-                draft.isRunning ? strings.timerRunning : strings.timerPaused,
+                draft.isReview
+                    ? strings.journalReviewState
+                    : draft.isRunning
+                    ? strings.timerRunning
+                    : strings.timerPaused,
                 style: TempoType.caption,
               ),
             ],
@@ -394,7 +398,9 @@ class _DraftCard extends StatelessWidget {
           Text(draftDuration(draft.accumulatedSeconds), style: TempoType.label),
           const SizedBox(height: TempoSpace.md),
           MeloopButton(
-            label: strings.continuePractice,
+            label: draft.instrumentName == null
+                ? strings.continuePractice
+                : strings.continueInstrumentPractice(draft.instrumentName!),
             icon: MeloopIcons.play,
             style: MeloopButtonStyle.soft,
             onPressed: onContinue,

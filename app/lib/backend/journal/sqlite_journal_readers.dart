@@ -135,24 +135,7 @@ class SqliteJournalSessionReader implements JournalSessionReader {
 
   @override
   Future<PracticeDraft?> unfinished() => _readStored(owner, (db) async {
-    final rows = await db.rawQuery('''
-SELECT s.*, d.accumulated_ms, d.checkpoint_at, d.review_input_json,
-       d.updated_at AS draft_updated_at
-FROM practice_sessions s LEFT JOIN session_drafts d ON d.session_id = s.id
-WHERE s.state <> 'saved'
-''');
-    if (rows.isEmpty) return null;
-    if (rows.length != 1 || rows.single['accumulated_ms'] == null) {
-      throw const JournalFailure(JournalFailureCode.corruptData);
-    }
-    final row = rows.single;
-    return PracticeDraft(
-      session: sessionFromRow(row),
-      accumulatedMilliseconds: row['accumulated_ms'] as int,
-      checkpointAt: storedUtc(row['checkpoint_at']),
-      updatedAt: storedUtc(row['draft_updated_at']),
-      reviewInput: reviewFromJson(row['review_input_json']),
-    );
+    return readUnfinishedDraft(db);
   });
 }
 
@@ -178,4 +161,25 @@ class SqliteJournalPreferencesReader implements JournalPreferencesReader {
       updatedAt: storedUtc(row['updated_at']),
     );
   });
+}
+
+Future<PracticeDraft?> readUnfinishedDraft(DatabaseExecutor db) async {
+  final rows = await db.rawQuery('''
+SELECT s.*, d.accumulated_ms, d.checkpoint_at, d.review_input_json,
+       d.updated_at AS draft_updated_at
+FROM practice_sessions s LEFT JOIN session_drafts d ON d.session_id = s.id
+WHERE s.state <> 'saved'
+''');
+  if (rows.isEmpty) return null;
+  if (rows.length != 1 || rows.single['accumulated_ms'] == null) {
+    throw const JournalFailure(JournalFailureCode.corruptData);
+  }
+  final row = rows.single;
+  return PracticeDraft(
+    session: sessionFromRow(row),
+    accumulatedMilliseconds: row['accumulated_ms'] as int,
+    checkpointAt: storedUtc(row['checkpoint_at']),
+    updatedAt: storedUtc(row['draft_updated_at']),
+    reviewInput: reviewFromJson(row['review_input_json']),
+  );
 }

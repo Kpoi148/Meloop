@@ -311,4 +311,11 @@
   "previewResetConfirm": "Delete and start again",
   "previewResetCancel": "Keep data",
   "previewResetFailed": "Could not delete data. Your profiles are still safe. Please try again."
+,
+  "profilesLoading": "Opening profiles…",
+  "journalReviewState": "In review",
+  "profilesLoadFailed": "Could not open profiles on this device.",
+  "journalRecoveryPending": "This practice is kept on your device. You can browse or add profiles; resuming or saving this practice is not available in this version yet.",
+  "continueInstrumentPractice": "Continue · {instrument}",
+  "@continueInstrumentPractice": {"placeholders": {"instrument": {"type": "String"}}}
 }
