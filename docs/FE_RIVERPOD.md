@@ -29,6 +29,8 @@ Dependency lưu buổi luyện mặc định báo lỗi khi chưa được cấu
 
 `InstrumentProfilePreview` cấp controller và dependency lưu buổi luyện mẫu trong một scope theo profile ID. Mô phỏng có độ trễ và bộ đếm lưu mẫu, không ghi nhật ký thật. `lib/main.dart` là điểm khởi chạy duy nhất. Chạy:
 
+Entry journal hiện dùng `JournalProfileEntry` và `journalBootstrapLoaderProvider`. Loader được app cấp, trả directory/count và draft thật; widget không mở SQLite. Cold entry nhiều hồ sơ luôn mở picker, kể cả có selected ID; một hồ sơ mở Home; draft ưu tiên màn recovery. Đổi hồ sơ chỉ đổi browsing/selection, không thay profile ID của draft. Resume entry chỉ rõ tên hồ sơ sở hữu. Recovery timer thật tạm chỉ đọc, không dùng `simulateSave`; write/checkpoint/review triển khai ở các bước sau. Preview độc lập vẫn có callback fake riêng.
+
 ```powershell
 cd app
 flutter pub get

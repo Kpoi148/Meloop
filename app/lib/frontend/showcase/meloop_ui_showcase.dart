@@ -36,9 +36,13 @@ class MeloopUiShowcase extends ConsumerStatefulWidget {
     this.onResetData,
     this.isPro = false,
     this.onViewPro,
+    this.journalRecoveryReadOnly = false,
+    this.allowProfileBrowsingWithDraft = false,
   });
 
   final bool developmentTools;
+  final bool journalRecoveryReadOnly;
+  final bool allowProfileBrowsingWithDraft;
   final InstrumentProfile? profile;
   final VoidCallback? onChooseProfile, onManageProfiles;
   final FutureOr<void> Function()? onResetData;
@@ -72,7 +76,8 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
   }
 
   void _openProfilePage(VoidCallback open) {
-    if (widget.profile != null &&
+    if (!widget.allowProfileBrowsingWithDraft &&
+        widget.profile != null &&
         ref.read(meloopShellControllerProvider).draft != null) {
       MeloopNotifications.show(context, context.l10n.unfinishedSessionMessage);
       return;
@@ -95,6 +100,10 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
   );
 
   Future<void> _setup(PreviewInstrumentProfile profile) async {
+    if (ref.read(meloopShellControllerProvider).draft != null) {
+      ref.read(meloopShellControllerProvider.notifier).showTimer();
+      return;
+    }
     final route = MaterialPageRoute<void>(
       builder: (_) => SetupExample(
         profile: profile,
@@ -147,7 +156,9 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
             ? null
             : shellController.showMain,
       ),
-      StartupDestination.recoveredTimer => const TimerExample(),
+      StartupDestination.recoveredTimer => TimerExample(
+        readOnly: widget.journalRecoveryReadOnly,
+      ),
       StartupDestination.main => _mainTabs(
         shell,
         shellController,

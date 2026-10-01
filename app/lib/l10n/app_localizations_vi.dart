@@ -951,4 +951,22 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get previewResetFailed =>
       'Chưa thể xóa dữ liệu. Hồ sơ của bạn vẫn được giữ. Hãy thử lại.';
+
+  @override
+  String get profilesLoading => 'Đang mở hồ sơ…';
+
+  @override
+  String get journalReviewState => 'Đang rà soát';
+
+  @override
+  String get profilesLoadFailed => 'Chưa thể mở hồ sơ trên thiết bị.';
+
+  @override
+  String get journalRecoveryPending =>
+      'Buổi luyện vẫn được giữ trên thiết bị. Bạn có thể xem hoặc thêm hồ sơ; chưa thể tiếp tục hay lưu buổi này ở phiên bản hiện tại.';
+
+  @override
+  String continueInstrumentPractice(String instrument) {
+    return 'Tiếp tục · $instrument';
+  }
 }

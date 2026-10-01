@@ -70,7 +70,9 @@ class HomeExample extends StatelessWidget {
         MeloopButton(
           label: draft == null
               ? strings.createPractice
-              : strings.continuePractice,
+              : draft?.instrumentName == null
+              ? strings.continuePractice
+              : strings.continueInstrumentPractice(draft!.instrumentName!),
           prominent: true,
           style: MeloopButtonStyle.yellow,
           icon: MeloopIcons.plus,

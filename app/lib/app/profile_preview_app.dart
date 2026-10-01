@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../backend/journal/sqlite_instrument_profile_service.dart';
+import '../backend/journal/sqlite_journal_bootstrap.dart';
+import '../frontend/application/instrument_profile_service.dart';
+import '../frontend/profiles/journal_profile_entry.dart';
 
 import '../frontend/application/app_settings_controller.dart';
 import '../frontend/practice_sessions/practice_session.dart';
@@ -58,11 +61,23 @@ MeloopApp createJournalProfileApp({List<Override> overrides = const []}) =>
 class _JournalProfiles extends ConsumerWidget {
   const _JournalProfiles();
   @override
-  Widget build(BuildContext context, WidgetRef ref) => InstrumentProfilePreview(
-    service: SqliteInstrumentProfileService(
-      owner: ref.watch(journalDatabaseOwnerProvider),
-      clock: ref.watch(journalClockProvider),
-      initialLanguage: Localizations.localeOf(context).languageCode,
-    ),
+  Widget build(BuildContext context, WidgetRef ref) => ProviderScope(
+    overrides: [
+      instrumentProfileServiceProvider.overrideWithValue(
+        SqliteInstrumentProfileService(
+          owner: ref.watch(journalDatabaseOwnerProvider),
+          clock: ref.watch(journalClockProvider),
+          initialLanguage: Localizations.localeOf(context).languageCode,
+        ),
+      ),
+      journalBootstrapLoaderProvider.overrideWithValue(
+        SqliteJournalBootstrap(
+          owner: ref.watch(journalDatabaseOwnerProvider),
+          clock: ref.watch(journalClockProvider),
+          initialLanguage: Localizations.localeOf(context).languageCode,
+        ).read,
+      ),
+    ],
+    child: const JournalProfileEntry(),
   );
 }

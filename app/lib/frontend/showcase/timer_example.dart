@@ -11,7 +11,8 @@ import 'preview_copy.dart';
 import 'session_form_example.dart';
 
 class TimerExample extends ConsumerStatefulWidget {
-  const TimerExample({super.key});
+  const TimerExample({super.key, this.readOnly = false});
+  final bool readOnly;
 
   @override
   ConsumerState<TimerExample> createState() => _TimerExampleState();
@@ -28,7 +29,7 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
     super.initState();
     final draft = ref.read(meloopShellControllerProvider).draft;
     _seconds = draft?.accumulatedSeconds ?? 0;
-    _running = draft?.isRunning ?? false;
+    _running = !widget.readOnly && (draft?.isRunning ?? false);
     _draftProfileId = draft?.profileId;
     _syncTicker();
   }
@@ -72,7 +73,9 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
     _running = false;
     _syncTicker();
     final controller = ref.read(meloopShellControllerProvider.notifier);
-    controller.checkpointDraft(seconds: _seconds, isRunning: false);
+    if (!widget.readOnly) {
+      controller.checkpointDraft(seconds: _seconds, isRunning: false);
+    }
     controller.showMain();
   }
 
@@ -111,7 +114,9 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
   Widget build(BuildContext context) {
     final state = ref.watch(meloopShellControllerProvider);
     final draft = state.draft;
-    final profile = state.selectedProfile;
+    final profile = state.profiles
+        .where((p) => p.id == draft?.profileId)
+        .firstOrNull;
     final strings = context.l10n;
     if (draft == null || profile == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -119,83 +124,95 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
       });
       return const SizedBox.shrink();
     }
-    return MeloopPage(
-      topBar: MeloopTopBar(title: strings.timerTitle, onBack: _back),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        spacing: TempoSpace.page,
-        children: [
-          MeloopCard(
-            color: TempoColors.soft,
-            child: Row(
-              children: [
-                MeloopArt.instrument(profile.instrument, size: 72),
-                const SizedBox(width: TempoSpace.md),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        profileDisplayName(strings, profile),
-                        style: TempoType.label,
-                      ),
-                      Text(
-                        strings.timerOptionalTitle,
-                        style: TempoType.caption,
-                      ),
-                      Text(
-                        draft.title.isEmpty
-                            ? strings.setPracticeName
-                            : draft.title,
-                        style: TempoType.title,
-                      ),
-                    ],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) _back();
+      },
+      child: MeloopPage(
+        topBar: MeloopTopBar(title: strings.timerTitle, onBack: _back),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: TempoSpace.page,
+          children: [
+            MeloopCard(
+              color: TempoColors.soft,
+              child: Row(
+                children: [
+                  MeloopArt.instrument(profile.instrument, size: 72),
+                  const SizedBox(width: TempoSpace.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          profileDisplayName(strings, profile),
+                          style: TempoType.label,
+                        ),
+                        Text(
+                          strings.timerOptionalTitle,
+                          style: TempoType.caption,
+                        ),
+                        Text(
+                          draft.title.isEmpty
+                              ? strings.setPracticeName
+                              : draft.title,
+                          style: TempoType.title,
+                        ),
+                      ],
+                    ),
                   ),
+                ],
+              ),
+            ),
+            if (draft.wasRecovered)
+              MeloopNotice(
+                message:
+                    '${strings.recoveredDraftTitle}\n${strings.recoveredDraftMessage}',
+              ),
+            if (widget.readOnly)
+              MeloopNotice(message: strings.journalRecoveryPending),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                const MeloopIllustration(
+                  asset: 'fidelity-timer.png',
+                  height: 330,
+                ),
+                Column(
+                  children: [
+                    Text(
+                      draft.isReview
+                          ? strings.journalReviewState
+                          : _running
+                          ? strings.timerRunning
+                          : strings.timerPaused,
+                      style: TempoType.label,
+                    ),
+                    Text(_duration(), style: TempoType.metric),
+                    Text(strings.practiceTime, style: TempoType.caption),
+                  ],
                 ),
               ],
             ),
-          ),
-          if (draft.wasRecovered)
-            MeloopNotice(
-              message:
-                  '${strings.recoveredDraftTitle}\n${strings.recoveredDraftMessage}',
+            MeloopButton(
+              label: _running ? strings.pause : strings.resume,
+              icon: _running ? MeloopIcons.pause : MeloopIcons.play,
+              onPressed: widget.readOnly ? null : _toggle,
             ),
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              const MeloopIllustration(
-                asset: 'fidelity-timer.png',
-                height: 330,
-              ),
-              Column(
-                children: [
-                  Text(
-                    _running ? strings.timerRunning : strings.timerPaused,
-                    style: TempoType.label,
-                  ),
-                  Text(_duration(), style: TempoType.metric),
-                  Text(strings.practiceTime, style: TempoType.caption),
-                ],
-              ),
-            ],
-          ),
-          MeloopButton(
-            label: _running ? strings.pause : strings.resume,
-            icon: _running ? MeloopIcons.pause : MeloopIcons.play,
-            onPressed: _toggle,
-          ),
-          MeloopButton(
-            label: strings.practiceTools,
-            icon: MeloopIcons.music,
-            style: MeloopButtonStyle.soft,
-            onPressed: () {},
-          ),
-          MeloopButton(
-            label: strings.finish,
-            style: MeloopButtonStyle.orange,
-            onPressed: _finish,
-          ),
-        ],
+            MeloopButton(
+              label: strings.practiceTools,
+              icon: MeloopIcons.music,
+              style: MeloopButtonStyle.soft,
+              onPressed: widget.readOnly ? null : () {},
+            ),
+            MeloopButton(
+              label: strings.finish,
+              style: MeloopButtonStyle.orange,
+              onPressed: widget.readOnly ? null : _finish,
+            ),
+          ],
+        ),
       ),
     );
   }

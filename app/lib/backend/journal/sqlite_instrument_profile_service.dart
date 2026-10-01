@@ -46,40 +46,6 @@ class SqliteInstrumentProfileService implements InstrumentProfileService {
     }
   }
 
-  Future<ProfileDirectory> _directory(DatabaseExecutor db) async {
-    final rows = await db.rawQuery('''
-SELECT p.*, (SELECT COUNT(*) FROM practice_sessions s
- WHERE s.profile_id=p.id AND s.state='saved') AS saved_count,
- (SELECT COUNT(*) FROM recordings r JOIN practice_sessions s ON s.id=r.session_id
- WHERE s.profile_id=p.id) AS recording_count
-FROM instrument_profiles p ORDER BY p.created_at ASC, p.id ASC
-''');
-    final preferences = await db.query(
-      'app_preferences',
-      columns: ['selected_profile_id'],
-    );
-    return ProfileDirectory(
-      profiles: List.unmodifiable(
-        rows.map(
-          (row) => InstrumentProfile(
-            id: row['id'] as String,
-            name: row['name'] as String,
-            instrumentType: InstrumentType.values.byName(
-              row['instrument_type'] as String,
-            ),
-            customType: row['custom_type'] as String,
-            savedSessionCount: row['saved_count'] as int,
-            recordingCount: row['recording_count'] as int,
-          ),
-        ),
-      ),
-      selectedProfileId: preferences.isEmpty
-          ? null
-          : preferences.single['selected_profile_id'] as String?,
-      isPro: false,
-    );
-  }
-
   Future<void> _select(DatabaseExecutor db, String id) async {
     if (initialLanguage != 'vi' && initialLanguage != 'en') {
       throw const ProfileServiceException(ProfileServiceError.invalidInput);
@@ -123,7 +89,8 @@ selected_profile_id=excluded.selected_profile_id, updated_at=excluded.updated_at
   }
 
   @override
-  Future<ProfileDirectory> load() => _stored(() => owner.read(_directory));
+  Future<ProfileDirectory> load() =>
+      _stored(() => owner.read(readProfileDirectory));
 
   @override
   Future<ProfileDirectory> create({
@@ -181,7 +148,7 @@ selected_profile_id=excluded.selected_profile_id, updated_at=excluded.updated_at
         });
       }
       await _select(db, requestId);
-      return _directory(db);
+      return readProfileDirectory(db);
     });
   });
 
@@ -191,7 +158,7 @@ selected_profile_id=excluded.selected_profile_id, updated_at=excluded.updated_at
     return owner.transaction((db) async {
       await _find(db, profileId);
       await _select(db, profileId);
-      return _directory(db);
+      return readProfileDirectory(db);
     });
   });
 
@@ -219,7 +186,7 @@ selected_profile_id=excluded.selected_profile_id, updated_at=excluded.updated_at
         where: 'id=?',
         whereArgs: [profileId],
       );
-      return _directory(db);
+      return readProfileDirectory(db);
     });
   });
 
@@ -237,7 +204,7 @@ selected_profile_id=excluded.selected_profile_id, updated_at=excluded.updated_at
         ProfileServiceError.unfinishedSession,
       );
     }
-    final directory = await _directory(db);
+    final directory = await readProfileDirectory(db);
     final profile = directory.byId(id)!;
     return ProfileDeletionImpact(
       savedSessionCount: profile.savedSessionCount,
@@ -266,7 +233,41 @@ selected_profile_id=excluded.selected_profile_id, updated_at=excluded.updated_at
         where: 'id=?',
         whereArgs: [profileId],
       );
-      return _directory(db);
+      return readProfileDirectory(db);
     });
   });
+}
+
+Future<ProfileDirectory> readProfileDirectory(DatabaseExecutor db) async {
+  final rows = await db.rawQuery('''
+SELECT p.*, (SELECT COUNT(*) FROM practice_sessions s
+ WHERE s.profile_id=p.id AND s.state='saved') AS saved_count,
+ (SELECT COUNT(*) FROM recordings r JOIN practice_sessions s ON s.id=r.session_id
+ WHERE s.profile_id=p.id) AS recording_count
+FROM instrument_profiles p ORDER BY p.created_at ASC, p.id ASC
+''');
+  final preferences = await db.query(
+    'app_preferences',
+    columns: ['selected_profile_id'],
+  );
+  return ProfileDirectory(
+    profiles: List.unmodifiable(
+      rows.map(
+        (row) => InstrumentProfile(
+          id: row['id'] as String,
+          name: row['name'] as String,
+          instrumentType: InstrumentType.values.byName(
+            row['instrument_type'] as String,
+          ),
+          customType: row['custom_type'] as String,
+          savedSessionCount: row['saved_count'] as int,
+          recordingCount: row['recording_count'] as int,
+        ),
+      ),
+    ),
+    selectedProfileId: preferences.isEmpty
+        ? null
+        : preferences.single['selected_profile_id'] as String?,
+    isPro: false,
+  );
 }

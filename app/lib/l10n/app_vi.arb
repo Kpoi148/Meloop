@@ -324,4 +324,11 @@
   "previewResetConfirm": "Xóa và bắt đầu lại",
   "previewResetCancel": "Giữ dữ liệu",
   "previewResetFailed": "Chưa thể xóa dữ liệu. Hồ sơ của bạn vẫn được giữ. Hãy thử lại."
+,
+  "profilesLoading": "Đang mở hồ sơ…",
+  "journalReviewState": "Đang rà soát",
+  "profilesLoadFailed": "Chưa thể mở hồ sơ trên thiết bị.",
+  "journalRecoveryPending": "Buổi luyện vẫn được giữ trên thiết bị. Bạn có thể xem hoặc thêm hồ sơ; chưa thể tiếp tục hay lưu buổi này ở phiên bản hiện tại.",
+  "continueInstrumentPractice": "Tiếp tục · {instrument}",
+  "@continueInstrumentPractice": {"placeholders": {"instrument": {"type": "String"}}}
 }

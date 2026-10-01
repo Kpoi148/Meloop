@@ -25,6 +25,8 @@ class PreviewPracticeDraft {
     this.accumulatedSeconds = 0,
     this.isRunning = false,
     this.wasRecovered = false,
+    this.instrumentName,
+    this.isReview = false,
   });
 
   final String profileId;
@@ -32,6 +34,8 @@ class PreviewPracticeDraft {
   final int accumulatedSeconds;
   final bool isRunning;
   final bool wasRecovered;
+  final String? instrumentName;
+  final bool isReview;
 
   PreviewPracticeDraft copyWith({
     String? title,
@@ -44,6 +48,8 @@ class PreviewPracticeDraft {
     accumulatedSeconds: accumulatedSeconds ?? this.accumulatedSeconds,
     isRunning: isRunning ?? this.isRunning,
     wasRecovered: wasRecovered ?? this.wasRecovered,
+    instrumentName: instrumentName,
+    isReview: isReview,
   );
 }
 
@@ -52,11 +58,15 @@ class StartupSnapshot {
     this.profiles = const [],
     this.selectedProfileId,
     this.draft,
+    this.recoverDraftOnEntry = true,
+    this.hasChosenProfile = false,
   });
 
   final List<PreviewInstrumentProfile> profiles;
   final String? selectedProfileId;
   final PreviewPracticeDraft? draft;
+  final bool recoverDraftOnEntry;
+  final bool hasChosenProfile;
 
   static const empty = StartupSnapshot();
   static const oneProfile = StartupSnapshot(
@@ -169,16 +179,17 @@ class MeloopShellController extends Notifier<MeloopShellState> {
     final draft = ids.contains(snapshot.draft?.profileId)
         ? snapshot.draft!.copyWith(isRunning: false, wasRecovered: true)
         : null;
-    final selectedId = ids.contains(draft?.profileId)
+    final selectedId =
+        snapshot.recoverDraftOnEntry && ids.contains(draft?.profileId)
         ? draft!.profileId
         : ids.contains(snapshot.selectedProfileId)
         ? snapshot.selectedProfileId
         : profiles.firstOrNull?.id;
-    final destination = draft != null
+    final destination = draft != null && snapshot.recoverDraftOnEntry
         ? StartupDestination.recoveredTimer
         : profiles.isEmpty
         ? StartupDestination.welcome
-        : profiles.length == 1
+        : profiles.length == 1 || snapshot.hasChosenProfile
         ? StartupDestination.main
         : StartupDestination.profilePicker;
     return MeloopShellState(
@@ -224,8 +235,6 @@ class MeloopShellController extends Notifier<MeloopShellState> {
 
   bool selectProfile(String id) {
     if (!state.profiles.any((profile) => profile.id == id)) return false;
-    final draft = state.draft;
-    if (draft != null && draft.profileId != id) return false;
     state = state.copyWith(
       selectedProfileId: id,
       selectedTab: 0,
