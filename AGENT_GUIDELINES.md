@@ -66,4 +66,8 @@ Ví dụ: `docs/agent-guideline`, `feat/practice-timer`, `fix/session-duplicate-
 
 Commit theo dạng `<type>: <mô tả ngắn>`, dùng cùng nhóm type với prefix nhánh, ví dụ `docs: add agent working guidelines`. Stage có chọn lọc; kiểm tra `git diff --cached --name-only` và `git diff --cached` trước khi commit. Chỉ commit sau khi kiểm tra phù hợp đã chạy hoặc đã nêu rõ vì sao chưa thể chạy.
 
-Push nhánh bằng `git push -u origin <ten-nhanh>` lần đầu. Không push trực tiếp lên `main`, không force push và không tự merge khi công việc chỉ yêu cầu đưa nhánh lên GitHub. Báo lại tên nhánh, commit, các kiểm tra đã chạy và giới hạn còn lại. Nếu người dùng yêu cầu chỉ lập kế hoạch hoặc chưa cho phép tạo file/push, dừng ở đúng phạm vi đó.
+Trước mỗi push, kiểm tra nhánh hiện tại và ref đích. Cấm push trực tiếp lên `main`, kể cả `git push origin HEAD:main`, push từ nhánh khác vào `main` hoặc force push. Mỗi công việc bắt buộc tạo nhánh mới theo prefix ở trên; commit và push lên nhánh đó bằng `git push -u origin <ten-nhanh>` lần đầu.
+
+Thay đổi vào `main` phải qua Pull Request. Không tự merge khi chưa được người dùng yêu cầu. Không tắt ruleset, thêm quyền bypass hoặc tìm cách vượt bảo vệ nhánh. Nếu GitHub từ chối push vào `main`, giữ commit hiện có, chuyển sang nhánh công việc mới và push nhánh đó để tạo PR; không thử lại bằng cách bypass hoặc force push.
+
+Báo lại tên nhánh, commit, các kiểm tra đã chạy và giới hạn còn lại. Nếu người dùng yêu cầu chỉ lập kế hoạch hoặc chưa cho phép tạo file/push, dừng ở đúng phạm vi đó.
