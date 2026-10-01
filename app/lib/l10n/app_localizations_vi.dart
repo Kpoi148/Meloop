@@ -179,6 +179,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String get noPracticeSessions => 'Chưa có buổi luyện';
 
   @override
+  String get profileSessionsEmptyMessage =>
+      'Buổi luyện của hồ sơ này sẽ hiện ở đây.';
+
+  @override
+  String get openWelcomePreview => 'Xem màn chào Tempo';
+
+  @override
   String savedSessions(int count) {
     return '$count buổi luyện đã lưu';
   }

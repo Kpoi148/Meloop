@@ -8,12 +8,14 @@ class PreviewInstrumentProfile {
     required this.instrument,
     this.name,
     this.savedSessionCount = 0,
+    this.customInstrumentName,
   });
 
   final String id;
   final MeloopInstrument instrument;
   final String? name;
   final int savedSessionCount;
+  final String? customInstrumentName;
 }
 
 class PreviewPracticeDraft {

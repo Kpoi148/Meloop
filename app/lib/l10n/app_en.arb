@@ -54,6 +54,8 @@
   "addInstrument": "Add instrument",
   "freeProfileLimit": "Free: up to 3 instrument profiles.",
   "noPracticeSessions": "No practice sessions yet",
+  "profileSessionsEmptyMessage": "Practice sessions for this profile will appear here.",
+  "openWelcomePreview": "Preview Tempo welcome",
   "savedSessions": "{count} saved sessions",
   "unfinishedSessionTitle": "You still have a practice session.",
   "unfinishedSessionMessage": "Finish or discard the current session before changing instruments.",

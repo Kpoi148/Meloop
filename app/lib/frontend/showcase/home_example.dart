@@ -15,12 +15,14 @@ class HomeExample extends StatelessWidget {
     this.profile,
     this.draft,
     this.onInstrument,
+    this.showSampleData = true,
   });
   final VoidCallback onCreate, onHistory;
   final VoidCallback? onCatalog;
   final PreviewInstrumentProfile? profile;
   final PreviewPracticeDraft? draft;
   final VoidCallback? onInstrument;
+  final bool showSampleData;
   @override
   Widget build(BuildContext context) {
     final strings = context.l10n;
@@ -28,7 +30,7 @@ class HomeExample extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _HomeHeader(profile: profile, onInstrument: onInstrument),
-        const _StatisticsCard(),
+        _StatisticsCard(showSampleData: showSampleData),
         const SizedBox(height: TempoSpace.lg),
         Row(
           children: [
@@ -44,14 +46,14 @@ class HomeExample extends StatelessWidget {
                     children: [
                       Text(strings.weeklyGoal, style: TempoType.label),
                       Text(
-                        strings.goalProgress(3, 5),
+                        strings.goalProgress(showSampleData ? 3 : 0, 5),
                         style: TempoType.caption,
                       ),
                     ],
                   ),
                   const SizedBox(height: TempoSpace.sm),
-                  const LinearProgressIndicator(
-                    value: .6,
+                  LinearProgressIndicator(
+                    value: showSampleData ? .6 : 0,
                     minHeight: 10,
                     color: TempoColors.yellow,
                     backgroundColor: TempoColors.line,
@@ -125,7 +127,14 @@ class HomeExample extends StatelessWidget {
           },
         ),
         const SizedBox(height: TempoSpace.sm),
-        const _RecentCard(),
+        if (showSampleData)
+          const _RecentCard()
+        else
+          MeloopStateView(
+            state: MeloopViewState.empty,
+            title: strings.noPracticeSessions,
+            message: strings.profileSessionsEmptyMessage,
+          ),
       ],
     );
   }
@@ -173,7 +182,9 @@ class _HomeHeader extends StatelessWidget {
           top: -32,
           child: Transform.rotate(
             angle: .105,
-            child: MeloopArt.instrument(selected.instrument, size: 285),
+            child: selected.instrument == MeloopInstrument.guitar
+                ? const MeloopArt.scene(MeloopScene.guitar, size: 285)
+                : MeloopArt.instrument(selected.instrument, size: 285),
           ),
         ),
         Positioned.fill(
@@ -215,6 +226,7 @@ class _InstrumentChip extends StatelessWidget {
     label: context.l10n.changeInstrument,
     button: true,
     child: InkWell(
+      key: const Key('choose-profile'),
       onTap: onPressed,
       borderRadius: BorderRadius.circular(TempoRadius.pill),
       child: Container(
@@ -230,7 +242,7 @@ class _InstrumentChip extends StatelessWidget {
             MeloopArt.instrument(profile.instrument, size: 39),
             const SizedBox(width: 7),
             Flexible(
-              child: Text(instrumentLabel(context.l10n, profile.instrument)),
+              child: Text(profileInstrumentLabel(context.l10n, profile)),
             ),
             const SizedBox(width: 7),
             const MeloopIcon(MeloopIcons.down, size: 18),
@@ -242,8 +254,11 @@ class _InstrumentChip extends StatelessWidget {
 }
 
 class _StatisticsCard extends StatelessWidget {
-  const _StatisticsCard();
-  static const values = [20, 0, 25, 0, 30, 25, 35];
+  const _StatisticsCard({required this.showSampleData});
+  final bool showSampleData;
+  List<int> get values => showSampleData
+      ? const [20, 0, 25, 0, 30, 25, 35]
+      : List<int>.filled(7, 0);
   @override
   Widget build(BuildContext context) {
     final strings = context.l10n;
@@ -267,9 +282,9 @@ class _StatisticsCard extends StatelessWidget {
             const SizedBox(height: 9),
             MeloopResponsiveRow(
               children: [
-                _Metric('135', strings.practiceMinutes),
-                _Metric('5', strings.practiceSessions),
-                _Metric('3', strings.consecutiveDays),
+                _Metric(showSampleData ? '135' : '0', strings.practiceMinutes),
+                _Metric(showSampleData ? '5' : '0', strings.practiceSessions),
+                _Metric(showSampleData ? '3' : '0', strings.consecutiveDays),
               ],
             ),
             const SizedBox(height: TempoSpace.xs),

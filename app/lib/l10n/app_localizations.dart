@@ -398,6 +398,18 @@ abstract class AppLocalizations {
   /// **'Chưa có buổi luyện'**
   String get noPracticeSessions;
 
+  /// No description provided for @profileSessionsEmptyMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Buổi luyện của hồ sơ này sẽ hiện ở đây.'**
+  String get profileSessionsEmptyMessage;
+
+  /// No description provided for @openWelcomePreview.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem màn chào Tempo'**
+  String get openWelcomePreview;
+
   /// No description provided for @savedSessions.
   ///
   /// In vi, this message translates to:

@@ -22,3 +22,10 @@ String profileDisplayName(
       ? strings.samplePianoProfile
       : strings.defaultProfileName;
 }
+
+String profileInstrumentLabel(
+  AppLocalizations strings,
+  PreviewInstrumentProfile profile,
+) =>
+    profile.customInstrumentName ??
+    instrumentLabel(strings, profile.instrument);

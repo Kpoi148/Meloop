@@ -1,16 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
 import '../application/app_settings_controller.dart';
+import '../application/instrument_profile_service.dart';
 import '../application/startup_controller.dart';
 import '../components/meloop_ui.dart';
 import 'component_catalog.dart';
 import 'home_example.dart';
+import 'instrument_profile_preview.dart';
 import 'instrument_profiles_example.dart';
 import 'instrument_picker_example.dart';
 import 'language_selector.dart';
 import 'profile_form_example.dart';
+import 'preview_data_reset_button.dart';
+import 'preview_copy.dart';
 import 'session_form_example.dart';
 import 'settings_example.dart';
 import 'showcase_controller.dart';
@@ -20,9 +26,19 @@ import 'welcome_example.dart';
 
 /// Development entry point; sample records are never written to journal storage.
 class MeloopUiShowcase extends ConsumerStatefulWidget {
-  const MeloopUiShowcase({super.key, this.developmentTools = true});
+  const MeloopUiShowcase({
+    super.key,
+    this.developmentTools = true,
+    this.profile,
+    this.onChooseProfile,
+    this.onManageProfiles,
+    this.onResetData,
+  });
 
   final bool developmentTools;
+  final InstrumentProfile? profile;
+  final VoidCallback? onChooseProfile, onManageProfiles;
+  final FutureOr<void> Function()? onResetData;
 
   @override
   ConsumerState<MeloopUiShowcase> createState() => _MeloopUiShowcaseState();
@@ -39,6 +55,23 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
 
   void _catalog() => Navigator.of(context)
       .push(MaterialPageRoute<void>(builder: (_) => const ComponentCatalog()));
+
+  void _resetData() {
+    ref.invalidate(showcaseControllerProvider);
+    Navigator.of(context).pushAndRemoveUntil<void>(
+      MaterialPageRoute(builder: (_) => const InstrumentProfilePreview()),
+      (_) => false,
+    );
+  }
+
+  void _openProfilePage(VoidCallback open) {
+    if (widget.profile != null &&
+        ref.read(meloopShellControllerProvider).draft != null) {
+      MeloopNotifications.show(context, context.l10n.unfinishedSessionMessage);
+      return;
+    }
+    open();
+  }
 
   void _profileForm() => Navigator.of(context).push(
     MaterialPageRoute<void>(
@@ -141,6 +174,7 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
       ),
       child: switch (shell.selectedTab) {
         0 => HomeExample(
+          showSampleData: widget.profile == null,
           profile: profile,
           draft: shell.draft,
           onCreate: () => shell.draft == null
@@ -148,7 +182,9 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
               : shellController.showTimer(),
           onHistory: () => shellController.selectTab(1),
           onCatalog: widget.developmentTools ? _catalog : null,
-          onInstrument: shellController.showProfilePicker,
+          onInstrument: () => _openProfilePage(
+            widget.onChooseProfile ?? shellController.showProfilePicker,
+          ),
         ),
         1 => _history(shell, showcase, showcaseController),
         2 => _progress(),
@@ -163,6 +199,37 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
     ShowcaseController controller,
   ) {
     final strings = context.l10n;
+    if (widget.profile case final profile?) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: TempoSpace.page,
+        children: [
+          const MeloopTopBar(),
+          Text(strings.navHistory, style: TempoType.heading),
+          Text(
+            '${profile.name} · ${profileInstrumentLabel(strings, shell.selectedProfile!)}',
+          ),
+          if (shell.draft != null)
+            MeloopButton(
+              label: strings.continuePractice,
+              onPressed: ref
+                  .read(meloopShellControllerProvider.notifier)
+                  .showTimer,
+            ),
+          MeloopStateView(
+            state: MeloopViewState.empty,
+            title: strings.noPracticeSessions,
+            message: strings.profileSessionsEmptyMessage,
+          ),
+          MeloopButton(
+            label: strings.createPractice,
+            onPressed: () => shell.draft == null
+                ? _setup(shell.selectedProfile!)
+                : ref.read(meloopShellControllerProvider.notifier).showTimer(),
+          ),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: TempoSpace.page,
@@ -270,8 +337,18 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
       profile: profile,
       language: _settingsLanguage(),
       onLanguage: () => showLanguageSelector(context, ref),
-      onProfiles: _profiles,
+      onProfiles: () => _openProfilePage(widget.onManageProfiles ?? _profiles),
     );
+    if (widget.profile != null) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          settings,
+          const SizedBox(height: TempoSpace.page),
+          PreviewDataResetButton(onReset: widget.onResetData ?? () {}),
+        ],
+      );
+    }
     if (!widget.developmentTools) return settings;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -297,6 +374,18 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
           value: state.failNextSave,
           onChanged: controller.simulateFailure,
         ),
+        const SizedBox(height: TempoSpace.md),
+        MeloopButton(
+          label: strings.openWelcomePreview,
+          style: MeloopButtonStyle.outline,
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => const InstrumentProfilePreview(),
+            ),
+          ),
+        ),
+        const SizedBox(height: TempoSpace.md),
+        PreviewDataResetButton(onReset: () {}, onComplete: _resetData),
       ],
     );
   }

@@ -61,6 +61,8 @@
   "addInstrument": "Thêm nhạc cụ",
   "freeProfileLimit": "Miễn phí: tối đa 3 hồ sơ nhạc cụ.",
   "noPracticeSessions": "Chưa có buổi luyện",
+  "profileSessionsEmptyMessage": "Buổi luyện của hồ sơ này sẽ hiện ở đây.",
+  "openWelcomePreview": "Xem màn chào Tempo",
   "savedSessions": "{count} buổi luyện đã lưu",
   "@savedSessions": {"placeholders": {"count": {"type": "int"}}},
   "unfinishedSessionTitle": "Bạn còn một buổi luyện.",

@@ -181,6 +181,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noPracticeSessions => 'No practice sessions yet';
 
   @override
+  String get profileSessionsEmptyMessage =>
+      'Practice sessions for this profile will appear here.';
+
+  @override
+  String get openWelcomePreview => 'Preview Tempo welcome';
+
+  @override
   String savedSessions(int count) {
     return '$count saved sessions';
   }
