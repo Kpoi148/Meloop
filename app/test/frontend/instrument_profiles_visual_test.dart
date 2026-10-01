@@ -15,6 +15,7 @@ import 'package:meloop/frontend/profiles/profile_form.dart';
 import 'package:meloop/frontend/showcase/profile_preview_service.dart';
 import 'package:meloop/frontend/showcase/instrument_profile_preview.dart';
 import 'package:meloop/frontend/showcase/meloop_ui_showcase.dart';
+import 'package:meloop/frontend/showcase/pro_preview_page.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -79,6 +80,16 @@ void main() {
       ),
       ('profile-home', 844, InstrumentProfilePreview(service: service)),
       ('profile-settings', 844, InstrumentProfilePreview(service: service)),
+      (
+        'pro-free',
+        1500,
+        ProPreviewPage(isPro: false, onEnablePreview: () async {}),
+      ),
+      (
+        'pro-active',
+        1500,
+        ProPreviewPage(isPro: true, onEnablePreview: () async {}),
+      ),
     ];
 
     for (final (name, height, page) in samples) {

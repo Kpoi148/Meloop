@@ -702,4 +702,113 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get retry => 'Thử lại';
+
+  @override
+  String get proTitle => 'Meloop Pro';
+
+  @override
+  String get proOneTimeBadge => 'MUA MỘT LẦN · KHÔNG GIA HẠN';
+
+  @override
+  String get proHeading => 'Thêm không gian\ncho đam mê.';
+
+  @override
+  String get proSubtitle => 'Một người bạn đồng hành, theo cách của bạn.';
+
+  @override
+  String get proIllustrativePrice => '49.000đ';
+
+  @override
+  String get proPriceCaption => 'Giá minh họa · Mua một lần';
+
+  @override
+  String get proProfilesBenefit => 'Thêm hồ sơ nhạc cụ';
+
+  @override
+  String get proProfilesDescription =>
+      'Tách riêng nhật ký cho mỗi âm sắc bạn yêu.';
+
+  @override
+  String get proFiltersBenefit => 'Bộ lọc tiến độ nâng cao';
+
+  @override
+  String get proFiltersDescription =>
+      'Xem các khoảng thời gian dài hơn hoặc tùy chọn.';
+
+  @override
+  String get proFreeFeatures =>
+      'Nhật ký, công cụ, ghi âm, mục tiêu, lịch nhắc, sao lưu và xuất âm thanh vẫn miễn phí.';
+
+  @override
+  String get proPreviewTry => 'Dùng thử Meloop Pro';
+
+  @override
+  String get proPreviewActive => 'Đang xem thử Meloop Pro';
+
+  @override
+  String get proPreviewPlan => 'PRO · XEM THỬ';
+
+  @override
+  String get proPreviewFootnote =>
+      'Bản UI mô phỏng quyền Pro, không có giao dịch thật.\nGiá chính thức do cửa hàng cung cấp.';
+
+  @override
+  String get proPreviewConfirmTitle => 'Xem thử Meloop Pro';
+
+  @override
+  String get proPreviewConfirmMessage =>
+      'Thao tác này bật chế độ xem thử Pro để bạn trải nghiệm giao diện và tạo thêm hồ sơ. Không thu tiền, không kết nối cửa hàng.';
+
+  @override
+  String get proPreviewEnable => 'Bật xem thử';
+
+  @override
+  String get proPreviewEnabled => 'Đã bật Pro để xem thử.';
+
+  @override
+  String get proPreviewFailed =>
+      'Chưa thể bật Pro. Dữ liệu của bạn vẫn được giữ. Hãy thử lại.';
+
+  @override
+  String get proPreviewActiveTitle => 'Meloop Pro đang bật để xem thử.';
+
+  @override
+  String get proPreviewActiveMessage =>
+      'Bạn có thể tạo thêm hồ sơ trong chế độ xem thử. Không có khoản thanh toán nào được thực hiện.';
+
+  @override
+  String get proRestoreTransaction => 'Khôi phục giao dịch';
+
+  @override
+  String get proRestoreFootnote => 'Khôi phục với cùng tài khoản và cửa hàng.';
+
+  @override
+  String get proRestoreTitle => 'Khôi phục Meloop Pro';
+
+  @override
+  String get proRestoreMessage =>
+      'Bản UI chưa kết nối Google Play nên không thể kiểm tra giao dịch. Chế độ xem thử Pro chỉ lưu trên thiết bị này.';
+
+  @override
+  String get proClose => 'Đóng';
+
+  @override
+  String get previewResetAction => 'Xóa dữ liệu và bắt đầu lại';
+
+  @override
+  String get previewResetTitle => 'Bắt đầu lại từ màn chào?';
+
+  @override
+  String get previewResetMessage =>
+      'Toàn bộ hồ sơ, lựa chọn nhạc cụ, dữ liệu thử và quyền xem thử Pro trên thiết bị sẽ được xóa. Ứng dụng trở về màn chào và gói Free để bạn bắt đầu lại.';
+
+  @override
+  String get previewResetConfirm => 'Xóa và bắt đầu lại';
+
+  @override
+  String get previewResetCancel => 'Giữ dữ liệu';
+
+  @override
+  String get previewResetFailed =>
+      'Chưa thể xóa dữ liệu. Hồ sơ của bạn vẫn được giữ. Hãy thử lại.';
 }

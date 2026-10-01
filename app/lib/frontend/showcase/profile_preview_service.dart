@@ -121,6 +121,12 @@ class ProfilePreviewService implements InstrumentProfileService {
     return directory;
   }, initialize: false);
 
+  /// Enables the Tempo UI simulation; this is not a store purchase.
+  Future<ProfileDirectory> enableProPreview() => _run(() async {
+    if (isPro) return _directory;
+    return _commit(() => isPro = true);
+  });
+
   ProfileDirectory get _directory => ProfileDirectory(
     profiles: List.unmodifiable(_profiles),
     selectedProfileId: _selectedId,

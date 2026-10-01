@@ -17,6 +17,7 @@ import 'language_selector.dart';
 import 'profile_form_example.dart';
 import 'preview_data_reset_button.dart';
 import 'preview_copy.dart';
+import 'pro_preview_page.dart';
 import 'session_form_example.dart';
 import 'settings_example.dart';
 import 'showcase_controller.dart';
@@ -33,12 +34,16 @@ class MeloopUiShowcase extends ConsumerStatefulWidget {
     this.onChooseProfile,
     this.onManageProfiles,
     this.onResetData,
+    this.isPro = false,
+    this.onViewPro,
   });
 
   final bool developmentTools;
   final InstrumentProfile? profile;
   final VoidCallback? onChooseProfile, onManageProfiles;
   final FutureOr<void> Function()? onResetData;
+  final bool isPro;
+  final VoidCallback? onViewPro;
 
   @override
   ConsumerState<MeloopUiShowcase> createState() => _MeloopUiShowcaseState();
@@ -338,6 +343,9 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
       language: _settingsLanguage(),
       onLanguage: () => showLanguageSelector(context, ref),
       onProfiles: () => _openProfilePage(widget.onManageProfiles ?? _profiles),
+      isPro: widget.isPro,
+      onPro: widget.onViewPro,
+      onRestorePro: () => showProRestoreNotice(context),
     );
     if (widget.profile != null) {
       return Column(
