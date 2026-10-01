@@ -980,5 +980,5 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get timerReviewPending =>
-      'Bạn có thể tạm dừng hoặc tiếp tục buổi luyện. Tính năng kết thúc và lưu chưa có trong phiên bản này.';
+      'Bạn có thể kết thúc để mở form buổi luyện. Tính năng lưu chưa có trong phiên bản này.';
 }

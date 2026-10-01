@@ -986,5 +986,5 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get timerReviewPending =>
-      'You can pause or resume practice. Finishing and saving are not available in this version yet.';
+      'You can finish to open the practice form. Saving is not available in this version yet.';
 }
