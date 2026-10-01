@@ -7,6 +7,7 @@ import '../../shared/journal/journal_models.dart';
 import '../application/instrument_profile_service.dart';
 import '../application/startup_controller.dart';
 import '../application/practice_start_service.dart';
+import '../application/practice_timer_service.dart';
 import '../components/meloop_ui.dart';
 import '../showcase/meloop_ui_showcase.dart';
 import '../showcase/pro_preview_page.dart';
@@ -48,6 +49,10 @@ class _JournalProfileEntryState extends ConsumerState<JournalProfileEntry> {
     try {
       final snapshot = await ref.read(journalBootstrapLoaderProvider)();
       if (!mounted || request != _request) return;
+      if (snapshot.draft != null) {
+        await ref.read(practiceTimerServiceProvider)?.open(snapshot.draft!);
+        if (!mounted || request != _request) return;
+      }
       final directory = snapshot.directory;
       setState(() {
         _snapshot = snapshot;
@@ -96,15 +101,19 @@ class _JournalProfileEntryState extends ConsumerState<JournalProfileEntry> {
   }) {
     final profile = _snapshot!.directory.byId(draft.session.profileId);
     if (profile == null) throw StateError('Draft owner is missing.');
+    final timer = ref.read(practiceTimerServiceProvider)?.snapshot;
+    final current = timer?.sessionId == draft.session.id ? timer : null;
     return PreviewPracticeDraft(
       sessionId: draft.session.id,
       profileId: draft.session.profileId,
       title: draft.reviewInput?.title ?? draft.session.title,
       accumulatedSeconds:
-          draft.accumulatedMilliseconds ~/ Duration.millisecondsPerSecond,
+          (current?.elapsedMilliseconds ?? draft.accumulatedMilliseconds) ~/
+          Duration.millisecondsPerSecond,
+      isRunning: current?.state == PracticeState.running,
       wasRecovered: recovered,
       instrumentName: profile.name,
-      isReview: draft.session.state == PracticeState.review,
+      isReview: (current?.state ?? draft.session.state) == PracticeState.review,
     );
   }
 
@@ -116,6 +125,10 @@ class _JournalProfileEntryState extends ConsumerState<JournalProfileEntry> {
     final draft = await ref
         .read(practiceStartServiceProvider)
         .start(requestId: requestId, profileId: profileId, title: title);
+    if (!mounted) throw StateError('Journal entry was disposed.');
+    await ref
+        .read(practiceTimerServiceProvider)
+        ?.open(draft, newlyStarted: draft.session.id == requestId);
     if (!mounted) throw StateError('Journal entry was disposed.');
     final presented = _presentDraft(draft, recovered: false);
     setState(
@@ -186,7 +199,8 @@ class _JournalProfileEntryState extends ConsumerState<JournalProfileEntry> {
       child: MeloopUiShowcase(
         developmentTools: false,
         profile: _selected,
-        journalRecoveryReadOnly: draft != null,
+        journalRecoveryReadOnly:
+            draft != null && ref.read(practiceTimerServiceProvider) == null,
         allowProfileBrowsingWithDraft: true,
         onStartDraft: _start,
         onChooseProfile: () => _profiles(ProfileEntryPage.picker),

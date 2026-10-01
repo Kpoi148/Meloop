@@ -1855,6 +1855,18 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Chưa thể bắt đầu buổi luyện. Tiêu đề vẫn được giữ; hãy thử lại.'**
   String get practiceStartFailed;
+
+  /// No description provided for @timerCheckpointFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Buổi luyện đã tạm dừng do lỗi. Thời gian mới chưa được xác nhận lưu; hãy thử lại.'**
+  String get timerCheckpointFailed;
+
+  /// No description provided for @timerReviewPending.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có thể tạm dừng hoặc tiếp tục buổi luyện. Tính năng kết thúc và lưu chưa có trong phiên bản này.'**
+  String get timerReviewPending;
 }
 
 class _AppLocalizationsDelegate

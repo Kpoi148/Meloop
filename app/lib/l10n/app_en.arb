@@ -318,5 +318,7 @@
   "journalRecoveryPending": "This practice is kept on your device. You can browse or add profiles; resuming or saving this practice is not available in this version yet.",
   "continueInstrumentPractice": "Continue · {instrument}",
   "@continueInstrumentPractice": {"placeholders": {"instrument": {"type": "String"}}},
-  "practiceStartFailed": "Could not start practice. Your title is retained; please try again."
+  "practiceStartFailed": "Could not start practice. Your title is retained; please try again.",
+  "timerCheckpointFailed": "Practice paused after an error. The latest time has not been confirmed saved; please retry.",
+  "timerReviewPending": "You can pause or resume practice. Finishing and saving are not available in this version yet."
 }

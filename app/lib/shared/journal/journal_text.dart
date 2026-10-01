@@ -13,6 +13,9 @@ class ProfileRules {
 class PracticeRules {
   PracticeRules._();
   static const titleMaxCodePoints = 100;
+  static const maximumDuration = Duration(hours: 24);
+  static const checkpointInterval = Duration(seconds: 5);
+  static const timerRefreshInterval = Duration(seconds: 1);
 }
 
 class JournalText {

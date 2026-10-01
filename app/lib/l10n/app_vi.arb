@@ -331,5 +331,7 @@
   "journalRecoveryPending": "Buổi luyện vẫn được giữ trên thiết bị. Bạn có thể xem hoặc thêm hồ sơ; chưa thể tiếp tục hay lưu buổi này ở phiên bản hiện tại.",
   "continueInstrumentPractice": "Tiếp tục · {instrument}",
   "@continueInstrumentPractice": {"placeholders": {"instrument": {"type": "String"}}},
-  "practiceStartFailed": "Chưa thể bắt đầu buổi luyện. Tiêu đề vẫn được giữ; hãy thử lại."
+  "practiceStartFailed": "Chưa thể bắt đầu buổi luyện. Tiêu đề vẫn được giữ; hãy thử lại.",
+  "timerCheckpointFailed": "Buổi luyện đã tạm dừng do lỗi. Thời gian mới chưa được xác nhận lưu; hãy thử lại.",
+  "timerReviewPending": "Bạn có thể tạm dừng hoặc tiếp tục buổi luyện. Tính năng kết thúc và lưu chưa có trong phiên bản này."
 }

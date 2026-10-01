@@ -14,6 +14,8 @@ B03 bổ sung bootstrap nguyên tử cho directory/count saved, selected prefere
 
 B04 nối Setup Start qua `SqlitePracticeStartService`: UUID request ổn định, title NFC/code points, ngày/offset thiết bị; kiểm tra unfinished và insert Running cùng transaction. Trigger v1 tạo sidecar checkpoint 0; retry/concurrent Start trả draft đang có, lỗi sidecar rollback session. Mở Setup/Back không ghi. Draft chưa saved không tham gia history/stats; timer/checkpoint/review mutations thuộc B05/B06. Không thay migration v1.
 
+B05 nối timer monotonic app scope và SQLite checkpoint/state transaction; không thay migration. Checkpoint 5 giây, Pause/Resume/Back/background, recovery Paused tại checkpoint và auto-stop Review ở 24 giờ. Lỗi giữ elapsed mới trong RAM, Retry persist Paused; không gọi fake Save. Wall clock chỉ ghi metadata và timestamp không giảm; ngày/offset/owner giữ nguyên. Review raw input không bị timer viết lại. Final Review/Save thuộc B06.
+
 - Tên bảng/cột: snake_case. UUID v4 dạng TEXT lowercase cho profile, session, recording; giữ ID khi backup/restore. ID queue là INTEGER nội bộ, không thuộc định danh portable của SRS.
 - `created_at`, `updated_at`, `checkpoint_at`, `next_attempt_at`: INTEGER Unix milliseconds UTC. Cập nhật do backend thực hiện, không dùng SQL `now` làm đồng hồ timer.
 - `practice_date`: TEXT YYYY-MM-DD. SQL kiểm tra ngày thực tế và cận dưới 2000-01-01; nghiệp vụ còn phải kiểm tra không vượt device-local today. `start_offset_minutes` giữ offset lúc Start.

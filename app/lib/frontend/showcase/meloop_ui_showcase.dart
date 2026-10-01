@@ -7,6 +7,7 @@ import '../../l10n/l10n.dart';
 import '../application/app_settings_controller.dart';
 import '../application/instrument_profile_service.dart';
 import '../application/startup_controller.dart';
+import '../application/practice_timer_service.dart';
 import '../components/meloop_ui.dart';
 import '../practice_sessions/practice_sessions_tab.dart';
 import 'component_catalog.dart';
@@ -178,7 +179,9 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
       ),
       StartupDestination.recoveredTimer => TimerExample(
         readOnly:
-            widget.journalRecoveryReadOnly || shell.draft?.sessionId != null,
+            widget.journalRecoveryReadOnly ||
+            (shell.draft?.sessionId != null &&
+                ref.read(practiceTimerServiceProvider) == null),
       ),
       StartupDestination.main => _mainTabs(
         shell,

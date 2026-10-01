@@ -973,4 +973,12 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get practiceStartFailed =>
       'Chưa thể bắt đầu buổi luyện. Tiêu đề vẫn được giữ; hãy thử lại.';
+
+  @override
+  String get timerCheckpointFailed =>
+      'Buổi luyện đã tạm dừng do lỗi. Thời gian mới chưa được xác nhận lưu; hãy thử lại.';
+
+  @override
+  String get timerReviewPending =>
+      'Bạn có thể tạm dừng hoặc tiếp tục buổi luyện. Tính năng kết thúc và lưu chưa có trong phiên bản này.';
 }

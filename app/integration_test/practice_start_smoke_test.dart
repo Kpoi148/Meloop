@@ -10,6 +10,7 @@ import 'package:meloop/backend/journal/sqlite_instrument_profile_service.dart';
 import 'package:meloop/backend/journal/sqlite_journal_readers.dart';
 import 'package:meloop/frontend/showcase/home_example.dart';
 import 'package:meloop/frontend/application/startup_controller.dart';
+import 'package:meloop/frontend/application/practice_timer_service.dart';
 import 'package:meloop/frontend/showcase/setup_example.dart';
 import 'package:meloop/frontend/showcase/timer_example.dart';
 import 'package:meloop/shared/journal/journal_runtime.dart';
@@ -67,7 +68,11 @@ void main() {
         final before = await reader.unfinished();
         await tester.pumpWidget(
           createJournalProfileApp(
-            overrides: [journalDatabaseOwnerProvider.overrideWithValue(owner)],
+            overrides: [
+              journalDatabaseOwnerProvider.overrideWithValue(owner),
+              // B04 is tested independently; B05 has real timer integration QA.
+              practiceTimerServiceProvider.overrideWithValue(null),
+            ],
           ),
         );
         if (phase != 'reopen') {
