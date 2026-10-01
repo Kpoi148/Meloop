@@ -16,10 +16,14 @@ class SessionFormExample extends ConsumerStatefulWidget {
     this.onSave,
     this.initialTitle = '',
     this.initialDurationSeconds = 60,
+    this.sessionId,
   });
   final SessionFormSave? onSave;
   final String initialTitle;
   final int initialDurationSeconds;
+
+  /// Journal identity for the review adapter; durable Save is integrated in B06.
+  final String? sessionId;
   @override
   ConsumerState<SessionFormExample> createState() => _SessionFormExampleState();
 }

@@ -1849,6 +1849,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Tiếp tục · {instrument}'**
   String continueInstrumentPractice(String instrument);
+
+  /// No description provided for @practiceStartFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể bắt đầu buổi luyện. Tiêu đề vẫn được giữ; hãy thử lại.'**
+  String get practiceStartFailed;
 }
 
 class _AppLocalizationsDelegate

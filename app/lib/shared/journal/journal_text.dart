@@ -10,6 +10,11 @@ class ProfileRules {
   static const freeProfileLimit = 3;
 }
 
+class PracticeRules {
+  PracticeRules._();
+  static const titleMaxCodePoints = 100;
+}
+
 class JournalText {
   JournalText._();
   static final _whitespace = RegExp(r'\s+', unicode: true);
@@ -33,6 +38,9 @@ class JournalText {
     }
     return name;
   }
+
+  static String sessionTitle(String input) =>
+      profileName(input, maxCodePoints: PracticeRules.titleMaxCodePoints);
 
   static String _fold(String input) => String.fromCharCodes(
     input.runes.expand(

@@ -12,6 +12,8 @@ Thiết kế dựa trên Report 2 Software Requirements Specification v1.1 ngày
 
 B03 bổ sung bootstrap nguyên tử cho directory/count saved, selected preference và unfinished sidecar. Sửa selection mất hiệu lực mà không đổi language; draft không bị chuyển owner hoặc xóa. Entry journal đã tách khỏi preview profiles; timer recovery chỉ đọc đến B05/B06. Không thêm/sửa migration ở bước này.
 
+B04 nối Setup Start qua `SqlitePracticeStartService`: UUID request ổn định, title NFC/code points, ngày/offset thiết bị; kiểm tra unfinished và insert Running cùng transaction. Trigger v1 tạo sidecar checkpoint 0; retry/concurrent Start trả draft đang có, lỗi sidecar rollback session. Mở Setup/Back không ghi. Draft chưa saved không tham gia history/stats; timer/checkpoint/review mutations thuộc B05/B06. Không thay migration v1.
+
 - Tên bảng/cột: snake_case. UUID v4 dạng TEXT lowercase cho profile, session, recording; giữ ID khi backup/restore. ID queue là INTEGER nội bộ, không thuộc định danh portable của SRS.
 - `created_at`, `updated_at`, `checkpoint_at`, `next_attempt_at`: INTEGER Unix milliseconds UTC. Cập nhật do backend thực hiện, không dùng SQL `now` làm đồng hồ timer.
 - `practice_date`: TEXT YYYY-MM-DD. SQL kiểm tra ngày thực tế và cận dưới 2000-01-01; nghiệp vụ còn phải kiểm tra không vượt device-local today. `start_offset_minutes` giữ offset lúc Start.

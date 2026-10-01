@@ -38,11 +38,18 @@ class MeloopUiShowcase extends ConsumerStatefulWidget {
     this.onViewPro,
     this.journalRecoveryReadOnly = false,
     this.allowProfileBrowsingWithDraft = false,
+    this.onStartDraft,
   });
 
   final bool developmentTools;
   final bool journalRecoveryReadOnly;
   final bool allowProfileBrowsingWithDraft;
+  final Future<PreviewPracticeDraft> Function(
+    String requestId,
+    String profileId,
+    String title,
+  )?
+  onStartDraft;
   final InstrumentProfile? profile;
   final VoidCallback? onChooseProfile, onManageProfiles;
   final FutureOr<void> Function()? onResetData;
@@ -108,6 +115,19 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
       builder: (_) => SetupExample(
         profile: profile,
         onStart: ref.read(meloopShellControllerProvider.notifier).startDraft,
+        onJournalStart: widget.onStartDraft == null
+            ? null
+            : (requestId, title) async {
+                final draft = await widget.onStartDraft!(
+                  requestId,
+                  profile.id,
+                  title,
+                );
+                if (!mounted) return;
+                ref
+                    .read(meloopShellControllerProvider.notifier)
+                    .openStoredDraft(draft);
+              },
       ),
     );
     await Navigator.of(context).push(route);
@@ -157,7 +177,8 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
             : shellController.showMain,
       ),
       StartupDestination.recoveredTimer => TimerExample(
-        readOnly: widget.journalRecoveryReadOnly,
+        readOnly:
+            widget.journalRecoveryReadOnly || shell.draft?.sessionId != null,
       ),
       StartupDestination.main => _mainTabs(
         shell,

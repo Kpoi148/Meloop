@@ -88,6 +88,7 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
     await Navigator.of(context).push<void>(
       MaterialPageRoute(
         builder: (_) => SessionFormExample(
+          sessionId: ref.read(meloopShellControllerProvider).draft?.sessionId,
           initialTitle:
               ref.read(meloopShellControllerProvider).draft?.title ?? '',
           initialDurationSeconds: _seconds.clamp(1, 86400),

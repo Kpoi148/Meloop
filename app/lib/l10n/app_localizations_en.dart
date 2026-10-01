@@ -975,4 +975,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String continueInstrumentPractice(String instrument) {
     return 'Continue · $instrument';
   }
+
+  @override
+  String get practiceStartFailed =>
+      'Could not start practice. Your title is retained; please try again.';
 }

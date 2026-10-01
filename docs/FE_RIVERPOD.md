@@ -25,7 +25,7 @@ MeloopApp(
 
 `saveSession` và `yourHomePage` là dependency/màn hình do tính năng cung cấp. Import provider từ `package:meloop/frontend/application/session_form_controller.dart` và kiểu dữ liệu từ `package:meloop/frontend/application/session_form_values.dart`. Callback phải trả Future hoàn tất đúng khi thao tác lưu hoàn tất; nếu lưu lỗi phải throw. Adapter tại app chuyển giá trị form sang model/backend contract do nhóm backend thống nhất. Không thêm SQLite hoặc nghiệp vụ vào widget/controller frontend.
 
-Dependency lưu buổi luyện mặc định báo lỗi khi chưa được cấu hình. Entry `main.dart` hiện nối form hồ sơ vào SQLite journal thật qua `createJournalProfileApp()`; dữ liệu hồ sơ preview không tự nhập. Các luồng session/timer vẫn dùng mô phỏng, chưa ghi journal. Contract hồ sơ thuần Dart nằm trong `shared/profiles/`; provider frontend re-export để giữ import hiện có.
+Dependency lưu buổi luyện mặc định báo lỗi khi chưa được cấu hình. Entry `main.dart` nối form hồ sơ và Start draft vào SQLite journal thật qua `createJournalProfileApp()`; dữ liệu preview không tự nhập. `practiceStartServiceProvider` là port frontend được app cấp implementation BE, Setup chỉ gửi request/title và nhận thành công sau transaction. Shell giữ session ID/owner thật; timer production chỉ đọc đến B05/B06, chưa có Pause/Resume/Save thật. Contract hồ sơ thuần Dart nằm trong `shared/profiles/`; provider frontend re-export để giữ import hiện có.
 
 `InstrumentProfilePreview` cấp controller và dependency lưu buổi luyện mẫu trong một scope theo profile ID. Mô phỏng có độ trễ và bộ đếm lưu mẫu, không ghi nhật ký thật. `lib/main.dart` là điểm khởi chạy duy nhất. Chạy:
 

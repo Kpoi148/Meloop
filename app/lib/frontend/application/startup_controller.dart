@@ -27,6 +27,7 @@ class PreviewPracticeDraft {
     this.wasRecovered = false,
     this.instrumentName,
     this.isReview = false,
+    this.sessionId,
   });
 
   final String profileId;
@@ -36,6 +37,7 @@ class PreviewPracticeDraft {
   final bool wasRecovered;
   final String? instrumentName;
   final bool isReview;
+  final String? sessionId;
 
   PreviewPracticeDraft copyWith({
     String? title,
@@ -50,6 +52,7 @@ class PreviewPracticeDraft {
     wasRecovered: wasRecovered ?? this.wasRecovered,
     instrumentName: instrumentName,
     isReview: isReview,
+    sessionId: sessionId,
   );
 }
 
@@ -271,6 +274,16 @@ class MeloopShellController extends Notifier<MeloopShellState> {
         title: title,
         isRunning: true,
       ),
+      destination: StartupDestination.recoveredTimer,
+    );
+  }
+
+  void openStoredDraft(PreviewPracticeDraft draft) {
+    if (!state.profiles.any((p) => p.id == draft.profileId)) {
+      throw StateError('Draft owner is not in the profile directory.');
+    }
+    state = state.copyWith(
+      draft: draft,
       destination: StartupDestination.recoveredTimer,
     );
   }
