@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/l10n.dart';
 import '../layout/meloop_icon.dart';
 
 class MeloopSearch extends StatelessWidget {
@@ -7,11 +8,11 @@ class MeloopSearch extends StatelessWidget {
     super.key,
     required this.controller,
     required this.onChanged,
-    this.hint = 'Tìm buổi luyện, ghi chú…',
+    this.hint,
   });
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
-  final String hint;
+  final String? hint;
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
@@ -21,7 +22,7 @@ class MeloopSearch extends StatelessWidget {
       textInputAction: TextInputAction.search,
       onChanged: onChanged,
       decoration: InputDecoration(
-        hintText: hint,
+        hintText: hint ?? context.l10n.searchHint,
         prefixIcon: const Padding(
           padding: EdgeInsets.all(12),
           child: MeloopIcon(MeloopIcons.search),
@@ -29,7 +30,7 @@ class MeloopSearch extends StatelessWidget {
         suffixIcon: controller.text.isEmpty
             ? null
             : IconButton(
-                tooltip: 'Xóa tìm kiếm',
+                tooltip: context.l10n.clearSearch,
                 onPressed: () {
                   controller.clear();
                   onChanged('');

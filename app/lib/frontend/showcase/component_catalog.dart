@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
 import '../components/meloop_ui.dart';
 
 class ComponentCatalog extends StatefulWidget {
@@ -23,184 +24,187 @@ class _ComponentCatalogState extends State<ComponentCatalog> {
   }
 
   @override
-  Widget build(BuildContext context) => MeloopPage(
-    topBar: MeloopTopBar(
-      title: 'Thành phần dùng chung',
-      onBack: () => Navigator.of(context).pop(),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: TempoSpace.page,
-      children: [
-        const Text('Cùng một nhịp\nthiết kế.', style: TempoType.heading),
-        const Text(
-          'Mẫu UI Tempo · dữ liệu minh họa chỉ nằm trong bộ nhớ.',
-          style: TempoType.caption,
-        ),
-        const Text('Nút & trạng thái đang lưu', style: TempoType.section),
-        for (final style in MeloopButtonStyle.values)
-          MeloopButton(
-            label: switch (style) {
-              MeloopButtonStyle.primary => 'Lưu buổi luyện',
-              MeloopButtonStyle.yellow => 'Tạo buổi luyện',
-              MeloopButtonStyle.outline => 'Thêm nhạc cụ',
-              MeloopButtonStyle.soft => 'Công cụ',
-              MeloopButtonStyle.orange => 'Kết thúc',
-              MeloopButtonStyle.danger => 'Xóa buổi luyện',
-            },
-            style: style,
-            icon: MeloopIcons.check,
-            onPressed: () async {
-              await Future<void>.delayed(const Duration(milliseconds: 800));
-            },
-          ),
-        const MeloopButton(label: 'Không khả dụng', onPressed: null),
-        const MeloopButton(label: 'Lưu', onPressed: null, isLoading: true),
-        const Text('Ô nhập & lỗi tại trường', style: TempoType.section),
-        Form(
-          key: _form,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            spacing: TempoSpace.lg,
-            children: [
-              MeloopField(
-                label: 'Tên hồ sơ',
-                controller: _name,
-                requirement: MeloopFieldRequirement.required,
-                validator: MeloopValidation.profileName,
-                helper: '1–50 ký tự. Giữ nội dung nếu lưu thất bại.',
-              ),
-              MeloopField(
-                label: 'Tốc độ (BPM)',
-                controller: _bpm,
-                type: MeloopInputType.integer,
-                requirement: MeloopFieldRequirement.required,
-                validator: (value) => MeloopValidation.integer(
-                  value,
-                  label: 'BPM',
-                  min: 40,
-                  max: 240,
+  Widget build(BuildContext context) {
+    final strings = context.l10n;
+    return MeloopPage(
+      topBar: MeloopTopBar(
+        title: strings.catalogTitle,
+        onBack: () => Navigator.of(context).pop(),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: TempoSpace.page,
+        children: [
+          Text(strings.catalogHeading, style: TempoType.heading),
+          Text(strings.catalogSubtitle, style: TempoType.caption),
+          Text(strings.catalogButtons, style: TempoType.section),
+          for (final style in MeloopButtonStyle.values)
+            MeloopButton(
+              label: switch (style) {
+                MeloopButtonStyle.primary => strings.savePractice,
+                MeloopButtonStyle.yellow => strings.createPractice,
+                MeloopButtonStyle.outline => strings.addInstrument,
+                MeloopButtonStyle.soft => strings.practiceTools,
+                MeloopButtonStyle.orange => strings.endPractice,
+                MeloopButtonStyle.danger => strings.deleteSession,
+              },
+              style: style,
+              icon: MeloopIcons.check,
+              onPressed: () async {
+                await Future<void>.delayed(const Duration(milliseconds: 800));
+              },
+            ),
+          MeloopButton(label: strings.unavailable, onPressed: null),
+          MeloopButton(label: strings.save, onPressed: null, isLoading: true),
+          Text(strings.catalogFields, style: TempoType.section),
+          Form(
+            key: _form,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: TempoSpace.lg,
+              children: [
+                MeloopField(
+                  label: strings.profileName,
+                  controller: _name,
+                  requirement: MeloopFieldRequirement.required,
+                  validator: (value) =>
+                      MeloopValidation.profileNameFor(value, strings),
+                  helper: strings.profileHelper,
                 ),
-              ),
-              MeloopButton(
-                label: 'Kiểm tra dữ liệu',
-                onPressed: () {
-                  _form.currentState!.validate();
-                },
-              ),
-            ],
+                MeloopField(
+                  label: strings.tempoBpm,
+                  controller: _bpm,
+                  type: MeloopInputType.integer,
+                  requirement: MeloopFieldRequirement.required,
+                  validator: (value) => MeloopValidation.integer(
+                    value,
+                    label: strings.bpm,
+                    min: 40,
+                    max: 240,
+                    strings: strings,
+                  ),
+                ),
+                MeloopButton(
+                  label: strings.validateData,
+                  onPressed: () {
+                    _form.currentState!.validate();
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
-        const Text('Lựa chọn & tab', style: TempoType.section),
-        MeloopChoiceGroup<int>(
-          label: 'Khoảng thời gian',
-          initialValue: _tab,
-          requirement: MeloopFieldRequirement.required,
-          choices: const [
-            MeloopChoice(value: 7, label: '7 ngày'),
-            MeloopChoice(value: 30, label: '30 ngày'),
-            MeloopChoice(value: 0, label: 'Tất cả'),
-          ],
-          onChanged: (value) => setState(() => _tab = value!),
-        ),
-        MeloopSelect<int>(
-          label: 'Số phách mỗi ô nhịp',
-          initialValue: 4,
-          requirement: MeloopFieldRequirement.required,
-          choices: [
-            for (var i = 1; i <= 12; i++)
-              MeloopChoice(value: i, label: '$i phách'),
-          ],
-          onChanged: (_) {},
-        ),
-        MeloopChoiceGroup<int>(
-          label: 'Cảm xúc',
-          initialValue: _rating,
-          clearable: true,
-          choices: [
-            for (var i = 1; i <= 5; i++)
-              MeloopChoice(value: i, label: '$i / 5'),
-          ],
-          onChanged: (value) => setState(() => _rating = value),
-        ),
-        MeloopToggle(
-          label: 'Nhắc lịch luyện',
-          description: 'Nhắc một chút âm nhạc mỗi ngày.',
-          value: _reminder,
-          onChanged: (value) => setState(() => _reminder = value),
-        ),
-        MeloopToggle(
-          label: 'Đính kèm thông tin chẩn đoán',
-          description: 'Chỉ khi bạn chủ động chọn.',
-          checkbox: true,
-          value: _diagnostics,
-          onChanged: (value) => setState(() => _diagnostics = value),
-        ),
-        const Text('Hộp thoại & thông báo', style: TempoType.section),
-        MeloopButton(
-          label: 'Mở hộp thoại xác nhận',
-          style: MeloopButtonStyle.outline,
-          onPressed: () async {
-            await showMeloopConfirm(
+          Text(strings.catalogChoices, style: TempoType.section),
+          MeloopChoiceGroup<int>(
+            label: strings.timeRange,
+            initialValue: _tab,
+            requirement: MeloopFieldRequirement.required,
+            requiredMessage: strings.requiredChoice(
+              strings.timeRange.toLowerCase(),
+            ),
+            choices: [
+              MeloopChoice(value: 7, label: strings.sevenDays),
+              MeloopChoice(value: 30, label: strings.thirtyDays),
+              MeloopChoice(value: 0, label: strings.all),
+            ],
+            onChanged: (value) => setState(() => _tab = value!),
+          ),
+          MeloopSelect<int>(
+            label: strings.beatsPerBar,
+            initialValue: 4,
+            requirement: MeloopFieldRequirement.required,
+            choices: [
+              for (var i = 1; i <= 12; i++)
+                MeloopChoice(value: i, label: strings.beats(i)),
+            ],
+            onChanged: (_) {},
+          ),
+          MeloopChoiceGroup<int>(
+            label: strings.mood,
+            initialValue: _rating,
+            clearable: true,
+            choices: [
+              for (var i = 1; i <= 5; i++)
+                MeloopChoice(value: i, label: '$i / 5'),
+            ],
+            onChanged: (value) => setState(() => _rating = value),
+          ),
+          MeloopToggle(
+            label: strings.reminder,
+            description: strings.reminderDescription,
+            value: _reminder,
+            onChanged: (value) => setState(() => _reminder = value),
+          ),
+          MeloopToggle(
+            label: strings.attachDiagnostics,
+            description: strings.attachDiagnosticsDescription,
+            checkbox: true,
+            value: _diagnostics,
+            onChanged: (value) => setState(() => _diagnostics = value),
+          ),
+          Text(strings.catalogDialogs, style: TempoType.section),
+          MeloopButton(
+            label: strings.openConfirmDialog,
+            style: MeloopButtonStyle.outline,
+            onPressed: () async {
+              await showMeloopConfirm(
+                context,
+                title: '${strings.deleteSession}?',
+                message: strings.deleteSessionMessage,
+                destructive: true,
+                confirmLabel: strings.deleteSession,
+              );
+            },
+          ),
+          MeloopButton(
+            label: strings.openChoiceSheet,
+            style: MeloopButtonStyle.soft,
+            onPressed: () async {
+              await showMeloopSheet<void>(
+                context,
+                title: strings.tempoComponents,
+                child: MeloopNotice(message: strings.sharedThemeNotice),
+              );
+            },
+          ),
+          MeloopButton(
+            label: strings.showNotification,
+            style: MeloopButtonStyle.outline,
+            onPressed: () => MeloopNotifications.show(
               context,
-              title: 'Xóa buổi luyện?',
-              message: 'Nhật ký và bản ghi âm của buổi này sẽ bị xóa.',
-              destructive: true,
-              confirmLabel: 'Xóa buổi luyện',
-            );
-          },
-        ),
-        MeloopButton(
-          label: 'Mở bảng lựa chọn',
-          style: MeloopButtonStyle.soft,
-          onPressed: () async {
-            await showMeloopSheet<void>(
-              context,
-              title: 'Bộ thành phần Tempo',
-              child: const MeloopNotice(
-                message: 'Các màn hình dùng cùng theme, font, màu và icon.',
-              ),
-            );
-          },
-        ),
-        MeloopButton(
-          label: 'Hiện thông báo',
-          style: MeloopButtonStyle.outline,
-          onPressed: () => MeloopNotifications.show(
-            context,
-            'Đã hoàn tất thao tác mẫu.',
+              strings.sampleActionComplete,
+              kind: MeloopNoticeKind.success,
+            ),
+          ),
+          MeloopNotice(message: strings.journalOnDevice),
+          MeloopNotice(
+            message: strings.sessionSaved,
             kind: MeloopNoticeKind.success,
           ),
-        ),
-        const MeloopNotice(message: 'Nhật ký lưu trên thiết bị.'),
-        const MeloopNotice(
-          message: 'Đã lưu buổi luyện.',
-          kind: MeloopNoticeKind.success,
-        ),
-        const MeloopNotice(
-          message: 'Chưa thể lưu. Nội dung vẫn ở đây.',
-          kind: MeloopNoticeKind.error,
-        ),
-        const Text('Tải / trống / lỗi', style: TempoType.section),
-        const MeloopStateView(
-          state: MeloopViewState.loading,
-          title: 'Đang tải buổi luyện…',
-        ),
-        MeloopStateView(
-          state: MeloopViewState.empty,
-          title: 'Hành trình bắt đầu từ hôm nay.',
-          message: 'Lưu buổi luyện đầu tiên của bạn.',
-          actionLabel: 'Tạo buổi luyện',
-          onAction: () {},
-        ),
-        MeloopStateView(
-          state: MeloopViewState.error,
-          title: 'Chưa thể tải buổi luyện.',
-          message: 'Vui lòng thử lại. Dữ liệu của bạn vẫn được giữ.',
-          actionLabel: 'Thử lại',
-          onAction: () {},
-        ),
-      ],
-    ),
-  );
+          MeloopNotice(
+            message: strings.saveFailedKeepsContent,
+            kind: MeloopNoticeKind.error,
+          ),
+          Text(strings.catalogStates, style: TempoType.section),
+          MeloopStateView(
+            state: MeloopViewState.loading,
+            title: strings.loadingSessions,
+          ),
+          MeloopStateView(
+            state: MeloopViewState.empty,
+            title: strings.journeyStartsToday,
+            message: strings.saveFirstSession,
+            actionLabel: strings.createPractice,
+            onAction: () {},
+          ),
+          MeloopStateView(
+            state: MeloopViewState.error,
+            title: strings.loadSessionsFailed,
+            message: strings.dataKeptRetry,
+            actionLabel: strings.retry,
+            onAction: () {},
+          ),
+        ],
+      ),
+    );
+  }
 }

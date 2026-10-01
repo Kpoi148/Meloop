@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../../theme/tokens/tempo_tokens.dart';
 import '../inputs/meloop_field.dart';
 import '../layout/meloop_icon.dart';
@@ -23,10 +24,13 @@ class MeloopChoiceGroup<T> extends FormField<T> {
     bool clearable = false,
     super.enabled = true,
     FormFieldValidator<T>? validator,
+    String? requiredMessage,
   }) : super(
          validator: (value) =>
              requirement == MeloopFieldRequirement.required && value == null
-             ? 'Vui lòng chọn ${label.toLowerCase()}.'
+             ? requiredMessage ??
+                   lookupAppLocalizations(const Locale('vi'))
+                       .requiredChoice(label.toLowerCase())
              : validator?.call(value),
          autovalidateMode: AutovalidateMode.onUserInteraction,
          builder: (field) => Column(
@@ -113,6 +117,7 @@ class MeloopSelect<T> extends StatelessWidget {
     this.validator,
     this.enabled = true,
     this.requirement = MeloopFieldRequirement.optional,
+    this.requiredMessage,
   });
   final String label;
   final List<MeloopChoice<T>> choices;
@@ -121,6 +126,7 @@ class MeloopSelect<T> extends StatelessWidget {
   final FormFieldValidator<T>? validator;
   final bool enabled;
   final MeloopFieldRequirement requirement;
+  final String? requiredMessage;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -144,7 +150,9 @@ class MeloopSelect<T> extends StatelessWidget {
         onChanged: enabled ? onChanged : null,
         validator: (value) =>
             requirement == MeloopFieldRequirement.required && value == null
-            ? 'Vui lòng chọn ${label.toLowerCase()}.'
+            ? requiredMessage ??
+                  lookupAppLocalizations(const Locale('vi'))
+                      .requiredChoice(label.toLowerCase())
             : validator?.call(value),
         autovalidateMode: AutovalidateMode.onUserInteraction,
         errorBuilder: (context, error) => Semantics(

@@ -15,6 +15,8 @@ void main() {
   ) async {
     showcase.main();
     await tester.pumpAndSettle();
+    await tester.tap(find.text('Guitar của tôi'));
+    await tester.pumpAndSettle();
     Finder tab(String label) => find.descendant(
       of: find.byType(MeloopBottomNavigation),
       matching: find.text(label),
@@ -22,7 +24,7 @@ void main() {
     await tester.tap(tab('Cài đặt'));
     await tester.pumpAndSettle();
     final failureToggle = find.descendant(
-      of: find.widgetWithText(MeloopToggle, 'Mô phỏng lỗi ở lần lưu tiếp'),
+      of: find.widgetWithText(MeloopToggle, 'Lần lưu tiếp theo gặp lỗi'),
       matching: find.byType(Switch),
     );
     await tester.ensureVisible(failureToggle);

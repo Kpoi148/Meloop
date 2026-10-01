@@ -1,23 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/l10n.dart';
+import '../application/app_settings_controller.dart';
+import '../application/startup_controller.dart';
 import '../components/meloop_ui.dart';
 import 'component_catalog.dart';
 import 'home_example.dart';
+import 'instrument_profiles_example.dart';
+import 'instrument_picker_example.dart';
+import 'language_selector.dart';
+import 'profile_form_example.dart';
 import 'session_form_example.dart';
+import 'settings_example.dart';
 import 'showcase_controller.dart';
 import 'setup_example.dart';
+import 'timer_example.dart';
 import 'welcome_example.dart';
 
-/// Development entry point; sample records are never written to storage.
+/// Development entry point; sample records are never written to journal storage.
 class MeloopUiShowcase extends ConsumerStatefulWidget {
-  const MeloopUiShowcase({super.key});
+  const MeloopUiShowcase({super.key, this.developmentTools = true});
+
+  final bool developmentTools;
+
   @override
   ConsumerState<MeloopUiShowcase> createState() => _MeloopUiShowcaseState();
 }
 
 class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
   final _search = TextEditingController();
+
   @override
   void dispose() {
     _search.dispose();
@@ -26,140 +39,274 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
 
   void _catalog() => Navigator.of(context)
       .push(MaterialPageRoute<void>(builder: (_) => const ComponentCatalog()));
-  void _setup() =>
-      Navigator.of(context)
-          .push(MaterialPageRoute<void>(builder: (_) => const SetupExample()));
+
+  void _profileForm() => Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (routeContext) => ProfileFormExample(
+        onBack: () => Navigator.of(routeContext).pop(),
+        onSave: (name, instrument) {
+          ref
+              .read(meloopShellControllerProvider.notifier)
+              .addProfile(name: name, instrument: instrument);
+          Navigator.of(routeContext).pop();
+        },
+      ),
+    ),
+  );
+
+  void _setup(PreviewInstrumentProfile profile) => Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (_) => SetupExample(
+        profile: profile,
+        onStart: ref.read(meloopShellControllerProvider.notifier).startDraft,
+      ),
+    ),
+  );
+
+  void _profiles() => Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (routeContext) => Consumer(
+        builder: (context, profilesRef, _) {
+          final shell = profilesRef.watch(meloopShellControllerProvider);
+          return InstrumentProfilesExample(
+            profiles: shell.profiles,
+            selectedProfileId: shell.selectedProfileId,
+            onBack: () => Navigator.of(routeContext).pop(),
+            onHome: () {
+              Navigator.of(routeContext).pop();
+              profilesRef
+                  .read(meloopShellControllerProvider.notifier)
+                  .selectTab(0);
+            },
+            onAdd: _profileForm,
+          );
+        },
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(showcaseControllerProvider);
-    final controller = ref.read(showcaseControllerProvider.notifier);
-    // Keep the editing controller aligned when providers are reset or overridden.
-    if (_search.text != state.query) {
+    final shell = ref.watch(meloopShellControllerProvider);
+    final shellController = ref.read(meloopShellControllerProvider.notifier);
+    final showcase = ref.watch(showcaseControllerProvider);
+    final showcaseController = ref.read(showcaseControllerProvider.notifier);
+    if (_search.text != showcase.query) {
       _search.value = TextEditingValue(
-        text: state.query,
-        selection: TextSelection.collapsed(offset: state.query.length),
+        text: showcase.query,
+        selection: TextSelection.collapsed(offset: showcase.query.length),
       );
+    }
+
+    return switch (shell.destination) {
+      StartupDestination.welcome => WelcomeExample(
+        onCreateProfile: _profileForm,
+      ),
+      StartupDestination.profilePicker => InstrumentPickerExample(
+        profiles: shell.profiles,
+        selectedProfileId: shell.selectedProfileId,
+        onSelect: shellController.selectProfile,
+        onAdd: _profileForm,
+        onBack: shell.requiresProfileSelection
+            ? null
+            : shellController.showMain,
+      ),
+      StartupDestination.recoveredTimer => const TimerExample(),
+      StartupDestination.main => _mainTabs(
+        shell,
+        shellController,
+        showcase,
+        showcaseController,
+      ),
+    };
+  }
+
+  Widget _mainTabs(
+    MeloopShellState shell,
+    MeloopShellController shellController,
+    ShowcaseState showcase,
+    ShowcaseController showcaseController,
+  ) {
+    final profile = shell.selectedProfile;
+    if (profile == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        shellController.reload(StartupSnapshot.empty);
+      });
+      return const SizedBox.shrink();
     }
     return MeloopPage(
       bottomNavigation: MeloopBottomNavigation(
-        selectedIndex: state.selectedTab,
-        onSelected: controller.selectTab,
+        selectedIndex: shell.selectedTab,
+        onSelected: shellController.selectTab,
       ),
-      child: switch (state.selectedTab) {
+      child: switch (shell.selectedTab) {
         0 => HomeExample(
-          onCreate: _setup,
-          onHistory: () => controller.selectTab(1),
-          onCatalog: _catalog,
+          profile: profile,
+          draft: shell.draft,
+          onCreate: () => shell.draft == null
+              ? _setup(profile)
+              : shellController.showTimer(),
+          onHistory: () => shellController.selectTab(1),
+          onCatalog: widget.developmentTools ? _catalog : null,
+          onInstrument: shellController.showProfilePicker,
         ),
-        1 => _history(state, controller),
-        2 => const Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: TempoSpace.page,
-          children: [
-            MeloopTopBar(title: 'Tiến độ'),
-            Text('Mỗi ngày,\nmột bước tiến.', style: TempoType.heading),
-            MeloopStateView(
-              state: MeloopViewState.empty,
-              title: 'Chưa có dữ liệu tiến độ.',
-              message: 'Hoàn tất một buổi luyện để nhìn lại hành trình.',
-            ),
-          ],
-        ),
-        _ => _settings(state, controller),
+        1 => _history(shell, showcase, showcaseController),
+        2 => _progress(),
+        _ => _settings(profile, showcase, showcaseController),
       },
     );
   }
 
-  Widget _history(ShowcaseState state, ShowcaseController controller) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    spacing: TempoSpace.page,
-    children: [
-      const MeloopTopBar(),
-      const Text('Buổi luyện', style: TempoType.heading),
-      const Text('Những nốt nhạc làm nên hành trình.'),
-      MeloopSearch(controller: _search, onChanged: controller.search),
-      MeloopChoiceGroup<int>(
-        label: 'Khoảng thời gian',
-        initialValue: 0,
-        requirement: MeloopFieldRequirement.required,
-        choices: const [
-          MeloopChoice(value: 0, label: 'Tất cả'),
-          MeloopChoice(value: 7, label: '7 ngày'),
-          MeloopChoice(value: 30, label: '30 ngày'),
-        ],
-        onChanged: (_) {},
-      ),
-      if (state.query.isNotEmpty &&
-          !'luyện gam c'.contains(state.query.toLowerCase()))
+  Widget _history(
+    MeloopShellState shell,
+    ShowcaseState state,
+    ShowcaseController controller,
+  ) {
+    final strings = context.l10n;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: TempoSpace.page,
+      children: [
+        const MeloopTopBar(),
+        Text(strings.navHistory, style: TempoType.heading),
+        Text(strings.historySubtitle),
+        if (shell.draft != null)
+          MeloopCard(
+            color: TempoColors.soft,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(strings.unfinishedPractice, style: TempoType.title),
+                const SizedBox(height: TempoSpace.sm),
+                MeloopButton(
+                  label: strings.continuePractice,
+                  icon: MeloopIcons.play,
+                  onPressed: ref
+                      .read(meloopShellControllerProvider.notifier)
+                      .showTimer,
+                ),
+              ],
+            ),
+          ),
+        MeloopSearch(controller: _search, onChanged: controller.search),
+        MeloopChoiceGroup<int>(
+          label: strings.timeRange,
+          initialValue: 0,
+          requirement: MeloopFieldRequirement.required,
+          requiredMessage: strings.requiredChoice(
+            strings.timeRange.toLowerCase(),
+          ),
+          choices: [
+            MeloopChoice(value: 0, label: strings.all),
+            MeloopChoice(value: 7, label: strings.sevenDays),
+            MeloopChoice(value: 30, label: strings.thirtyDays),
+          ],
+          onChanged: (_) {},
+        ),
+        if (state.query.isNotEmpty &&
+            !strings.sampleSessionTitle.toLowerCase().contains(
+              state.query.toLowerCase(),
+            ))
+          MeloopStateView(
+            state: MeloopViewState.empty,
+            title: strings.noMatchingSessions,
+            actionLabel: strings.clearSearchAction,
+            onAction: () {
+              _search.clear();
+              controller.search('');
+            },
+          )
+        else
+          MeloopCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(strings.sampleSessionTitle, style: TempoType.title),
+                Text(strings.sampleSessionDate),
+              ],
+            ),
+          ),
+        MeloopButton(
+          label: shell.draft == null
+              ? strings.createPractice
+              : strings.continuePractice,
+          icon: shell.draft == null ? MeloopIcons.plus : MeloopIcons.play,
+          onPressed: () => shell.draft == null
+              ? _setup(shell.selectedProfile!)
+              : ref.read(meloopShellControllerProvider.notifier).showTimer(),
+        ),
+        Text(
+          strings.showcaseSaveCount(state.saveCount),
+          style: TempoType.caption,
+        ),
+      ],
+    );
+  }
+
+  Widget _progress() {
+    final strings = context.l10n;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: TempoSpace.page,
+      children: [
+        MeloopTopBar(title: strings.navProgress),
+        Text(strings.progressHeading, style: TempoType.heading),
         MeloopStateView(
           state: MeloopViewState.empty,
-          title: 'Không có buổi luyện phù hợp.',
-          actionLabel: 'Xóa tìm kiếm',
-          onAction: () {
-            _search.clear();
-            controller.search('');
-          },
-        )
-      else
-        const MeloopCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Luyện gam C', style: TempoType.title),
-              Text('23/09/2026 · 30 phút'),
-            ],
+          title: strings.noProgressTitle,
+          message: strings.noProgressMessage,
+        ),
+      ],
+    );
+  }
+
+  Widget _settings(
+    PreviewInstrumentProfile profile,
+    ShowcaseState state,
+    ShowcaseController controller,
+  ) {
+    final strings = context.l10n;
+    final settings = SettingsExample(
+      profile: profile,
+      language: _settingsLanguage(),
+      onLanguage: () => showLanguageSelector(context, ref),
+      onProfiles: _profiles,
+    );
+    if (!widget.developmentTools) return settings;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        settings,
+        const SizedBox(height: TempoSpace.page),
+        MeloopButton(
+          label: strings.componentCatalog,
+          style: MeloopButtonStyle.yellow,
+          onPressed: _catalog,
+        ),
+        const SizedBox(height: TempoSpace.md),
+        MeloopButton(
+          label: strings.openSessionForm,
+          style: MeloopButtonStyle.outline,
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const SessionFormExample()),
           ),
         ),
-      MeloopButton(
-        label: 'Tạo buổi luyện',
-        icon: MeloopIcons.plus,
-        onPressed: _setup,
-      ),
-      Text(
-        'Mẫu UI · ${state.saveCount} lần lưu mẫu hoàn tất. Không ghi dữ liệu lên thiết bị.',
-        style: TempoType.caption,
-      ),
-    ],
-  );
-  Widget _settings(ShowcaseState state, ShowcaseController controller) =>
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        spacing: TempoSpace.page,
-        children: [
-          const MeloopTopBar(title: 'Cài đặt'),
-          const Text('Theo cách\ncủa bạn.', style: TempoType.heading),
-          MeloopButton(
-            label: 'Bộ thành phần cho Wei',
-            style: MeloopButtonStyle.yellow,
-            onPressed: _catalog,
-          ),
-          MeloopButton(
-            label: 'Xem màn chào Tempo',
-            style: MeloopButtonStyle.outline,
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => WelcomeExample(onCreateProfile: _catalog),
-              ),
-            ),
-          ),
-          MeloopButton(
-            label: 'Xem form lưu buổi luyện',
-            style: MeloopButtonStyle.outline,
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const SessionFormExample(),
-              ),
-            ),
-          ),
-          MeloopToggle(
-            label: 'Mô phỏng lỗi ở lần lưu tiếp',
-            value: state.failNextSave,
-            onChanged: controller.simulateFailure,
-          ),
-          const MeloopNotice(
-            message: 'Đây là màn mẫu phát triển UI. Các thao tác không lưu nhật ký thật.',
-          ),
-        ],
-      );
+        const SizedBox(height: TempoSpace.md),
+        MeloopToggle(
+          label: strings.simulateNextSaveFailure,
+          value: state.failNextSave,
+          onChanged: controller.simulateFailure,
+        ),
+      ],
+    );
+  }
+
+  String _settingsLanguage() {
+    final strings = context.l10n;
+    final languageCode =
+        ref.watch(appLocaleProvider).value?.languageCode ?? 'vi';
+    return languageCode == 'en'
+        ? strings.languageEnglish
+        : strings.languageVietnamese;
+  }
 }

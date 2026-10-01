@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/l10n.dart';
 import '../application/session_form_controller.dart';
 import '../application/session_form_values.dart';
 import '../components/meloop_ui.dart';
@@ -91,11 +92,11 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
         : h * 3600 + m * 60 + s;
     setState(() {
       _durationError = total < 1 || total > 86400
-          ? 'Thời lượng phải từ 1 giây đến 24 giờ.'
+          ? context.l10n.durationRange
           : null;
     });
     if (!valid || _durationError != null) {
-      if (MeloopValidation.title(_title.text) != null) {
+      if (MeloopValidation.titleFor(_title.text, context.l10n) != null) {
         _titleFocus.requestFocus();
       }
       return;
@@ -124,10 +125,10 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
       if (!_dirty ||
           await showMeloopConfirm(
             context,
-            title: 'Bỏ thay đổi?',
-            message: 'Những thay đổi chưa lưu sẽ bị bỏ.',
-            confirmLabel: 'Bỏ thay đổi',
-            cancelLabel: 'Tiếp tục sửa',
+            title: context.l10n.discardChangesTitle,
+            message: context.l10n.discardChangesMessage,
+            confirmLabel: context.l10n.discardChanges,
+            cancelLabel: context.l10n.continueEditing,
             destructive: true,
           )) {
         if (mounted) Navigator.of(context).pop();
@@ -139,11 +140,10 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = context.l10n;
     final saveState = ref.watch(sessionFormControllerProvider(_saveId));
     final saving = saveState.isLoading;
-    final saveError = saveState.hasError
-        ? 'Chưa thể lưu buổi luyện. Nội dung của bạn vẫn ở đây. Vui lòng thử lại.'
-        : null;
+    final saveError = saveState.hasError ? strings.saveSessionFailed : null;
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -151,7 +151,7 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
       },
       child: MeloopPage(
         topBar: MeloopTopBar(
-          title: 'Lưu buổi luyện',
+          title: strings.saveSessionTitle,
           onBack: saving ? null : _back,
         ),
         child: Form(
@@ -160,22 +160,19 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: TempoSpace.page,
             children: [
-              const Text(
-                'Một buổi luyện,\nmột bước tiến.',
-                style: TempoType.heading,
-              ),
-              const Text('Ghi lại điều bạn muốn nhớ.'),
+              Text(strings.sessionFormHeading, style: TempoType.heading),
+              Text(strings.sessionFormSubtitle),
               MeloopField(
-                label: 'Tên buổi luyện',
+                label: strings.sessionTitle,
                 controller: _title,
                 focusNode: _titleFocus,
                 requirement: MeloopFieldRequirement.required,
-                hint: 'Ví dụ: Luyện gam C',
-                validator: MeloopValidation.title,
+                hint: strings.sessionTitleHint,
+                validator: (value) => MeloopValidation.titleFor(value, strings),
                 enabled: !saving,
               ),
               MeloopDateField(
-                label: 'Ngày luyện',
+                label: strings.practiceDate,
                 value: _date,
                 enabled: !saving,
                 onChanged: (date) => setState(() => _date = date),
@@ -185,9 +182,9 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
                 children: [
                   MeloopResponsiveRow(
                     children: [
-                      _durationField('Giờ', _hours, 24),
-                      _durationField('Phút', _minutes, 59),
-                      _durationField('Giây', _seconds, 59),
+                      _durationField(strings.hours, _hours, 24),
+                      _durationField(strings.minutes, _minutes, 59),
+                      _durationField(strings.seconds, _seconds, 59),
                     ],
                   ),
                   if (_durationError != null)
@@ -203,43 +200,43 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
                 ],
               ),
               _rating(
-                'Cảm xúc',
+                strings.mood,
                 _mood,
                 (value) => setState(() => _mood = value),
               ),
               _rating(
-                'Mức độ tập trung',
+                strings.focusLevel,
                 _focus,
                 (value) => setState(() => _focus = value),
               ),
               const Divider(),
               MeloopField(
-                label: 'Bạn đã luyện gì?',
+                label: strings.practicedWhat,
                 controller: _practiced,
                 type: MeloopInputType.multiline,
-                hint: 'Gam, hợp âm, bài nhạc…',
-                validator: MeloopValidation.note,
+                hint: strings.practicedHint,
+                validator: (value) => MeloopValidation.noteFor(value, strings),
                 enabled: !saving,
               ),
               MeloopField(
-                label: 'Điều còn vướng',
+                label: strings.difficulty,
                 controller: _difficulty,
                 type: MeloopInputType.multiline,
-                hint: 'Một đoạn khó, một điều muốn cải thiện…',
-                validator: MeloopValidation.note,
+                hint: strings.difficultyHint,
+                validator: (value) => MeloopValidation.noteFor(value, strings),
                 enabled: !saving,
               ),
               MeloopField(
-                label: 'Cho lần luyện tiếp',
+                label: strings.nextPractice,
                 controller: _next,
                 type: MeloopInputType.multiline,
-                validator: MeloopValidation.note,
+                validator: (value) => MeloopValidation.noteFor(value, strings),
                 enabled: !saving,
               ),
               if (saveError != null)
                 MeloopNotice(message: saveError, kind: MeloopNoticeKind.error),
               MeloopButton(
-                label: 'Lưu buổi luyện',
+                label: strings.savePractice,
                 icon: MeloopIcons.check,
                 onPressed: _save,
                 isLoading: saving,
@@ -261,14 +258,19 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
     type: MeloopInputType.integer,
     requirement: MeloopFieldRequirement.required,
     enabled: !_saving,
-    validator: (value) =>
-        MeloopValidation.integer(value, label: label, min: 0, max: max),
+    validator: (value) => MeloopValidation.integer(
+      value,
+      label: label,
+      min: 0,
+      max: max,
+      strings: context.l10n,
+    ),
   );
   Widget _rating(String label, int? value, ValueChanged<int?> onChanged) =>
       MeloopRating(
         label: label,
         initialValue: value,
-        mood: label == 'Cảm xúc',
+        mood: label == context.l10n.mood,
         enabled: !_saving,
         onChanged: onChanged,
       );
