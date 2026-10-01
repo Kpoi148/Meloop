@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../application/instrument_profile_service.dart';
 import '../components/meloop_ui.dart';
 
+const _profileArtworkBackground = Color(0xFFF4F0E3);
+
 class ProfilePickerScreen extends StatelessWidget {
   const ProfilePickerScreen({
     super.key,
@@ -87,7 +89,7 @@ class _PickerCard extends StatelessWidget {
       child: Container(
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          color: const Color(0xFFF4F0E3),
+          color: _profileArtworkBackground,
           border: Border.all(
             color: selected ? TempoColors.teal : TempoColors.line,
             width: selected ? 2 : 1,
@@ -102,12 +104,17 @@ class _PickerCard extends StatelessWidget {
                 children: [
                   Center(
                     child: profile.instrumentType == InstrumentType.guitar
-                        ? const MeloopArt.scene(MeloopScene.guitar, size: 230)
+                        ? const MeloopArt.scene(
+                            MeloopScene.guitar,
+                            size: 230,
+                            backgroundColor: _profileArtworkBackground,
+                          )
                         : MeloopArt.instrument(
                             MeloopInstrument.values[profile
                                 .instrumentType
                                 .index],
                             size: 230,
+                            backgroundColor: _profileArtworkBackground,
                           ),
                   ),
                   if (selected)
@@ -252,7 +259,7 @@ class _ManagerRow extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(11),
     decoration: BoxDecoration(
-      color: const Color(0x44FFFFFF),
+      color: _profileArtworkBackground,
       border: Border.all(color: TempoColors.line),
       borderRadius: BorderRadius.circular(TempoRadius.card),
     ),
@@ -261,6 +268,7 @@ class _ManagerRow extends StatelessWidget {
         MeloopArt.instrument(
           MeloopInstrument.values[profile.instrumentType.index],
           size: 112,
+          backgroundColor: _profileArtworkBackground,
         ),
         const SizedBox(width: 10),
         Expanded(

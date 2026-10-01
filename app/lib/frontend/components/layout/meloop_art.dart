@@ -27,12 +27,15 @@ class MeloopArt extends StatelessWidget {
       asset = 'tools-v2.png';
   final MeloopInstrument? instrument;
   final MeloopTool? tool;
-  const MeloopArt.scene(this.scene, {super.key, this.size = 118})
-    : instrument = null,
-      backgroundColor = null,
-      tool = null,
-      columns = 3,
-      asset = 'illustrations.png';
+  const MeloopArt.scene(
+    this.scene, {
+    super.key,
+    this.size = 118,
+    this.backgroundColor,
+  }) : instrument = null,
+       tool = null,
+       columns = 3,
+       asset = 'illustrations.png';
   final MeloopScene? scene;
   int get index => instrument?.index ?? tool?.index ?? scene!.index;
   final int columns;
