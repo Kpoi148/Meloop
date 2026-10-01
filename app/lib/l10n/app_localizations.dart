@@ -863,8 +863,146 @@ abstract class AppLocalizations {
   /// No description provided for @settingsHeading.
   ///
   /// In vi, this message translates to:
-  /// **'Theo cách\ncủa bạn.'**
+  /// **'Theo cách bạn.'**
   String get settingsHeading;
+
+  /// No description provided for @settingsFreePlan.
+  ///
+  /// In vi, this message translates to:
+  /// **'FREE'**
+  String get settingsFreePlan;
+
+  /// No description provided for @settingsEyebrow.
+  ///
+  /// In vi, this message translates to:
+  /// **'MELOOP · KHÔNG GIAN CỦA BẠN'**
+  String get settingsEyebrow;
+
+  /// No description provided for @settingsManageProfiles.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quản lý hồ sơ nhạc cụ'**
+  String get settingsManageProfiles;
+
+  /// No description provided for @settingsProDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm hồ sơ nhạc cụ và lọc thống kê nâng cao.'**
+  String get settingsProDescription;
+
+  /// No description provided for @settingsExplorePro.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khám phá Pro'**
+  String get settingsExplorePro;
+
+  /// No description provided for @settingsPersonalGroup.
+  ///
+  /// In vi, this message translates to:
+  /// **'Theo cách của bạn'**
+  String get settingsPersonalGroup;
+
+  /// No description provided for @settingsReminderOff.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tắt'**
+  String get settingsReminderOff;
+
+  /// No description provided for @settingsDeviceData.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dữ liệu trên thiết bị'**
+  String get settingsDeviceData;
+
+  /// No description provided for @settingsInformationGroup.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thông tin & hỗ trợ'**
+  String get settingsInformationGroup;
+
+  /// No description provided for @settingsPrivacy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quyền riêng tư'**
+  String get settingsPrivacy;
+
+  /// No description provided for @settingsContactSupport.
+  ///
+  /// In vi, this message translates to:
+  /// **'Liên hệ hỗ trợ'**
+  String get settingsContactSupport;
+
+  /// No description provided for @settingsRestorePro.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khôi phục Pro'**
+  String get settingsRestorePro;
+
+  /// No description provided for @settingsVersion.
+  ///
+  /// In vi, this message translates to:
+  /// **'Meloop · {version}'**
+  String settingsVersion(String version);
+
+  /// No description provided for @settingsStudioCredit.
+  ///
+  /// In vi, this message translates to:
+  /// **'Made with care by Moss Studio'**
+  String get settingsStudioCredit;
+
+  /// No description provided for @instrumentProfilesTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hồ sơ nhạc cụ'**
+  String get instrumentProfilesTitle;
+
+  /// No description provided for @instrumentProfilesHeading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mỗi nhạc cụ,\nmột hành trình.'**
+  String get instrumentProfilesHeading;
+
+  /// No description provided for @instrumentProfilesSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Những âm thanh làm nên bạn.'**
+  String get instrumentProfilesSubtitle;
+
+  /// No description provided for @profileInUse.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang sử dụng'**
+  String get profileInUse;
+
+  /// No description provided for @profileArchived.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã lưu trữ'**
+  String get profileArchived;
+
+  /// No description provided for @editProfile.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sửa hồ sơ'**
+  String get editProfile;
+
+  /// No description provided for @archiveProfile.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lưu trữ'**
+  String get archiveProfile;
+
+  /// No description provided for @reactivateProfile.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kích hoạt lại'**
+  String get reactivateProfile;
+
+  /// No description provided for @freeProfilesNote.
+  ///
+  /// In vi, this message translates to:
+  /// **'Miễn phí có 3 hồ sơ. Lưu trữ giữ nguyên lịch sử và không giải phóng suất hồ sơ.'**
+  String get freeProfilesNote;
 
   /// No description provided for @settingsLanguageDescription.
   ///

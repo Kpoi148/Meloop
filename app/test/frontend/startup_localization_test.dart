@@ -157,4 +157,57 @@ void main() {
     expect(find.text('Hôm nay bạn chơi\nnhạc cụ nào?'), findsNothing);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('settings tab follows the prototype composition', (tester) async {
+    await tester.pumpWidget(
+      MeloopApp(
+        overrides: [
+          startupSnapshotProvider.overrideWithValue(StartupSnapshot.oneProfile),
+        ],
+        home: const MeloopUiShowcase(developmentTools: false),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Cài đặt'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('FREE'), findsOneWidget);
+    expect(find.text('MELOOP · KHÔNG GIAN CỦA BẠN'), findsOneWidget);
+    expect(find.text('Theo cách bạn.'), findsOneWidget);
+    expect(find.text('Guitar của tôi'), findsOneWidget);
+    expect(find.text('Quản lý hồ sơ nhạc cụ'), findsOneWidget);
+    expect(find.text('Meloop Pro', findRichText: true), findsOneWidget);
+    expect(find.text('Theo cách của bạn'), findsOneWidget);
+    expect(find.text('Dữ liệu trên thiết bị'), findsOneWidget);
+    expect(find.text('Thông tin & hỗ trợ'), findsOneWidget);
+    expect(find.text('Khôi phục Pro'), findsOneWidget);
+    expect(find.textContaining('Meloop · 0.1.0'), findsOneWidget);
+
+    await tester.tap(find.text('Quản lý hồ sơ nhạc cụ'));
+    await tester.pumpAndSettle();
+    expect(find.text('Hồ sơ nhạc cụ'), findsOneWidget);
+    expect(find.text('Mỗi nhạc cụ,\nmột hành trình.'), findsOneWidget);
+    expect(find.text('Những âm thanh làm nên bạn.'), findsOneWidget);
+    expect(find.text('Đang chọn'), findsOneWidget);
+    expect(
+      find.text(
+        'Miễn phí có 3 hồ sơ. Lưu trữ giữ nguyên lịch sử và không giải phóng suất hồ sơ.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.byType(MeloopBottomNavigation), findsNothing);
+
+    await tester.tap(find.text('Thêm hồ sơ'));
+    await tester.pumpAndSettle();
+    expect(find.text('Bạn chơi nhạc cụ gì?'), findsOneWidget);
+    await tester.tap(find.byTooltip('Quay lại'));
+    await tester.pumpAndSettle();
+    expect(find.text('Mỗi nhạc cụ,\nmột hành trình.'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Trang chủ'));
+    await tester.pumpAndSettle();
+    expect(find.text('Tổng quan'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }

@@ -421,7 +421,80 @@ class AppLocalizationsVi extends AppLocalizations {
       'Hoàn tất một buổi luyện để nhìn lại hành trình.';
 
   @override
-  String get settingsHeading => 'Theo cách\ncủa bạn.';
+  String get settingsHeading => 'Theo cách bạn.';
+
+  @override
+  String get settingsFreePlan => 'FREE';
+
+  @override
+  String get settingsEyebrow => 'MELOOP · KHÔNG GIAN CỦA BẠN';
+
+  @override
+  String get settingsManageProfiles => 'Quản lý hồ sơ nhạc cụ';
+
+  @override
+  String get settingsProDescription =>
+      'Thêm hồ sơ nhạc cụ và lọc thống kê nâng cao.';
+
+  @override
+  String get settingsExplorePro => 'Khám phá Pro';
+
+  @override
+  String get settingsPersonalGroup => 'Theo cách của bạn';
+
+  @override
+  String get settingsReminderOff => 'Tắt';
+
+  @override
+  String get settingsDeviceData => 'Dữ liệu trên thiết bị';
+
+  @override
+  String get settingsInformationGroup => 'Thông tin & hỗ trợ';
+
+  @override
+  String get settingsPrivacy => 'Quyền riêng tư';
+
+  @override
+  String get settingsContactSupport => 'Liên hệ hỗ trợ';
+
+  @override
+  String get settingsRestorePro => 'Khôi phục Pro';
+
+  @override
+  String settingsVersion(String version) {
+    return 'Meloop · $version';
+  }
+
+  @override
+  String get settingsStudioCredit => 'Made with care by Moss Studio';
+
+  @override
+  String get instrumentProfilesTitle => 'Hồ sơ nhạc cụ';
+
+  @override
+  String get instrumentProfilesHeading => 'Mỗi nhạc cụ,\nmột hành trình.';
+
+  @override
+  String get instrumentProfilesSubtitle => 'Những âm thanh làm nên bạn.';
+
+  @override
+  String get profileInUse => 'Đang sử dụng';
+
+  @override
+  String get profileArchived => 'Đã lưu trữ';
+
+  @override
+  String get editProfile => 'Sửa hồ sơ';
+
+  @override
+  String get archiveProfile => 'Lưu trữ';
+
+  @override
+  String get reactivateProfile => 'Kích hoạt lại';
+
+  @override
+  String get freeProfilesNote =>
+      'Miễn phí có 3 hồ sơ. Lưu trữ giữ nguyên lịch sử và không giải phóng suất hồ sơ.';
 
   @override
   String settingsLanguageDescription(String language) {

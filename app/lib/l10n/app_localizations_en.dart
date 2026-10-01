@@ -424,7 +424,81 @@ class AppLocalizationsEn extends AppLocalizations {
       'Finish a practice session to look back on your journey.';
 
   @override
-  String get settingsHeading => 'Make it\nyours.';
+  String get settingsHeading => 'Make it yours.';
+
+  @override
+  String get settingsFreePlan => 'FREE';
+
+  @override
+  String get settingsEyebrow => 'MELOOP · YOUR SPACE';
+
+  @override
+  String get settingsManageProfiles => 'Manage instrument profiles';
+
+  @override
+  String get settingsProDescription =>
+      'Add instrument profiles and unlock advanced progress filters.';
+
+  @override
+  String get settingsExplorePro => 'Explore Pro';
+
+  @override
+  String get settingsPersonalGroup => 'Make it yours';
+
+  @override
+  String get settingsReminderOff => 'Off';
+
+  @override
+  String get settingsDeviceData => 'Data on this device';
+
+  @override
+  String get settingsInformationGroup => 'Information & support';
+
+  @override
+  String get settingsPrivacy => 'Privacy';
+
+  @override
+  String get settingsContactSupport => 'Contact support';
+
+  @override
+  String get settingsRestorePro => 'Restore Pro';
+
+  @override
+  String settingsVersion(String version) {
+    return 'Meloop · $version';
+  }
+
+  @override
+  String get settingsStudioCredit => 'Made with care by Moss Studio';
+
+  @override
+  String get instrumentProfilesTitle => 'Instrument profiles';
+
+  @override
+  String get instrumentProfilesHeading => 'Every instrument,\nits own journey.';
+
+  @override
+  String get instrumentProfilesSubtitle =>
+      'The sounds that make you who you are.';
+
+  @override
+  String get profileInUse => 'In use';
+
+  @override
+  String get profileArchived => 'Archived';
+
+  @override
+  String get editProfile => 'Edit profile';
+
+  @override
+  String get archiveProfile => 'Archive';
+
+  @override
+  String get reactivateProfile => 'Reactivate';
+
+  @override
+  String get freeProfilesNote =>
+      'The free plan includes 3 profiles. Archiving preserves history and does not free a profile slot.';
 
   @override
   String settingsLanguageDescription(String language) {

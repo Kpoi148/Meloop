@@ -7,10 +7,12 @@ import '../application/startup_controller.dart';
 import '../components/meloop_ui.dart';
 import 'component_catalog.dart';
 import 'home_example.dart';
+import 'instrument_profiles_example.dart';
 import 'instrument_picker_example.dart';
 import 'language_selector.dart';
 import 'profile_form_example.dart';
 import 'session_form_example.dart';
+import 'settings_example.dart';
 import 'showcase_controller.dart';
 import 'setup_example.dart';
 import 'timer_example.dart';
@@ -57,6 +59,28 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
       builder: (_) => SetupExample(
         profile: profile,
         onStart: ref.read(meloopShellControllerProvider.notifier).startDraft,
+      ),
+    ),
+  );
+
+  void _profiles() => Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (routeContext) => Consumer(
+        builder: (context, profilesRef, _) {
+          final shell = profilesRef.watch(meloopShellControllerProvider);
+          return InstrumentProfilesExample(
+            profiles: shell.profiles,
+            selectedProfileId: shell.selectedProfileId,
+            onBack: () => Navigator.of(routeContext).pop(),
+            onHome: () {
+              Navigator.of(routeContext).pop();
+              profilesRef
+                  .read(meloopShellControllerProvider.notifier)
+                  .selectTab(0);
+            },
+            onAdd: _profileForm,
+          );
+        },
       ),
     ),
   );
@@ -128,7 +152,7 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
         ),
         1 => _history(shell, showcase, showcaseController),
         2 => _progress(),
-        _ => _settings(showcase, showcaseController),
+        _ => _settings(profile, showcase, showcaseController),
       },
     );
   }
@@ -236,93 +260,53 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
     );
   }
 
-  Widget _settings(ShowcaseState state, ShowcaseController controller) {
+  Widget _settings(
+    PreviewInstrumentProfile profile,
+    ShowcaseState state,
+    ShowcaseController controller,
+  ) {
     final strings = context.l10n;
-    final languageCode =
-        ref.watch(appLocaleProvider).value?.languageCode ?? 'vi';
-    final language = languageCode == 'en'
-        ? strings.languageEnglish
-        : strings.languageVietnamese;
+    final settings = SettingsExample(
+      profile: profile,
+      language: _settingsLanguage(),
+      onLanguage: () => showLanguageSelector(context, ref),
+      onProfiles: _profiles,
+    );
+    if (!widget.developmentTools) return settings;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: TempoSpace.page,
       children: [
-        MeloopTopBar(title: strings.navSettings),
-        Text(strings.settingsHeading, style: TempoType.heading),
-        _SettingsRow(
-          icon: MeloopIcons.globe,
-          label: strings.language,
-          detail: strings.settingsLanguageDescription(language),
-          onTap: () => showLanguageSelector(context, ref),
+        settings,
+        const SizedBox(height: TempoSpace.page),
+        MeloopButton(
+          label: strings.componentCatalog,
+          style: MeloopButtonStyle.yellow,
+          onPressed: _catalog,
         ),
-        if (widget.developmentTools) ...[
-          MeloopButton(
-            label: strings.componentCatalog,
-            style: MeloopButtonStyle.yellow,
-            onPressed: _catalog,
+        const SizedBox(height: TempoSpace.md),
+        MeloopButton(
+          label: strings.openSessionForm,
+          style: MeloopButtonStyle.outline,
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const SessionFormExample()),
           ),
-          MeloopButton(
-            label: strings.openSessionForm,
-            style: MeloopButtonStyle.outline,
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const SessionFormExample(),
-              ),
-            ),
-          ),
-          MeloopToggle(
-            label: strings.simulateNextSaveFailure,
-            value: state.failNextSave,
-            onChanged: controller.simulateFailure,
-          ),
-        ],
+        ),
+        const SizedBox(height: TempoSpace.md),
+        MeloopToggle(
+          label: strings.simulateNextSaveFailure,
+          value: state.failNextSave,
+          onChanged: controller.simulateFailure,
+        ),
       ],
     );
   }
-}
 
-class _SettingsRow extends StatelessWidget {
-  const _SettingsRow({
-    required this.icon,
-    required this.label,
-    required this.detail,
-    required this.onTap,
-  });
-
-  final MeloopIcons icon;
-  final String label;
-  final String detail;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => Material(
-    color: TempoColors.fieldFill,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(TempoRadius.field),
-      side: const BorderSide(color: TempoColors.line),
-    ),
-    child: InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(TempoRadius.field),
-      child: Padding(
-        padding: const EdgeInsets.all(TempoSpace.md),
-        child: Row(
-          children: [
-            MeloopIcon(icon),
-            const SizedBox(width: TempoSpace.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(label, style: TempoType.label),
-                  Text(detail, style: TempoType.caption),
-                ],
-              ),
-            ),
-            const MeloopIcon(MeloopIcons.arrow),
-          ],
-        ),
-      ),
-    ),
-  );
+  String _settingsLanguage() {
+    final strings = context.l10n;
+    final languageCode =
+        ref.watch(appLocaleProvider).value?.languageCode ?? 'vi';
+    return languageCode == 'en'
+        ? strings.languageEnglish
+        : strings.languageVietnamese;
+  }
 }
