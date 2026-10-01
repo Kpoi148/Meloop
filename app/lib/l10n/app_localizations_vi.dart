@@ -386,6 +386,146 @@ class AppLocalizationsVi extends AppLocalizations {
   String get historySubtitle => 'Những nốt nhạc làm nên hành trình.';
 
   @override
+  String get practiceTodayLabel => 'Hôm nay';
+
+  @override
+  String get practiceYesterdayLabel => 'Hôm qua';
+
+  @override
+  String practiceRatingShort(int value) {
+    return '$value/5';
+  }
+
+  @override
+  String practiceDurationWithBpm(String duration, int bpm) {
+    return '$duration · $bpm BPM';
+  }
+
+  @override
+  String get practiceSort => 'Sắp xếp';
+
+  @override
+  String get practiceFilters => 'Bộ lọc';
+
+  @override
+  String get practiceApplyFilters => 'Áp dụng';
+
+  @override
+  String get practiceClearFilters => 'Xóa bộ lọc';
+
+  @override
+  String get practiceNewest => 'Mới nhất';
+
+  @override
+  String get practiceOldest => 'Cũ nhất';
+
+  @override
+  String get practiceClearSearchAndFilters => 'Xóa tìm kiếm và bộ lọc';
+
+  @override
+  String get practiceNoResultsMessage =>
+      'Thử từ khóa khác hoặc thay đổi bộ lọc để tìm buổi luyện của bạn.';
+
+  @override
+  String get practiceEmptyMessage =>
+      'Bắt đầu buổi luyện đầu tiên, ghi lại những điều bạn muốn nhớ.';
+
+  @override
+  String get practiceSessionDetails => 'Chi tiết buổi luyện';
+
+  @override
+  String get practiceWhatWasPracticed => 'Đã luyện';
+
+  @override
+  String get practiceSessionRecordings => 'Bản ghi của buổi này';
+
+  @override
+  String get practiceNotRated => 'Chưa đánh giá';
+
+  @override
+  String get practiceNoNotes => 'Chưa có ghi chú.';
+
+  @override
+  String practiceToday(String date) {
+    return 'Hôm nay · $date';
+  }
+
+  @override
+  String practiceYesterday(String date) {
+    return 'Hôm qua · $date';
+  }
+
+  @override
+  String practiceDurationMinutes(int minutes) {
+    return '$minutes phút';
+  }
+
+  @override
+  String practiceDurationSeconds(int seconds) {
+    return '$seconds giây';
+  }
+
+  @override
+  String practiceHoursMinutes(int hours, int minutes) {
+    return '$hours giờ $minutes phút';
+  }
+
+  @override
+  String practiceBpm(int bpm) {
+    return '$bpm BPM';
+  }
+
+  @override
+  String practiceMoodScore(int value) {
+    return 'Cảm xúc $value/5';
+  }
+
+  @override
+  String practiceFocusScore(int value) {
+    return 'Tập trung $value/5';
+  }
+
+  @override
+  String practiceRecordingCount(int count) {
+    return '$count bản ghi';
+  }
+
+  @override
+  String practiceRatingValue(int value) {
+    return '$value / 5';
+  }
+
+  @override
+  String get practiceSampleRhythm => 'Nhịp điệu cơ bản';
+
+  @override
+  String get practiceSampleSong => 'Ôn bài nhạc yêu thích';
+
+  @override
+  String get practiceSampleMinorScale => 'Luyện gam Am';
+
+  @override
+  String get practiceSampleTechnique => 'Luyện kỹ thuật tay';
+
+  @override
+  String get practiceSampleReview => 'Ôn lại những đoạn khó';
+
+  @override
+  String get practiceSampleSlowPractice => 'Luyện chậm, giữ nhịp đều';
+
+  @override
+  String get practiceSampleScaleNotes =>
+      'Gam C trưởng, luyện từng nốt rõ tiếng theo hai chiều.';
+
+  @override
+  String get practiceSampleSteadyNotes =>
+      'Luyện chậm từng đoạn, giữ nhịp đều và rõ tiếng.';
+
+  @override
+  String get practiceSampleDifficulty =>
+      'Đoạn chuyển cần mượt hơn, giữ nhịp khi tăng tốc độ.';
+
+  @override
   String get unfinishedPractice => 'Buổi luyện chưa hoàn tất';
 
   @override

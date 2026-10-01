@@ -90,10 +90,12 @@ class MeloopBottomNavigation extends StatelessWidget {
     required this.selectedIndex,
     required this.onSelected,
     this.items,
+    this.compact = false,
   });
   final int selectedIndex;
   final ValueChanged<int> onSelected;
   final List<MeloopNavItem>? items;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +121,9 @@ class MeloopBottomNavigation extends StatelessWidget {
               maxWidth: TempoSize.contentMaxWidth,
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+              padding: compact
+                  ? const EdgeInsets.fromLTRB(5, 10, 5, 11)
+                  : const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -133,54 +137,86 @@ class MeloopBottomNavigation extends StatelessWidget {
                           borderRadius: BorderRadius.circular(
                             TempoRadius.field,
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 2,
-                              vertical: 4,
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 38,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    color: selectedIndex == i
-                                        ? TempoColors.yellow
-                                        : null,
-                                    borderRadius: BorderRadius.circular(
-                                      TempoRadius.pill,
+                          child: Stack(
+                            alignment: Alignment.topCenter,
+                            fit: StackFit.passthrough,
+                            children: [
+                              Padding(
+                                padding: compact
+                                    ? const EdgeInsets.fromLTRB(2, 0, 2, 9)
+                                    : const EdgeInsets.symmetric(
+                                        horizontal: 2,
+                                        vertical: 4,
+                                      ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 38,
+                                      height: 36,
+                                      decoration: BoxDecoration(
+                                        color: selectedIndex == i
+                                            ? TempoColors.yellow
+                                            : null,
+                                        borderRadius: BorderRadius.circular(
+                                          TempoRadius.pill,
+                                        ),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: MeloopIcon(
+                                        resolvedItems[i].icon,
+                                        size: TempoSize.navigationIcon,
+                                      ),
+                                    ),
+                                    const SizedBox(height: TempoSpace.xs),
+                                    Text(
+                                      resolvedItems[i].label,
+                                      textAlign: TextAlign.center,
+                                      style: TempoType.caption.copyWith(
+                                        height: compact ? 1.25 : null,
+                                        letterSpacing: compact ? 0 : null,
+                                        fontWeight: selectedIndex == i
+                                            ? FontWeight.w700
+                                            : FontWeight.w500,
+                                      ),
+                                    ),
+                                    if (!compact) ...[
+                                      const SizedBox(height: TempoSpace.sm),
+                                      Container(
+                                        width: 35,
+                                        height: 4,
+                                        decoration: BoxDecoration(
+                                          color: selectedIndex == i
+                                              ? TempoColors.yellow
+                                              : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(
+                                            3,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                              if (compact)
+                                Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: Align(
+                                    child: Container(
+                                      width: 35,
+                                      height: 4,
+                                      decoration: BoxDecoration(
+                                        color: selectedIndex == i
+                                            ? TempoColors.yellow
+                                            : Colors.transparent,
+                                        borderRadius: BorderRadius.circular(3),
+                                      ),
                                     ),
                                   ),
-                                  alignment: Alignment.center,
-                                  child: MeloopIcon(
-                                    resolvedItems[i].icon,
-                                    size: TempoSize.navigationIcon,
-                                  ),
                                 ),
-                                const SizedBox(height: TempoSpace.xs),
-                                Text(
-                                  resolvedItems[i].label,
-                                  textAlign: TextAlign.center,
-                                  style: TempoType.caption.copyWith(
-                                    fontWeight: selectedIndex == i
-                                        ? FontWeight.w700
-                                        : FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(height: TempoSpace.sm),
-                                Container(
-                                  width: 35,
-                                  height: 4,
-                                  decoration: BoxDecoration(
-                                    color: selectedIndex == i
-                                        ? TempoColors.yellow
-                                        : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(3),
-                                  ),
-                                ),
-                              ],
-                            ),
+                            ],
                           ),
                         ),
                       ),

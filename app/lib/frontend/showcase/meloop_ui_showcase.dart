@@ -8,6 +8,7 @@ import '../application/app_settings_controller.dart';
 import '../application/instrument_profile_service.dart';
 import '../application/startup_controller.dart';
 import '../components/meloop_ui.dart';
+import '../practice_sessions/practice_sessions_tab.dart';
 import 'component_catalog.dart';
 import 'home_example.dart';
 import 'instrument_profile_preview.dart';
@@ -16,7 +17,6 @@ import 'instrument_picker_example.dart';
 import 'language_selector.dart';
 import 'profile_form_example.dart';
 import 'preview_data_reset_button.dart';
-import 'preview_copy.dart';
 import 'pro_preview_page.dart';
 import 'session_form_example.dart';
 import 'settings_example.dart';
@@ -50,11 +50,13 @@ class MeloopUiShowcase extends ConsumerStatefulWidget {
 }
 
 class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
-  final _search = TextEditingController();
+  final _practiceScrollControllers = <String, ScrollController>{};
 
   @override
   void dispose() {
-    _search.dispose();
+    for (final controller in _practiceScrollControllers.values) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -92,14 +94,16 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
     ),
   );
 
-  void _setup(PreviewInstrumentProfile profile) => Navigator.of(context).push(
-    MaterialPageRoute<void>(
+  Future<void> _setup(PreviewInstrumentProfile profile) async {
+    final route = MaterialPageRoute<void>(
       builder: (_) => SetupExample(
         profile: profile,
         onStart: ref.read(meloopShellControllerProvider.notifier).startDraft,
       ),
-    ),
-  );
+    );
+    await Navigator.of(context).push(route);
+    await route.completed;
+  }
 
   void _profiles() => Navigator.of(context).push(
     MaterialPageRoute<void>(
@@ -129,12 +133,6 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
     final shellController = ref.read(meloopShellControllerProvider.notifier);
     final showcase = ref.watch(showcaseControllerProvider);
     final showcaseController = ref.read(showcaseControllerProvider.notifier);
-    if (_search.text != showcase.query) {
-      _search.value = TextEditingValue(
-        text: showcase.query,
-        selection: TextSelection.collapsed(offset: showcase.query.length),
-      );
-    }
 
     return switch (shell.destination) {
       StartupDestination.welcome => WelcomeExample(
@@ -172,11 +170,30 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
       });
       return const SizedBox.shrink();
     }
+    final navigation = MeloopBottomNavigation(
+      selectedIndex: shell.selectedTab,
+      onSelected: shellController.selectTab,
+      compact: shell.selectedTab == 1,
+    );
+    if (shell.selectedTab == 1) {
+      return PracticeSessionsTab(
+        key: ValueKey(profile.id),
+        profile: profile,
+        draft: shell.draft,
+        scrollController: _practiceScrollControllers.putIfAbsent(
+          profile.id,
+          ScrollController.new,
+        ),
+        bottomNavigation: navigation,
+        onCreate: () => _setup(profile),
+        onContinue: shellController.showTimer,
+        onInstrument: () => _openProfilePage(
+          widget.onChooseProfile ?? shellController.showProfilePicker,
+        ),
+      );
+    }
     return MeloopPage(
-      bottomNavigation: MeloopBottomNavigation(
-        selectedIndex: shell.selectedTab,
-        onSelected: shellController.selectTab,
-      ),
+      bottomNavigation: navigation,
       child: switch (shell.selectedTab) {
         0 => HomeExample(
           showSampleData: widget.profile == null,
@@ -191,127 +208,9 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
             widget.onChooseProfile ?? shellController.showProfilePicker,
           ),
         ),
-        1 => _history(shell, showcase, showcaseController),
         2 => _progress(),
         _ => _settings(profile, showcase, showcaseController),
       },
-    );
-  }
-
-  Widget _history(
-    MeloopShellState shell,
-    ShowcaseState state,
-    ShowcaseController controller,
-  ) {
-    final strings = context.l10n;
-    if (widget.profile case final profile?) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        spacing: TempoSpace.page,
-        children: [
-          const MeloopTopBar(),
-          Text(strings.navHistory, style: TempoType.heading),
-          Text(
-            '${profile.name} · ${profileInstrumentLabel(strings, shell.selectedProfile!)}',
-          ),
-          if (shell.draft != null)
-            MeloopButton(
-              label: strings.continuePractice,
-              onPressed: ref
-                  .read(meloopShellControllerProvider.notifier)
-                  .showTimer,
-            ),
-          MeloopStateView(
-            state: MeloopViewState.empty,
-            title: strings.noPracticeSessions,
-            message: strings.profileSessionsEmptyMessage,
-          ),
-          MeloopButton(
-            label: strings.createPractice,
-            onPressed: () => shell.draft == null
-                ? _setup(shell.selectedProfile!)
-                : ref.read(meloopShellControllerProvider.notifier).showTimer(),
-          ),
-        ],
-      );
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: TempoSpace.page,
-      children: [
-        const MeloopTopBar(),
-        Text(strings.navHistory, style: TempoType.heading),
-        Text(strings.historySubtitle),
-        if (shell.draft != null)
-          MeloopCard(
-            color: TempoColors.soft,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(strings.unfinishedPractice, style: TempoType.title),
-                const SizedBox(height: TempoSpace.sm),
-                MeloopButton(
-                  label: strings.continuePractice,
-                  icon: MeloopIcons.play,
-                  onPressed: ref
-                      .read(meloopShellControllerProvider.notifier)
-                      .showTimer,
-                ),
-              ],
-            ),
-          ),
-        MeloopSearch(controller: _search, onChanged: controller.search),
-        MeloopChoiceGroup<int>(
-          label: strings.timeRange,
-          initialValue: 0,
-          requirement: MeloopFieldRequirement.required,
-          requiredMessage: strings.requiredChoice(
-            strings.timeRange.toLowerCase(),
-          ),
-          choices: [
-            MeloopChoice(value: 0, label: strings.all),
-            MeloopChoice(value: 7, label: strings.sevenDays),
-            MeloopChoice(value: 30, label: strings.thirtyDays),
-          ],
-          onChanged: (_) {},
-        ),
-        if (state.query.isNotEmpty &&
-            !strings.sampleSessionTitle.toLowerCase().contains(
-              state.query.toLowerCase(),
-            ))
-          MeloopStateView(
-            state: MeloopViewState.empty,
-            title: strings.noMatchingSessions,
-            actionLabel: strings.clearSearchAction,
-            onAction: () {
-              _search.clear();
-              controller.search('');
-            },
-          )
-        else
-          MeloopCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(strings.sampleSessionTitle, style: TempoType.title),
-                Text(strings.sampleSessionDate),
-              ],
-            ),
-          ),
-        MeloopButton(
-          label: shell.draft == null
-              ? strings.createPractice
-              : strings.continuePractice,
-          icon: shell.draft == null ? MeloopIcons.plus : MeloopIcons.play,
-          onPressed: () => shell.draft == null
-              ? _setup(shell.selectedProfile!)
-              : ref.read(meloopShellControllerProvider.notifier).showTimer(),
-        ),
-        Text(
-          strings.showcaseSaveCount(state.saveCount),
-          style: TempoType.caption,
-        ),
-      ],
     );
   }
 

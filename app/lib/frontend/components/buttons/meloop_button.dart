@@ -14,6 +14,7 @@ class MeloopButton extends StatefulWidget {
     required this.label,
     required this.onPressed,
     this.icon,
+    this.iconGap = TempoSpace.sm,
     this.style = MeloopButtonStyle.primary,
     this.isLoading = false,
     this.loadingLabel,
@@ -25,6 +26,7 @@ class MeloopButton extends StatefulWidget {
   final String label;
   final FutureOr<void> Function()? onPressed;
   final MeloopIcons? icon;
+  final double iconGap;
   final MeloopButtonStyle style;
   final bool isLoading;
   final String? loadingLabel;
@@ -116,8 +118,7 @@ class _MeloopButtonState extends State<MeloopButton> {
                   size: TempoSize.buttonIcon,
                   color: foreground,
                 ),
-              if (busy || widget.icon != null)
-                const SizedBox(width: TempoSpace.sm),
+              if (busy || widget.icon != null) SizedBox(width: widget.iconGap),
               Flexible(
                 child: Text(
                   busy

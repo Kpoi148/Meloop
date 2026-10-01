@@ -5,6 +5,7 @@ import '../application/instrument_profile_service.dart';
 import '../application/session_form_controller.dart';
 import '../application/startup_controller.dart';
 import '../components/meloop_ui.dart';
+import '../practice_sessions/practice_sessions_controller.dart';
 import '../profiles/instrument_profiles_feature.dart';
 import 'preview_data_reset_button.dart';
 import 'profile_preview_service.dart';
@@ -39,7 +40,12 @@ class _InstrumentProfilePreviewState extends State<InstrumentProfilePreview> {
   @override
   Widget build(BuildContext context) => ProviderScope(
     key: ValueKey(_generation),
-    overrides: [instrumentProfileServiceProvider.overrideWithValue(_service)],
+    overrides: [
+      instrumentProfileServiceProvider.overrideWithValue(_service),
+      practiceSessionsControllerProvider.overrideWith(
+        PracticeSessionsController.new,
+      ),
+    ],
     child: _ProfilePreview(
       onReset: _reset,
       onEnablePro: _service.enableProPreview,
