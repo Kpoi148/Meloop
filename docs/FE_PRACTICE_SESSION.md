@@ -7,6 +7,7 @@ Phần FE của UC-04 dùng bố cục `sessionSetup`, `timer` và `tools` trong
 - **Buổi luyện → icon + góc dưới phải** mở form tạo buổi. Nút nằm trong Scaffold phía trên bottom navigation, có tooltip và vùng chạm riêng; nội dung cuối trang chừa khoảng trống cho nút. Nút ẩn khi bàn phím mở.
 - Nhập tên bắt buộc rồi **Bắt đầu luyện**. Chỉ rời form sau khi service hoàn tất Start; lỗi giữ tên và cho thử lại. Nếu service đã có buổi chưa lưu, mở buổi đó và không tạo ID mới.
 - Màn đếm giờ hiển thị hồ sơ, tên buổi, thời gian và trạng thái từ service. Widget không tạo Timer, Stopwatch hoặc bộ đếm riêng. Tạm dừng, tiếp tục, đổi tên và hủy đều gọi service.
+- Hồ sơ phía trên dùng ảnh vuông vàng cạnh nội dung, không có card nền bao quanh. Ảnh hồ sơ và tranh trung tâm lấy cùng loại nhạc cụ runtime; profile Sáo hiển thị sáo ở cả hai vị trí. Guitar giữ tranh gốc; các nhạc cụ khác ghép sprite trong suốt vào khung Tempo. Chữ giờ, crop ảnh, khoảng cách nút và màu nút Công cụ theo mẫu.
 - **Công cụ** mở các thẻ theo prototype và chuyển cùng session ID cho tính năng công cụ. Việc mở/đóng route không reset hoặc kết thúc timer.
 - Back về tab trước hoặc app vào nền gọi Pause. Khi trở lại phải bấm Tiếp tục. Back từ màn xem lại trả về buổi Paused với cùng ID.
 - **Kết thúc** gọi Finish rồi mở form xem lại với tên, ngày bắt đầu và thời gian service trả về. Không tự nâng thời lượng 0 lên 1 giây; form báo lỗi để người dùng sửa.
@@ -46,6 +47,10 @@ flutter build apk --debug
 `practice_session_feature_test.dart` kiểm tra service cập nhật từ bên ngoài, paused interval, lỗi Start/Save, review thời lượng 0, Back, lifecycle nền, cùng ID khi mở công cụ, lưu đồng thời/idempotent, đổi tên và xác nhận hủy. Kiểm tra bố cục 320/390/460 px với chữ 1×/3× và safe area; nút tạo nằm phía trên thanh điều hướng.
 
 `practice_session_visual_test.dart` dựng ảnh với font Be Vietnam Pro và asset gốc tại `app/build/ui-review/practice-timer-390.png`, `practice-history-390.png` và `practice-tools-390.png`. Đã xem ảnh Flutter và đối chiếu thông số source CSS/asset prototype; chưa có golden baseline để khẳng định trùng từng pixel.
+
+Lượt sửa ảnh theo profile dựng thêm `practice-<instrument>-390.png` và `practice-<instrument>-460.png` cho cả bảy lựa chọn nhạc cụ để đối chiếu bố cục với mẫu người dùng.
+
+Sau lượt sửa: định dạng đạt, phân tích mã không có issue và toàn bộ 92 unit/widget tests đạt. APK chính đã build, cài cập nhật và mở trên Android 15/API 35; đã tạo buổi thử với profile Sáo và xem ảnh chụp thiết bị để xác nhận ảnh nhỏ/trung tâm cùng là sáo, header không có card nền và chữ giờ hiển thị lớn. Không ghi nhận marker lỗi Flutter/runtime trong lượt mở này.
 
 Kết quả ngày 01/10/2026: định dạng đạt; phân tích mã không có issue; toàn bộ 91 unit/widget tests đạt, trong đó có 14 tests UC-04. APK debug đã build thành công. `practice_session_smoke_test.dart` đạt trên Medium_Phone (`emulator-5554`, Android 15 / API 35), kiểm tra IME Android và toàn bộ luồng tạo → Pause → Resume → Finish → Review → Save. Smoke test dùng adapter bộ nhớ, không ghi dữ liệu người dùng. Chưa kiểm chứng service backend, lưu bền vững, audio hoặc TalkBack.
 

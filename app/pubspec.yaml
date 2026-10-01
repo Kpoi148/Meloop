@@ -37,6 +37,8 @@ flutter:
     - assets/illustrations/fidelity-welcome.png
     - assets/illustrations/fidelity-setup.png
     - assets/illustrations/fidelity-timer.png
+    - assets/illustrations/practice-timer-frame.png
+    - assets/illustrations/practice-instruments.png
     - assets/illustrations/instruments-v2.png
     - assets/illustrations/tools-v2.png
     - assets/illustrations/illustrations.png

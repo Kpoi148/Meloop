@@ -4,6 +4,62 @@ import 'tempo_tokens.dart';
 
 /// Dimensions from Tempo's final timer composition at 390 / 460 px.
 abstract final class PracticeTempo {
+  static const instrumentAsset =
+      'assets/illustrations/practice-instruments.png';
+  static const timerFrameAsset =
+      'assets/illustrations/practice-timer-frame.png';
+  static const guitarTimerAsset = 'assets/illustrations/fidelity-timer.png';
+  static const guitarCoverAsset = 'assets/illustrations/fidelity-setup.png';
+  static const instrumentColumns = 4;
+  static const instrumentRows = 2;
+  static const otherInstrumentCell = 7;
+  static const profileCoverBackground = Color(0xFFF4DB7B);
+  static const profileArtSize = 170.0;
+  static const profileArtLeft = -28.0;
+  static const profileArtTop = -22.0;
+  static const guitarCoverAlignment = Alignment(0, .4);
+  static const profileGap = 15.0;
+  static const titleIconGap = 9.0;
+  static const titleIconSize = 20.0;
+  static const pagePadding = EdgeInsets.fromLTRB(20, 14, 20, 30);
+  static const stageOverlap = 5.0;
+  static const stageInstrumentScale = .72;
+  static const stageInstrumentLeft = -45.0;
+  static const stageInstrumentTopFraction = .25;
+  static const compactStageInstrumentScale = .48;
+  static const compactStageInstrumentLeft = -80.0;
+  static const compactStageInstrumentTopFraction = .46;
+  static const fluteRotationDivisor = 6;
+  static const actionGap = 10.0;
+  static const toolsActionBackground = Color(0xFFDEE8DD);
+  static const toolsButtonHeight = 54.0;
+  static const profileName = TextStyle(
+    fontFamily: TempoType.fontFamily,
+    fontSize: 20,
+    height: 1.3,
+    letterSpacing: -.6,
+    fontWeight: FontWeight.w700,
+  );
+  static const titleCaption = TextStyle(
+    fontFamily: TempoType.fontFamily,
+    fontSize: 13,
+    height: 1.4,
+    color: Color(0xFF64877E),
+  );
+  static const sessionName = TextStyle(
+    fontFamily: TempoType.fontFamily,
+    fontSize: 23,
+    height: 1.2,
+    letterSpacing: -.75,
+    fontWeight: FontWeight.w700,
+  );
+  static const runningLabel = TextStyle(
+    fontFamily: TempoType.fontFamily,
+    fontSize: 16,
+    height: 1.5,
+    letterSpacing: .2,
+    fontWeight: FontWeight.w700,
+  );
   static const profileCover = 111.0;
   static const compactProfileCover = 96.0;
   static const stageHeight = 400.0;
@@ -54,6 +110,20 @@ abstract final class PracticeTempo {
   static const readout = TextStyle(
     fontFamily: TempoType.fontFamily,
     fontSize: 83,
+    height: 1.15,
+    letterSpacing: -5,
+    fontWeight: FontWeight.w700,
+  );
+  static const wideReadout = TextStyle(
+    fontFamily: TempoType.fontFamily,
+    fontSize: 92,
+    height: 1.15,
+    letterSpacing: -5,
+    fontWeight: FontWeight.w700,
+  );
+  static const compactReadout = TextStyle(
+    fontFamily: TempoType.fontFamily,
+    fontSize: 74,
     height: 1.15,
     letterSpacing: -5,
     fontWeight: FontWeight.w700,

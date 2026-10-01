@@ -8,6 +8,7 @@ import '../application/practice_session_provider.dart';
 import '../application/startup_controller.dart';
 import '../components/meloop_ui.dart';
 import '../practice/practice_duration.dart';
+import '../practice/practice_instrument_art.dart';
 import '../practice/practice_tools_page.dart';
 import '../practice/practice_title_form.dart';
 import '../practice/saved_practice_page.dart';
@@ -167,6 +168,7 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
         if (!didPop) unawaited(_back());
       },
       child: MeloopPage(
+        padding: PracticeTempo.pagePadding,
         topBar: MeloopTopBar(
           title: strings.timerTitle,
           onBack: _busy ? null : _back,
@@ -191,12 +193,12 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
                     '${strings.recoveredDraftTitle}\n${strings.recoveredDraftMessage}',
               ),
             ],
-            _TimerStage(draft: draft),
+            _TimerStage(draft: draft, instrument: profile.instrument),
             if (_error != null)
               MeloopNotice(message: _error!, kind: MeloopNoticeKind.error),
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              spacing: TempoSpace.md,
+              spacing: PracticeTempo.actionGap,
               children: [
                 MeloopButton(
                   label: draft.isRunning ? strings.pause : strings.resume,
@@ -214,8 +216,10 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
                   label: strings.timerTools,
                   icon: MeloopIcons.music,
                   style: MeloopButtonStyle.soft,
+                  backgroundColor: PracticeTempo.toolsActionBackground,
                   prominent: true,
                   borderRadius: TempoRadius.pill,
+                  minimumHeight: PracticeTempo.toolsButtonHeight,
                   onPressed: _busy ? null : () => _tools(draft.id),
                 ),
                 MeloopButton(
@@ -249,50 +253,42 @@ class _ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       final compact = constraints.maxWidth < PracticeTempo.compactContentWidth;
-      final cover = ClipRRect(
-        borderRadius: BorderRadius.circular(TempoRadius.recent),
-        child: SizedBox.square(
-          dimension: compact
-              ? PracticeTempo.compactProfileCover
-              : PracticeTempo.profileCover,
-          child: profile.instrument == MeloopInstrument.guitar
-              ? Image.asset(
-                  'assets/illustrations/fidelity-setup.png',
-                  fit: BoxFit.cover,
-                  alignment: Alignment.bottomCenter,
-                  excludeFromSemantics: true,
-                )
-              : MeloopArt.instrument(
-                  profile.instrument,
-                  backgroundColor: TempoColors.selection,
-                ),
-        ),
+      final cover = PracticeProfileCover(
+        key: const Key('practice-profile-cover'),
+        instrument: profile.instrument,
+        size: compact
+            ? PracticeTempo.compactProfileCover
+            : PracticeTempo.profileCover,
       );
       final copy = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             profileDisplayName(context.l10n, profile),
-            style: TempoType.button,
+            style: PracticeTempo.profileName,
           ),
           const SizedBox(height: TempoSpace.sm),
-          Text(context.l10n.sessionTitle, style: TempoType.caption),
+          Text(context.l10n.sessionTitle, style: PracticeTempo.titleCaption),
           TextButton(
             onPressed: onRename,
             style: TextButton.styleFrom(
               padding: EdgeInsets.zero,
               alignment: Alignment.centerLeft,
-              textStyle: TempoType.section,
+              textStyle: PracticeTempo.sessionName,
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(
+                Flexible(
                   child: Text(
                     title.isEmpty ? context.l10n.setPracticeName : title,
                   ),
                 ),
-                const SizedBox(width: TempoSpace.sm),
-                const MeloopIcon(MeloopIcons.edit, size: TempoSize.smallIcon),
+                const SizedBox(width: PracticeTempo.titleIconGap),
+                const MeloopIcon(
+                  MeloopIcons.edit,
+                  size: PracticeTempo.titleIconSize,
+                ),
               ],
             ),
           ),
@@ -308,7 +304,7 @@ class _ProfileHeader extends StatelessWidget {
       return Row(
         children: [
           cover,
-          const SizedBox(width: TempoSpace.lg),
+          const SizedBox(width: PracticeTempo.profileGap),
           Expanded(child: copy),
         ],
       );
@@ -317,8 +313,9 @@ class _ProfileHeader extends StatelessWidget {
 }
 
 class _TimerStage extends StatelessWidget {
-  const _TimerStage({required this.draft});
+  const _TimerStage({required this.draft, required this.instrument});
   final PracticeSessionDraft draft;
+  final MeloopInstrument instrument;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
@@ -334,7 +331,7 @@ class _TimerStage extends StatelessWidget {
                     ? context.l10n.timerRunning
                     : context.l10n.timerPaused)
                 .toUpperCase(),
-            style: TempoType.label,
+            style: PracticeTempo.runningLabel,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: TempoSpace.sm),
@@ -343,6 +340,10 @@ class _TimerStage extends StatelessWidget {
             key: const Key('practice-elapsed'),
             style: duration.length > 5 || largeText
                 ? PracticeTempo.longReadout
+                : wide
+                ? PracticeTempo.wideReadout
+                : constraints.maxWidth < PracticeTempo.compactContentWidth
+                ? PracticeTempo.compactReadout
                 : PracticeTempo.readout,
             textAlign: TextAlign.center,
           ),
@@ -353,11 +354,13 @@ class _TimerStage extends StatelessWidget {
           ),
         ],
       );
-      final artwork = MeloopIllustration(
-        asset: 'fidelity-timer.png',
-        height: wide
-            ? PracticeTempo.wideStageHeight
-            : PracticeTempo.stageHeight,
+      final height = wide
+          ? PracticeTempo.wideStageHeight
+          : PracticeTempo.stageHeight;
+      final artwork = PracticeTimerArtwork(
+        key: const Key('practice-timer-artwork'),
+        instrument: instrument,
+        height: height,
       );
       if (largeText) {
         return Column(
@@ -368,27 +371,39 @@ class _TimerStage extends StatelessWidget {
           ],
         );
       }
-      return Stack(
-        clipBehavior: Clip.none,
-        children: [
-          artwork,
-          Positioned(
-            top: wide ? PracticeTempo.wideReadoutTop : PracticeTempo.readoutTop,
-            left:
-                (wide
-                    ? PracticeTempo.wideReadoutLeft
-                    : constraints.maxWidth < PracticeTempo.compactContentWidth
-                    ? PracticeTempo.compactReadoutLeft
-                    : PracticeTempo.readoutLeft) -
-                TempoSpace.page,
-            right:
-                (wide
-                    ? PracticeTempo.wideReadoutRight
-                    : PracticeTempo.readoutRight) -
-                TempoSpace.page,
-            child: readout,
-          ),
-        ],
+      return SizedBox(
+        height: height - PracticeTempo.stageOverlap,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned(
+              top: -PracticeTempo.stageOverlap,
+              left: 0,
+              right: 0,
+              child: artwork,
+            ),
+            Positioned(
+              top:
+                  (wide
+                      ? PracticeTempo.wideReadoutTop
+                      : PracticeTempo.readoutTop) -
+                  PracticeTempo.stageOverlap,
+              left:
+                  (wide
+                      ? PracticeTempo.wideReadoutLeft
+                      : constraints.maxWidth < PracticeTempo.compactContentWidth
+                      ? PracticeTempo.compactReadoutLeft
+                      : PracticeTempo.readoutLeft) -
+                  TempoSpace.page,
+              right:
+                  (wide
+                      ? PracticeTempo.wideReadoutRight
+                      : PracticeTempo.readoutRight) -
+                  TempoSpace.page,
+              child: readout,
+            ),
+          ],
+        ),
       );
     },
   );
