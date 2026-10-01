@@ -20,7 +20,7 @@ Trong `app/`:
 
 ```powershell
 flutter pub get
-flutter run -t lib/main_showcase.dart
+flutter run
 ```
 
 Trang chủ → Tạo buổi luyện → form lưu mẫu. Cài đặt → Bộ thành phần cho Wei / Xem màn chào / Xem form lưu. Bật “Mô phỏng lỗi ở lần lưu tiếp” để thử giữ input và lưu lại. Lưu mẫu có độ trễ cho phép quan sát khóa nút; không ghi nhật ký lên thiết bị.
@@ -134,7 +134,7 @@ dart format --output=none --set-exit-if-changed lib test integration_test
 flutter analyze
 flutter test
 flutter test integration_test/shared_ui_smoke_test.dart -d emulator-5554
-flutter build apk --debug -t lib/main_showcase.dart
+flutter build apk --debug
 ```
 
 Tests bao phủ validation Unicode/SRS, keyboard, xóa tìm kiếm, bỏ chọn, bấm đúp trước rebuild, lỗi lưu giữ input, lỗi dialog và retry. Ma trận màn mẫu: 320/390/460 px × chữ 1/2/3× × keyboard inset 0/300 px với safe area trên/dưới. Dialog/sheet: 320×640, chữ 3×, keyboard 0/280 px.

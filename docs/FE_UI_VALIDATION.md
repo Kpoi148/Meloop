@@ -2,6 +2,8 @@
 
 Ngày kiểm chứng: 28/09/2026. Phạm vi là theme, thành phần dùng chung và màn mẫu FE. Hướng dẫn tích hợp: [FE_SHARED_UI.md](FE_SHARED_UI.md).
 
+Các lệnh bên dưới ghi lại lần kiểm chứng ngày 28/09. Entry showcase riêng đã được gỡ ngày 01/10/2026; hiện dùng `flutter run` và `flutter build apk --debug` trong `app/`, qua `lib/main.dart`.
+
 ## Môi trường
 
 - Windows, Flutter 3.47.5 stable / Dart 3.13.4.

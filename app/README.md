@@ -16,7 +16,7 @@ Không tạo HTTP API giữa frontend và backend. Frontend gọi backend qua co
 
 ## Theme và UI Tempo (task 10)
 
-Project Flutter Android đã được khởi tạo. `main.dart`, `main_showcase.dart` và `main_profile_preview.dart` cùng mở luồng hồ sơ → Trang chủ Tempo để các cấu hình Run trong Android Studio có cùng hành vi. Nhật ký mẫu của bộ thành phần vẫn là dữ liệu minh họa.
+Project Flutter Android đã được khởi tạo. `lib/main.dart` là điểm khởi chạy duy nhất, mở luồng hồ sơ → Trang chủ Tempo. Trong Android Studio, chọn cấu hình Run `main.dart`. Nhật ký mẫu của bộ thành phần vẫn là dữ liệu minh họa.
 
 Hướng dẫn tokens, component, ví dụ cho Wei và kiểm chứng: [`../docs/FE_SHARED_UI.md`](../docs/FE_SHARED_UI.md). Import từ `package:meloop/frontend/components/meloop_ui.dart`.
 
