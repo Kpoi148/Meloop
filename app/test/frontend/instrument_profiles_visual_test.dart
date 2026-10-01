@@ -8,13 +8,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meloop/app/meloop_app.dart';
 import 'package:meloop/frontend/application/instrument_profile_service.dart';
+import 'package:meloop/frontend/application/startup_controller.dart';
 import 'package:meloop/frontend/components/meloop_ui.dart';
 import 'package:meloop/frontend/profiles/instrument_profiles_feature.dart';
 import 'package:meloop/frontend/profiles/profile_form.dart';
 import 'package:meloop/frontend/showcase/profile_preview_service.dart';
 import 'package:meloop/frontend/showcase/instrument_profile_preview.dart';
 import 'package:meloop/frontend/showcase/meloop_ui_showcase.dart';
-import 'package:meloop/frontend/showcase/showcase_controller.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -109,7 +109,7 @@ void main() {
       await tester.pumpAndSettle();
       if (name == 'profile-settings') {
         ProviderScope.containerOf(tester.element(find.byType(MeloopUiShowcase)))
-            .read(showcaseControllerProvider.notifier)
+            .read(meloopShellControllerProvider.notifier)
             .selectTab(3);
         await tester.pumpAndSettle();
         expect(find.byKey(const Key('reset-preview-data')), findsOneWidget);

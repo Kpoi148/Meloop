@@ -18,6 +18,8 @@ flutter run
 
 Trong Android Studio, mở thư mục `app/`, khởi động máy ảo bằng Device Manager và chọn tên máy ảo Android trên thanh công cụ trước khi Run. Windows không phải nền tảng được cấu hình trong dự án.
 
+Luồng hồ sơ dùng màn Cài đặt và localization từ `main`: đổi ngôn ngữ được lưu bằng `SqliteAppSettingsStore`, còn hồ sơ UI vẫn dùng database riêng. Trang chủ, Cài đặt và các tab dùng `MeloopShellController` trong scope theo hồ sơ; khởi động không tạo buổi luyện. Khi có buổi luyện mẫu chưa hoàn tất, UI yêu cầu hoàn tất hoặc hủy trước khi chuyển sang chọn/quản lý hồ sơ. Buổi luyện mẫu chưa được lưu thành nhật ký nghiệp vụ.
+
 ## Nối service hồ sơ cục bộ
 
 `instrumentProfileServiceProvider` trong `app/lib/frontend/application/instrument_profile_service.dart` là ranh giới FE. App cần cấp implementation của service hồ sơ do Khanh làm qua `MeloopApp.overrides`. Các thao tác `load`, `create`, `rename`, `select`, `deletionImpact`, `delete` trả về dữ liệu đã commit; `create` nhận request ID ổn định cho lần thử lại. App truyền callback mở Home, xem Pro và mở buổi luyện chưa hoàn tất vào `InstrumentProfilesFeature`.

@@ -1,33 +1,64 @@
+import 'package:flutter/widgets.dart';
+
+import '../../../l10n/app_localizations.dart';
+
 /// Presentation validation only. The domain must validate before committing.
 abstract final class MeloopValidation {
   static final _singleLineControls = RegExp(r'[\x00-\x1F\x7F]');
   static final _noteControls = RegExp(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]');
+  static final AppLocalizations _vi = lookupAppLocalizations(
+    const Locale('vi'),
+  );
 
   static String? singleLine(
     String? value, {
     required String label,
     required int maxLength,
+    AppLocalizations? strings,
   }) {
+    final copy = strings ?? _vi;
     final text = (value ?? '').trim();
-    if (text.isEmpty) return 'Vui lòng nhập ${label.toLowerCase()}.';
+    if (text.isEmpty) return copy.requiredField(label.toLowerCase());
     if (_singleLineControls.hasMatch(value ?? '')) {
-      return '$label không được có xuống dòng hoặc ký tự điều khiển.';
+      return copy.invalidSingleLine(label);
     }
-    if (text.runes.length > maxLength) return '$label tối đa $maxLength ký tự.';
+    if (text.runes.length > maxLength) {
+      return copy.maxCharacters(label, maxLength);
+    }
     return null;
   }
 
-  static String? title(String? value) =>
-      singleLine(value, label: 'Tên buổi luyện', maxLength: 100);
-  static String? profileName(String? value) =>
-      singleLine(value, label: 'Tên hồ sơ', maxLength: 50);
+  static String? title(String? value) => titleFor(value, _vi);
+  static String? titleFor(String? value, AppLocalizations strings) =>
+      singleLine(
+        value,
+        label: strings.sessionTitle,
+        maxLength: 100,
+        strings: strings,
+      );
+  static String? profileName(String? value) => profileNameFor(value, _vi);
+  static String? profileNameFor(String? value, AppLocalizations strings) =>
+      singleLine(
+        value,
+        label: strings.profileName,
+        maxLength: 50,
+        strings: strings,
+      );
   static String? customInstrument(String? value) =>
-      singleLine(value, label: 'Tên nhạc cụ', maxLength: 40);
-  static String? note(String? value) {
+      customInstrumentFor(value, _vi);
+  static String? customInstrumentFor(String? value, AppLocalizations strings) =>
+      singleLine(
+        value,
+        label: strings.customInstrumentName,
+        maxLength: 40,
+        strings: strings,
+      );
+  static String? note(String? value) => noteFor(value, _vi);
+  static String? noteFor(String? value, AppLocalizations strings) {
     if (_noteControls.hasMatch(value ?? '')) {
-      return 'Ghi chú có ký tự điều khiển không hợp lệ.';
+      return strings.invalidNoteControl;
     }
-    if ((value ?? '').runes.length > 2000) return 'Ghi chú tối đa 2.000 ký tự.';
+    if ((value ?? '').runes.length > 2000) return strings.noteMaxCharacters;
     return null;
   }
 
@@ -36,13 +67,15 @@ abstract final class MeloopValidation {
     required String label,
     required int min,
     required int max,
+    AppLocalizations? strings,
   }) {
+    final copy = strings ?? _vi;
     final text = (value ?? '').trim();
-    if (text.isEmpty) return 'Vui lòng nhập ${label.toLowerCase()}.';
-    if (!RegExp(r'^\d+$').hasMatch(text)) return '$label phải là số nguyên.';
+    if (text.isEmpty) return copy.requiredField(label.toLowerCase());
+    if (!RegExp(r'^\d+$').hasMatch(text)) return copy.integerRequired(label);
     final number = int.tryParse(text);
     if (number == null || number < min || number > max) {
-      return '$label phải từ $min đến $max.';
+      return copy.integerRange(label, min, max);
     }
     return null;
   }

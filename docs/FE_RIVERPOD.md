@@ -38,6 +38,7 @@ flutter run
 ## Trạng thái giao diện
 
 - `showcaseControllerProvider`: tab đang chọn, query lịch sử, cờ mô phỏng lỗi một lần và số lần lưu mẫu thành công. Widget theo dõi bằng `ref.watch`, gửi thao tác qua `ref.read(...notifier)`.
+- `meloopShellControllerProvider`: điều hướng khởi động, các tab và buổi luyện mẫu đang mở. Luồng hồ sơ cấp snapshot từ hồ sơ đã chọn và override controller trong scope theo profile ID để không dùng lại trạng thái của hồ sơ trước.
 - `sessionFormControllerProvider(formId)`: `AsyncValue<void>` của thao tác lưu, độc lập theo mỗi instance form. Provider tự giải phóng khi form đóng.
 - Controller khóa đồng bộ trước khi await, giữ lỗi và stack trace trong state cho đến lần thử lại; không ghi dữ liệu form vào log. Widget hiển thị thông báo lỗi an toàn và giữ các ô nhập.
 - Sau khi provider bị giải phóng, Future hoàn tất không ghi vào state hoặc yêu cầu đóng một màn khác.

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../application/instrument_profile_service.dart';
 import '../application/session_form_controller.dart';
+import '../application/startup_controller.dart';
 import '../components/meloop_ui.dart';
 import '../profiles/instrument_profiles_feature.dart';
 import 'preview_data_reset_button.dart';
@@ -124,6 +125,25 @@ class _ProfilePreviewState extends ConsumerState<_ProfilePreview> {
     _PreviewPage.home => ProviderScope(
       key: ValueKey(_selected!.id),
       overrides: [
+        meloopShellControllerProvider.overrideWith(MeloopShellController.new),
+        startupSnapshotProvider.overrideWithValue(
+          StartupSnapshot(
+            profiles: [
+              PreviewInstrumentProfile(
+                id: _selected!.id,
+                name: _selected!.name,
+                instrument:
+                    MeloopInstrument.values[_selected!.instrumentType.index],
+                savedSessionCount: _selected!.savedSessionCount,
+                customInstrumentName:
+                    _selected!.instrumentType == InstrumentType.other
+                    ? _selected!.customType
+                    : null,
+              ),
+            ],
+            selectedProfileId: _selected!.id,
+          ),
+        ),
         showcaseControllerProvider.overrideWith(ShowcaseController.new),
         sessionFormSaveProvider.overrideWith(
           (ref) =>
@@ -133,6 +153,7 @@ class _ProfilePreviewState extends ConsumerState<_ProfilePreview> {
         ),
       ],
       child: MeloopUiShowcase(
+        developmentTools: false,
         profile: _selected,
         onChooseProfile: () => _showProfiles(ProfileEntryPage.picker),
         onManageProfiles: () => _showProfiles(ProfileEntryPage.manager),

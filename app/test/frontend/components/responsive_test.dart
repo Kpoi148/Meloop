@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meloop/app/meloop_app.dart';
+import 'package:meloop/frontend/application/startup_controller.dart';
 import 'package:meloop/frontend/components/meloop_ui.dart';
 import 'package:meloop/frontend/showcase/component_catalog.dart';
 import 'package:meloop/frontend/showcase/home_example.dart';
+import 'package:meloop/frontend/showcase/instrument_profiles_example.dart';
 import 'package:meloop/frontend/showcase/session_form_example.dart';
+import 'package:meloop/frontend/showcase/settings_example.dart';
 import 'package:meloop/frontend/showcase/setup_example.dart';
 import 'package:meloop/frontend/showcase/welcome_example.dart';
 
@@ -49,6 +52,44 @@ void main() {
             const WelcomeExample(),
             SetupExample(onSave: (_) async {}),
             SessionFormExample(onSave: (_) async {}),
+            MeloopPage(
+              bottomNavigation: MeloopBottomNavigation(
+                selectedIndex: 3,
+                onSelected: (_) {},
+              ),
+              child: SettingsExample(
+                profile: const PreviewInstrumentProfile(
+                  id: 'guitar-preview',
+                  instrument: MeloopInstrument.guitar,
+                ),
+                language: 'Tiếng Việt',
+                onLanguage: () {},
+              ),
+            ),
+            InstrumentProfilesExample(
+              profiles: const [
+                PreviewInstrumentProfile(
+                  id: 'guitar-preview',
+                  name: 'Guitar của tôi',
+                  instrument: MeloopInstrument.guitar,
+                ),
+                PreviewInstrumentProfile(
+                  id: 'piano-preview',
+                  name: 'Piano buổi tối',
+                  instrument: MeloopInstrument.piano,
+                ),
+                PreviewInstrumentProfile(
+                  id: 'violin-preview',
+                  name: 'Violin của tôi',
+                  instrument: MeloopInstrument.violin,
+                ),
+              ],
+              selectedProfileId: 'guitar-preview',
+              archivedProfileIds: const {'violin-preview'},
+              onBack: () {},
+              onHome: () {},
+              onAdd: () {},
+            ),
             const ComponentCatalog(),
           ];
           for (final screen in screens) {

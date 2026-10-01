@@ -1,0 +1,705 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Vietnamese (`vi`).
+class AppLocalizationsVi extends AppLocalizations {
+  AppLocalizationsVi([String locale = 'vi']) : super(locale);
+
+  @override
+  String get appTitle => 'Meloop';
+
+  @override
+  String get back => 'Quay lại';
+
+  @override
+  String get confirm => 'Xác nhận';
+
+  @override
+  String get cancel => 'Hủy';
+
+  @override
+  String get processing => 'Đang xử lý…';
+
+  @override
+  String get saving => 'Đang lưu…';
+
+  @override
+  String get retrying => 'Đang thử lại…';
+
+  @override
+  String get requiredSuffix => ' *';
+
+  @override
+  String get optionalSuffix => ' (tùy chọn)';
+
+  @override
+  String get requiredSemantics => 'bắt buộc';
+
+  @override
+  String get optionalSemantics => 'tùy chọn';
+
+  @override
+  String requiredField(String label) {
+    return 'Vui lòng nhập $label.';
+  }
+
+  @override
+  String requiredChoice(String label) {
+    return 'Vui lòng chọn $label.';
+  }
+
+  @override
+  String invalidSingleLine(String label) {
+    return '$label không được có xuống dòng hoặc ký tự điều khiển.';
+  }
+
+  @override
+  String maxCharacters(String label, int count) {
+    return '$label tối đa $count ký tự.';
+  }
+
+  @override
+  String get invalidNoteControl => 'Ghi chú có ký tự điều khiển không hợp lệ.';
+
+  @override
+  String get noteMaxCharacters => 'Ghi chú tối đa 2.000 ký tự.';
+
+  @override
+  String integerRequired(String label) {
+    return '$label phải là số nguyên.';
+  }
+
+  @override
+  String integerRange(String label, int min, int max) {
+    return '$label phải từ $min đến $max.';
+  }
+
+  @override
+  String get validDateRange => 'Chọn ngày từ 01/01/2000 đến hôm nay.';
+
+  @override
+  String get clearSearch => 'Xóa tìm kiếm';
+
+  @override
+  String get searchHint => 'Tìm buổi luyện, ghi chú…';
+
+  @override
+  String ratingSemantics(String label, int value) {
+    return '$label $value trên 5';
+  }
+
+  @override
+  String get moodRatingHint =>
+      '1 · Không vui → 5 · Rất vui. Bấm lại để bỏ chọn.';
+
+  @override
+  String get focusRatingHint =>
+      '1 · Khó tập trung → 5 · Rất tập trung. Bấm lại để bỏ chọn.';
+
+  @override
+  String get genericFailure => 'Chưa thể hoàn tất. Vui lòng thử lại.';
+
+  @override
+  String get navHome => 'Trang chủ';
+
+  @override
+  String get navHistory => 'Buổi luyện';
+
+  @override
+  String get navProgress => 'Tiến độ';
+
+  @override
+  String get navSettings => 'Cài đặt';
+
+  @override
+  String get language => 'Ngôn ngữ';
+
+  @override
+  String get languageVietnamese => 'Tiếng Việt';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageViCode => 'VI';
+
+  @override
+  String get languageEnCode => 'EN';
+
+  @override
+  String get chooseLanguage => 'Chọn ngôn ngữ';
+
+  @override
+  String get languageSaved => 'Đã đổi ngôn ngữ.';
+
+  @override
+  String get languageSaveFailed => 'Chưa thể lưu ngôn ngữ. Vui lòng thử lại.';
+
+  @override
+  String get welcomeTitle => 'Một chút âm nhạc.\nMỗi ngày.';
+
+  @override
+  String get welcomeSubtitle =>
+      'Luyện tập, ghi lại và nhìn thấy\nhành trình của chính bạn.';
+
+  @override
+  String get welcomePrivacy =>
+      'Không cần tài khoản. Nhật ký lưu trên thiết bị.';
+
+  @override
+  String get createFirstProfile => 'Tạo hồ sơ đầu tiên';
+
+  @override
+  String get continueWithInstrument => 'Tiếp tục với nhạc cụ của tôi';
+
+  @override
+  String get instrumentPickerTitle => 'Hôm nay bạn chơi\nnhạc cụ nào?';
+
+  @override
+  String get instrumentPickerSubtitle =>
+      'Chọn một nhạc cụ để tiếp tục hành trình.';
+
+  @override
+  String get manageInstruments => 'Quản lý nhạc cụ';
+
+  @override
+  String get selected => 'Đang chọn';
+
+  @override
+  String get addInstrument => 'Thêm nhạc cụ';
+
+  @override
+  String get freeProfileLimit => 'Miễn phí: tối đa 3 hồ sơ nhạc cụ.';
+
+  @override
+  String get noPracticeSessions => 'Chưa có buổi luyện';
+
+  @override
+  String get profileSessionsEmptyMessage =>
+      'Buổi luyện của hồ sơ này sẽ hiện ở đây.';
+
+  @override
+  String get openWelcomePreview => 'Xem màn chào Tempo';
+
+  @override
+  String savedSessions(int count) {
+    return '$count buổi luyện đã lưu';
+  }
+
+  @override
+  String get unfinishedSessionTitle => 'Bạn còn một buổi luyện.';
+
+  @override
+  String get unfinishedSessionMessage =>
+      'Hoàn tất hoặc hủy buổi luyện hiện tại trước khi đổi nhạc cụ.';
+
+  @override
+  String get understood => 'Đã hiểu';
+
+  @override
+  String get profileFormTitle => 'Nhạc cụ của bạn';
+
+  @override
+  String get profileQuestion => 'Bạn chơi nhạc cụ gì?';
+
+  @override
+  String get profileSubtitle => 'Chọn âm thanh thuộc về bạn.';
+
+  @override
+  String get instrumentOtherDescription => 'Nhạc cụ mang âm sắc của riêng bạn';
+
+  @override
+  String get customInstrumentName => 'Tên nhạc cụ';
+
+  @override
+  String get customInstrumentHint => 'Ví dụ: Saxophone';
+
+  @override
+  String get profileName => 'Tên hồ sơ';
+
+  @override
+  String get profileNameHint => 'Ví dụ: Guitar của tôi';
+
+  @override
+  String get saveProfile => 'Lưu hồ sơ';
+
+  @override
+  String get profileFootnote => 'Có thể đổi tên sau. Không cần đăng nhập.';
+
+  @override
+  String get instrumentGuitar => 'Guitar';
+
+  @override
+  String get instrumentPiano => 'Piano';
+
+  @override
+  String get instrumentUkulele => 'Ukulele';
+
+  @override
+  String get instrumentViolin => 'Violin';
+
+  @override
+  String get instrumentFlute => 'Sáo';
+
+  @override
+  String get instrumentDrums => 'Bộ gõ';
+
+  @override
+  String get instrumentOther => 'Khác';
+
+  @override
+  String get defaultProfileName => 'Guitar của tôi';
+
+  @override
+  String get samplePianoProfile => 'Piano buổi tối';
+
+  @override
+  String get overview => 'Tổng quan';
+
+  @override
+  String get changeInstrument => 'Đổi nhạc cụ';
+
+  @override
+  String get lastSevenDays => '7 ngày gần nhất';
+
+  @override
+  String get details => 'Chi tiết ›';
+
+  @override
+  String get practiceMinutes => 'phút luyện';
+
+  @override
+  String get practiceSessions => 'buổi luyện';
+
+  @override
+  String get consecutiveDays => 'ngày liên tiếp';
+
+  @override
+  String get weeklyGoal => 'Mục tiêu tuần';
+
+  @override
+  String goalProgress(int current, int target) {
+    return '$current/$target ngày';
+  }
+
+  @override
+  String get mondayToSunday => 'Thứ Hai – Chủ nhật';
+
+  @override
+  String get createPractice => 'Tạo buổi luyện';
+
+  @override
+  String get continuePractice => 'Tiếp tục buổi luyện';
+
+  @override
+  String get practiceTools => 'Công cụ luyện tập';
+
+  @override
+  String get recentSession => 'Buổi gần nhất';
+
+  @override
+  String get viewAll => 'Xem tất cả ›';
+
+  @override
+  String get sampleSessionTitle => 'Luyện gam C';
+
+  @override
+  String get sampleSessionMeta => 'Hôm nay · 35 phút · 80 BPM';
+
+  @override
+  String get sampleSessionNotes =>
+      'Gam C trưởng, chuyển hợp âm C – G – Am – F.';
+
+  @override
+  String get nextPracticeUpper => 'CHO LẦN LUYỆN TIẾP';
+
+  @override
+  String get sampleNextNotes => 'Giữ nhịp ở 80 BPM, thả lỏng bàn tay.';
+
+  @override
+  String get setupTitle => 'Tạo buổi luyện';
+
+  @override
+  String get newPracticeUpper => 'BUỔI LUYỆN MỚI';
+
+  @override
+  String get setupQuestion => 'Hôm nay bạn\nmuốn tập gì?';
+
+  @override
+  String get sessionTitle => 'Tên buổi luyện';
+
+  @override
+  String get sessionTitleHint => 'Ví dụ: Luyện gam C';
+
+  @override
+  String get sessionTitleHelper =>
+      'Đặt tên để dễ tìm lại. Có thể đổi khi xem lại.';
+
+  @override
+  String get timerStartsHint => 'Bộ đếm bắt đầu khi bạn bấm Bắt đầu luyện.';
+
+  @override
+  String get startPractice => 'Bắt đầu luyện';
+
+  @override
+  String get timerTitle => 'Buổi luyện';
+
+  @override
+  String get timerOptions => 'Tùy chọn buổi luyện';
+
+  @override
+  String get timerOptionalTitle => 'Tên buổi luyện · tùy chọn';
+
+  @override
+  String get setPracticeName => 'Đặt tên buổi luyện';
+
+  @override
+  String get timerPaused => 'Tạm dừng';
+
+  @override
+  String get timerRunning => 'Đang luyện';
+
+  @override
+  String get practiceTime => 'Thời gian luyện tập';
+
+  @override
+  String get pause => 'Tạm dừng';
+
+  @override
+  String get resume => 'Tiếp tục';
+
+  @override
+  String get finish => 'Kết thúc';
+
+  @override
+  String get recoveredDraftTitle => 'Đã khôi phục buổi luyện';
+
+  @override
+  String get recoveredDraftMessage =>
+      'Thời gian đã lưu được giữ nguyên. Buổi luyện được tạm dừng sau khi mở lại.';
+
+  @override
+  String get historySubtitle => 'Những nốt nhạc làm nên hành trình.';
+
+  @override
+  String get unfinishedPractice => 'Buổi luyện chưa hoàn tất';
+
+  @override
+  String get finishPractice => 'Hoàn tất';
+
+  @override
+  String get timeRange => 'Khoảng thời gian';
+
+  @override
+  String get all => 'Tất cả';
+
+  @override
+  String get sevenDays => '7 ngày';
+
+  @override
+  String get thirtyDays => '30 ngày';
+
+  @override
+  String get noMatchingSessions => 'Không có buổi luyện phù hợp.';
+
+  @override
+  String get clearSearchAction => 'Xóa tìm kiếm';
+
+  @override
+  String get sampleSessionDate => '23/09/2026 · 30 phút';
+
+  @override
+  String showcaseSaveCount(int count) {
+    return 'Mẫu UI · $count lần lưu mẫu hoàn tất. Không ghi dữ liệu lên thiết bị.';
+  }
+
+  @override
+  String get progressHeading => 'Mỗi ngày,\nmột bước tiến.';
+
+  @override
+  String get noProgressTitle => 'Chưa có dữ liệu tiến độ.';
+
+  @override
+  String get noProgressMessage =>
+      'Hoàn tất một buổi luyện để nhìn lại hành trình.';
+
+  @override
+  String get settingsHeading => 'Theo cách bạn.';
+
+  @override
+  String get settingsFreePlan => 'FREE';
+
+  @override
+  String get settingsEyebrow => 'MELOOP · KHÔNG GIAN CỦA BẠN';
+
+  @override
+  String get settingsManageProfiles => 'Quản lý hồ sơ nhạc cụ';
+
+  @override
+  String get settingsProDescription =>
+      'Thêm hồ sơ nhạc cụ và lọc thống kê nâng cao.';
+
+  @override
+  String get settingsExplorePro => 'Khám phá Pro';
+
+  @override
+  String get settingsPersonalGroup => 'Theo cách của bạn';
+
+  @override
+  String get settingsReminderOff => 'Tắt';
+
+  @override
+  String get settingsDeviceData => 'Dữ liệu trên thiết bị';
+
+  @override
+  String get settingsInformationGroup => 'Thông tin & hỗ trợ';
+
+  @override
+  String get settingsPrivacy => 'Quyền riêng tư';
+
+  @override
+  String get settingsContactSupport => 'Liên hệ hỗ trợ';
+
+  @override
+  String get settingsRestorePro => 'Khôi phục Pro';
+
+  @override
+  String settingsVersion(String version) {
+    return 'Meloop · $version';
+  }
+
+  @override
+  String get settingsStudioCredit => 'Made with care by Moss Studio';
+
+  @override
+  String get instrumentProfilesTitle => 'Hồ sơ nhạc cụ';
+
+  @override
+  String get instrumentProfilesHeading => 'Mỗi nhạc cụ,\nmột hành trình.';
+
+  @override
+  String get instrumentProfilesSubtitle => 'Những âm thanh làm nên bạn.';
+
+  @override
+  String get profileInUse => 'Đang sử dụng';
+
+  @override
+  String get profileArchived => 'Đã lưu trữ';
+
+  @override
+  String get editProfile => 'Sửa hồ sơ';
+
+  @override
+  String get archiveProfile => 'Lưu trữ';
+
+  @override
+  String get reactivateProfile => 'Kích hoạt lại';
+
+  @override
+  String get freeProfilesNote =>
+      'Miễn phí có 3 hồ sơ. Lưu trữ giữ nguyên lịch sử và không giải phóng suất hồ sơ.';
+
+  @override
+  String settingsLanguageDescription(String language) {
+    return '$language';
+  }
+
+  @override
+  String get componentCatalog => 'Bộ thành phần UI';
+
+  @override
+  String get openSessionForm => 'Xem form lưu buổi luyện';
+
+  @override
+  String get simulateNextSaveFailure => 'Lần lưu tiếp theo gặp lỗi';
+
+  @override
+  String get saveSessionTitle => 'Lưu buổi luyện';
+
+  @override
+  String get sessionFormHeading => 'Một buổi luyện,\nmột bước tiến.';
+
+  @override
+  String get sessionFormSubtitle => 'Ghi lại điều bạn muốn nhớ.';
+
+  @override
+  String get practiceDate => 'Ngày luyện';
+
+  @override
+  String get hours => 'Giờ';
+
+  @override
+  String get minutes => 'Phút';
+
+  @override
+  String get seconds => 'Giây';
+
+  @override
+  String get durationRange => 'Thời lượng phải từ 1 giây đến 24 giờ.';
+
+  @override
+  String get mood => 'Cảm xúc';
+
+  @override
+  String get focusLevel => 'Mức độ tập trung';
+
+  @override
+  String get practicedWhat => 'Bạn đã luyện gì?';
+
+  @override
+  String get practicedHint => 'Gam, hợp âm, bài nhạc…';
+
+  @override
+  String get difficulty => 'Điều còn vướng';
+
+  @override
+  String get difficultyHint => 'Một đoạn khó, một điều muốn cải thiện…';
+
+  @override
+  String get nextPractice => 'Cho lần luyện tiếp';
+
+  @override
+  String get savePractice => 'Lưu buổi luyện';
+
+  @override
+  String get discardChangesTitle => 'Bỏ thay đổi?';
+
+  @override
+  String get discardChangesMessage => 'Những thay đổi chưa lưu sẽ bị bỏ.';
+
+  @override
+  String get discardChanges => 'Bỏ thay đổi';
+
+  @override
+  String get continueEditing => 'Tiếp tục sửa';
+
+  @override
+  String get saveSessionFailed =>
+      'Chưa thể lưu buổi luyện. Nội dung của bạn vẫn ở đây. Vui lòng thử lại.';
+
+  @override
+  String get catalogTitle => 'Thành phần dùng chung';
+
+  @override
+  String get catalogHeading => 'Cùng một nhịp\nthiết kế.';
+
+  @override
+  String get catalogSubtitle =>
+      'Mẫu UI Tempo · dữ liệu minh họa chỉ nằm trong bộ nhớ.';
+
+  @override
+  String get catalogButtons => 'Nút & trạng thái đang lưu';
+
+  @override
+  String get catalogFields => 'Ô nhập & lỗi tại trường';
+
+  @override
+  String get catalogChoices => 'Lựa chọn & tab';
+
+  @override
+  String get catalogDialogs => 'Hộp thoại & thông báo';
+
+  @override
+  String get catalogStates => 'Tải / trống / lỗi';
+
+  @override
+  String get save => 'Lưu';
+
+  @override
+  String get unavailable => 'Không khả dụng';
+
+  @override
+  String get addProfile => 'Thêm hồ sơ';
+
+  @override
+  String get deleteSession => 'Xóa buổi luyện';
+
+  @override
+  String get endPractice => 'Kết thúc';
+
+  @override
+  String get profileHelper => '1–50 ký tự. Giữ nội dung nếu lưu thất bại.';
+
+  @override
+  String get tempoBpm => 'Tốc độ (BPM)';
+
+  @override
+  String get bpm => 'BPM';
+
+  @override
+  String get validateData => 'Kiểm tra dữ liệu';
+
+  @override
+  String get beatsPerBar => 'Số phách mỗi ô nhịp';
+
+  @override
+  String beats(int count) {
+    return '$count phách';
+  }
+
+  @override
+  String get reminder => 'Nhắc lịch luyện';
+
+  @override
+  String get reminderDescription => 'Nhắc một chút âm nhạc mỗi ngày.';
+
+  @override
+  String get attachDiagnostics => 'Đính kèm thông tin chẩn đoán';
+
+  @override
+  String get attachDiagnosticsDescription => 'Chỉ khi bạn chủ động chọn.';
+
+  @override
+  String get openConfirmDialog => 'Mở hộp thoại xác nhận';
+
+  @override
+  String get deleteSessionMessage =>
+      'Nhật ký và bản ghi âm của buổi này sẽ bị xóa.';
+
+  @override
+  String get openChoiceSheet => 'Mở bảng lựa chọn';
+
+  @override
+  String get tempoComponents => 'Bộ thành phần Tempo';
+
+  @override
+  String get sharedThemeNotice =>
+      'Các màn hình dùng cùng theme, font, màu và icon.';
+
+  @override
+  String get showNotification => 'Hiện thông báo';
+
+  @override
+  String get sampleActionComplete => 'Đã hoàn tất thao tác mẫu.';
+
+  @override
+  String get journalOnDevice => 'Nhật ký lưu trên thiết bị.';
+
+  @override
+  String get sessionSaved => 'Đã lưu buổi luyện.';
+
+  @override
+  String get saveFailedKeepsContent => 'Chưa thể lưu. Nội dung vẫn ở đây.';
+
+  @override
+  String get loadingSessions => 'Đang tải buổi luyện…';
+
+  @override
+  String get journeyStartsToday => 'Hành trình bắt đầu từ hôm nay.';
+
+  @override
+  String get saveFirstSession => 'Lưu buổi luyện đầu tiên của bạn.';
+
+  @override
+  String get loadSessionsFailed => 'Chưa thể tải buổi luyện.';
+
+  @override
+  String get dataKeptRetry => 'Vui lòng thử lại. Dữ liệu của bạn vẫn được giữ.';
+
+  @override
+  String get retry => 'Thử lại';
+}

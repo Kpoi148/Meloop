@@ -31,7 +31,7 @@ void main() {
       await tester.tap(tab('Cài đặt'));
       await tester.pumpAndSettle();
       final failureToggle = find.descendant(
-        of: find.widgetWithText(MeloopToggle, 'Mô phỏng lỗi ở lần lưu tiếp'),
+        of: find.widgetWithText(MeloopToggle, 'Lần lưu tiếp theo gặp lỗi'),
         matching: find.byType(Switch),
       );
       await tester.ensureVisible(failureToggle);

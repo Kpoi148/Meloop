@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../../l10n/l10n.dart';
 import '../../theme/tokens/tempo_tokens.dart';
 import '../buttons/meloop_button.dart';
 import '../layout/meloop_icon.dart';
@@ -132,7 +133,7 @@ class MeloopStateView extends StatelessWidget {
               label: actionLabel!,
               onPressed: onAction,
               style: MeloopButtonStyle.outline,
-              loadingLabel: 'Đang thử lại…',
+              loadingLabel: context.l10n.retrying,
             ),
           ],
         ],

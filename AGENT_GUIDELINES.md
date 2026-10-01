@@ -23,6 +23,14 @@ Tài liệu này áp dụng cho mọi thay đổi trong repository. Đọc yêu 
 - Đặt tên rõ nghĩa, dùng immutable model khi phù hợp, xử lý lỗi có ngữ cảnh và không nuốt ngoại lệ. Chỉ thêm tầng use case khi nghiệp vụ phức tạp, được tái sử dụng hoặc kết hợp nhiều nguồn dữ liệu.
 - Giữ file trong đúng thư mục đã thống nhất. Nếu cần đổi cấu trúc, giải thích lý do và cập nhật README liên quan.
 
+## Không hard code
+
+- Không ghi cố định dữ liệu người dùng, ID hồ sơ/session, trạng thái thành công giả, đường dẫn máy cá nhân hoặc credential vào code ứng dụng. Lấy dữ liệu từ nguồn runtime đúng trách nhiệm; truyền dependency khi cần thay thế nguồn dữ liệu.
+- Chuỗi hiển thị cho người dùng phải qua localization; màu, typography, spacing dùng theme token hiện có. Không nhúng chuỗi hoặc giá trị thiết kế riêng lẻ trong widget khi đã có nguồn dùng chung.
+- Giới hạn nghiệp vụ, giá trị mặc định và tùy chọn cấu hình phải có nguồn định nghĩa tập trung theo từng tính năng, có tên và đơn vị rõ ràng. Không rải magic number hoặc sao chép cùng một quy tắc ở frontend/backend; không tạo một file global constants chứa mọi thứ không liên quan.
+- Đường dẫn lưu trữ phải lấy từ API thiết bị và ghép trong sandbox của app; không cố định đường dẫn Windows/Android của máy phát triển. Không tự thêm dịch vụ cloud để thay thế cấu hình cục bộ.
+- Literal cố định của giao thức/schema, enum và constant có tên vẫn được phép khi đó là định nghĩa chính thức. Migration đã phát hành phải giữ giá trị cố định theo phiên bản để có thể tái lập; không kéo cấu hình có thể thay đổi vào migration cũ. Dữ liệu giả chỉ nằm trong test/showcase đã phân biệt rõ với luồng thật.
+
 ## Kiểm chứng và tránh lỗi thường gặp của agent
 
 **Hallucination:** Không khẳng định một tính năng, API, package, lệnh build hoặc kết quả kiểm thử đã tồn tại nếu chưa kiểm tra. Đọc mã nguồn và tài liệu gốc khi cần; phân biệt dữ kiện quan sát được với đề xuất. Nếu thiếu Flutter SDK, thiết bị, credential hoặc mạng, báo rõ giới hạn thay vì nói đã kiểm thử thành công.
@@ -66,4 +74,8 @@ Ví dụ: `docs/agent-guideline`, `feat/practice-timer`, `fix/session-duplicate-
 
 Commit theo dạng `<type>: <mô tả ngắn>`, dùng cùng nhóm type với prefix nhánh, ví dụ `docs: add agent working guidelines`. Stage có chọn lọc; kiểm tra `git diff --cached --name-only` và `git diff --cached` trước khi commit. Chỉ commit sau khi kiểm tra phù hợp đã chạy hoặc đã nêu rõ vì sao chưa thể chạy.
 
-Push nhánh bằng `git push -u origin <ten-nhanh>` lần đầu. Không push trực tiếp lên `main`, không force push và không tự merge khi công việc chỉ yêu cầu đưa nhánh lên GitHub. Báo lại tên nhánh, commit, các kiểm tra đã chạy và giới hạn còn lại. Nếu người dùng yêu cầu chỉ lập kế hoạch hoặc chưa cho phép tạo file/push, dừng ở đúng phạm vi đó.
+Trước mỗi push, kiểm tra nhánh hiện tại và ref đích. Cấm push trực tiếp lên `main`, kể cả `git push origin HEAD:main`, push từ nhánh khác vào `main` hoặc force push. Mỗi công việc bắt buộc tạo nhánh mới theo prefix ở trên; commit và push lên nhánh đó bằng `git push -u origin <ten-nhanh>` lần đầu.
+
+Thay đổi vào `main` phải qua Pull Request. Không tự merge khi chưa được người dùng yêu cầu. Không tắt ruleset, thêm quyền bypass hoặc tìm cách vượt bảo vệ nhánh. Nếu GitHub từ chối push vào `main`, giữ commit hiện có, chuyển sang nhánh công việc mới và push nhánh đó để tạo PR; không thử lại bằng cách bypass hoặc force push.
+
+Báo lại tên nhánh, commit, các kiểm tra đã chạy và giới hạn còn lại. Nếu người dùng yêu cầu chỉ lập kế hoạch hoặc chưa cho phép tạo file/push, dừng ở đúng phạm vi đó.

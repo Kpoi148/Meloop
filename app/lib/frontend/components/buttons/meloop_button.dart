@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../../../l10n/l10n.dart';
 import '../../theme/tokens/tempo_tokens.dart';
 import '../layout/meloop_icon.dart';
 
@@ -15,7 +16,7 @@ class MeloopButton extends StatefulWidget {
     this.icon,
     this.style = MeloopButtonStyle.primary,
     this.isLoading = false,
-    this.loadingLabel = 'Đang lưu…',
+    this.loadingLabel,
     this.fullWidth = true,
     this.onError,
     this.prominent = false,
@@ -26,7 +27,7 @@ class MeloopButton extends StatefulWidget {
   final MeloopIcons? icon;
   final MeloopButtonStyle style;
   final bool isLoading;
-  final String loadingLabel;
+  final String? loadingLabel;
   final bool fullWidth;
   final bool prominent;
   final void Function(Object error, StackTrace stackTrace)? onError;
@@ -119,7 +120,9 @@ class _MeloopButtonState extends State<MeloopButton> {
                 const SizedBox(width: TempoSpace.sm),
               Flexible(
                 child: Text(
-                  busy ? widget.loadingLabel : widget.label,
+                  busy
+                      ? widget.loadingLabel ?? context.l10n.saving
+                      : widget.label,
                   textAlign: TextAlign.center,
                 ),
               ),
