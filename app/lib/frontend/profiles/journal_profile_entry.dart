@@ -6,6 +6,7 @@ import '../../shared/journal/journal_bootstrap.dart';
 import '../../shared/journal/journal_models.dart';
 import '../application/instrument_profile_service.dart';
 import '../application/startup_controller.dart';
+import '../application/practice_start_service.dart';
 import '../components/meloop_ui.dart';
 import '../showcase/meloop_ui_showcase.dart';
 import '../showcase/pro_preview_page.dart';
@@ -89,6 +90,43 @@ class _JournalProfileEntryState extends ConsumerState<JournalProfileEntry> {
     ),
   );
 
+  PreviewPracticeDraft _presentDraft(
+    PracticeDraft draft, {
+    bool recovered = true,
+  }) {
+    final profile = _snapshot!.directory.byId(draft.session.profileId);
+    if (profile == null) throw StateError('Draft owner is missing.');
+    return PreviewPracticeDraft(
+      sessionId: draft.session.id,
+      profileId: draft.session.profileId,
+      title: draft.reviewInput?.title ?? draft.session.title,
+      accumulatedSeconds:
+          draft.accumulatedMilliseconds ~/ Duration.millisecondsPerSecond,
+      wasRecovered: recovered,
+      instrumentName: profile.name,
+      isReview: draft.session.state == PracticeState.review,
+    );
+  }
+
+  Future<PreviewPracticeDraft> _start(
+    String requestId,
+    String profileId,
+    String title,
+  ) async {
+    final draft = await ref
+        .read(practiceStartServiceProvider)
+        .start(requestId: requestId, profileId: profileId, title: title);
+    if (!mounted) throw StateError('Journal entry was disposed.');
+    final presented = _presentDraft(draft, recovered: false);
+    setState(
+      () => _snapshot = JournalBootstrapSnapshot(
+        directory: _snapshot!.directory,
+        draft: draft,
+      ),
+    );
+    return presented;
+  }
+
   @override
   Widget build(BuildContext context) {
     final strings = context.l10n;
@@ -120,20 +158,7 @@ class _JournalProfileEntryState extends ConsumerState<JournalProfileEntry> {
     }
     final snapshot = _snapshot!;
     final draft = snapshot.draft;
-    final draftProfile = draft == null
-        ? null
-        : snapshot.directory.byId(draft.session.profileId);
-    final shellDraft = draft == null
-        ? null
-        : PreviewPracticeDraft(
-            profileId: draft.session.profileId,
-            title: draft.reviewInput?.title ?? draft.session.title,
-            accumulatedSeconds:
-                draft.accumulatedMilliseconds ~/ Duration.millisecondsPerSecond,
-            wasRecovered: true,
-            instrumentName: draftProfile!.name,
-            isReview: draft.session.state == PracticeState.review,
-          );
+    final shellDraft = draft == null ? null : _presentDraft(draft);
     final profiles = [
       for (final p in snapshot.directory.profiles)
         PreviewInstrumentProfile(
@@ -163,6 +188,7 @@ class _JournalProfileEntryState extends ConsumerState<JournalProfileEntry> {
         profile: _selected,
         journalRecoveryReadOnly: draft != null,
         allowProfileBrowsingWithDraft: true,
+        onStartDraft: _start,
         onChooseProfile: () => _profiles(ProfileEntryPage.picker),
         onManageProfiles: () => _profiles(ProfileEntryPage.manager),
         onViewPro: _pro,

@@ -969,4 +969,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String continueInstrumentPractice(String instrument) {
     return 'Tiếp tục · $instrument';
   }
+
+  @override
+  String get practiceStartFailed =>
+      'Chưa thể bắt đầu buổi luyện. Tiêu đề vẫn được giữ; hãy thử lại.';
 }

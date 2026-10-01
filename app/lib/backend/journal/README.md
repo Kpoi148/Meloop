@@ -1,5 +1,9 @@
 # SQLite journal services và readers
 
+`SqlitePracticeStartService` (B04) validate UUID và title NFC 1–100 code points, đọc unfinished và tạo Running trong một transaction. Schema v1 tạo sidecar với checkpoint 0 atomically; không sửa migration. Retry giữ request/session ID, Start đồng thời hoặc khác hồ sơ trả buổi đang có và không đổi owner/title/checkpoint. ID đã saved không được dùng để tạo buổi khác. Lỗi sidecar rollback cả session; lỗi storage không log nội dung nhật ký. Start ghi ngày/offset thiết bị lúc tạo; chưa triển khai đo thời gian, Pause/Resume hoặc Save (B05/B06).
+
+Android Start QA dùng `integration_test/practice_start_smoke_test.dart`, `--no-uninstall`, `--dart-define=START_TEST_DB=start-process-<uuid>.db` và `START_TEST_PHASE=create/reopen`. Database test riêng, phase create giữ file qua force-stop; phase reopen chỉ xóa đúng file test. Không dùng database người dùng để seed hoặc inject lỗi.
+
 Implement các port trong `shared/journal/`, đọc schema v1 qua cùng `JournalDatabaseOwner`. Không mở/đóng database riêng cho mỗi query.
 
 - `SqliteJournalProfileReader`: danh sách theo created_at/id và tìm profile ID.

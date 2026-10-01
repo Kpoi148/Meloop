@@ -31,13 +31,12 @@ abstract final class MeloopValidation {
   }
 
   static String? title(String? value) => titleFor(value, _vi);
-  static String? titleFor(String? value, AppLocalizations strings) =>
-      singleLine(
-        value,
-        label: strings.sessionTitle,
-        maxLength: 100,
-        strings: strings,
-      );
+  static String? titleFor(String? value, AppLocalizations strings) => _profile(
+    value,
+    strings.sessionTitle,
+    PracticeRules.titleMaxCodePoints,
+    strings,
+  );
   static String? profileName(String? value) => profileNameFor(value, _vi);
   static String? profileNameFor(String? value, AppLocalizations strings) =>
       _profile(

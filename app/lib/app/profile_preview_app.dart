@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../backend/journal/sqlite_instrument_profile_service.dart';
 import '../backend/journal/sqlite_journal_bootstrap.dart';
+import '../backend/journal/sqlite_practice_start_service.dart';
+import '../frontend/application/practice_start_service.dart';
 import '../frontend/application/instrument_profile_service.dart';
 import '../frontend/profiles/journal_profile_entry.dart';
 
@@ -63,6 +65,12 @@ class _JournalProfiles extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) => ProviderScope(
     overrides: [
+      practiceStartServiceProvider.overrideWithValue(
+        SqlitePracticeStartService(
+          owner: ref.watch(journalDatabaseOwnerProvider),
+          clock: ref.watch(journalClockProvider),
+        ),
+      ),
       instrumentProfileServiceProvider.overrideWithValue(
         SqliteInstrumentProfileService(
           owner: ref.watch(journalDatabaseOwnerProvider),
