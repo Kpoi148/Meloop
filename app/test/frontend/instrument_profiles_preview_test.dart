@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:meloop/frontend/application/instrument_profile_service.dart';
 import 'package:meloop/frontend/components/meloop_ui.dart';
 import 'package:meloop/frontend/profiles/instrument_profiles_feature.dart';
+import 'package:meloop/frontend/showcase/component_catalog.dart';
 import 'package:meloop/frontend/showcase/welcome_example.dart';
 import 'package:meloop/main.dart' as app;
 import 'package:meloop/main_showcase.dart' as showcase;
@@ -85,4 +86,27 @@ void main() {
     expect(find.text('Quản lý hồ sơ'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'showcase welcome CTA creates a profile instead of opening catalog',
+    (tester) async {
+      showcase.main();
+      await tester.pumpAndSettle();
+      await tapVisible(
+        tester,
+        find.descendant(
+          of: find.byType(MeloopBottomNavigation),
+          matching: find.text('Cài đặt'),
+        ),
+      );
+      await tapVisible(tester, find.text('Xem màn chào Tempo'));
+      expect(find.byType(WelcomeExample), findsOneWidget);
+      final service = serviceFrom(tester);
+      await createGuitar(tester);
+      expect(find.byType(ComponentCatalog), findsNothing);
+      expect(find.text('Quản lý hồ sơ'), findsOneWidget);
+      expect((await service.load()).profiles.single.name, 'Guitar của tôi');
+      expect(tester.takeException(), isNull);
+    },
+  );
 }

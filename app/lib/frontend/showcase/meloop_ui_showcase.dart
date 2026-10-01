@@ -9,7 +9,6 @@ import 'preview_data_reset_button.dart';
 import 'session_form_example.dart';
 import 'showcase_controller.dart';
 import 'setup_example.dart';
-import 'welcome_example.dart';
 
 /// Development entry point; sample records are never written to storage.
 class MeloopUiShowcase extends ConsumerStatefulWidget {
@@ -149,7 +148,7 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
             style: MeloopButtonStyle.outline,
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute<void>(
-                builder: (_) => WelcomeExample(onCreateProfile: _catalog),
+                builder: (_) => const InstrumentProfilePreview(),
               ),
             ),
           ),
