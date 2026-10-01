@@ -1399,6 +1399,204 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Thử lại'**
   String get retry;
+
+  /// No description provided for @proTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Meloop Pro'**
+  String get proTitle;
+
+  /// No description provided for @proOneTimeBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'MUA MỘT LẦN · KHÔNG GIA HẠN'**
+  String get proOneTimeBadge;
+
+  /// No description provided for @proHeading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm không gian\ncho đam mê.'**
+  String get proHeading;
+
+  /// No description provided for @proSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Một người bạn đồng hành, theo cách của bạn.'**
+  String get proSubtitle;
+
+  /// No description provided for @proIllustrativePrice.
+  ///
+  /// In vi, this message translates to:
+  /// **'49.000đ'**
+  String get proIllustrativePrice;
+
+  /// No description provided for @proPriceCaption.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giá minh họa · Mua một lần'**
+  String get proPriceCaption;
+
+  /// No description provided for @proProfilesBenefit.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm hồ sơ nhạc cụ'**
+  String get proProfilesBenefit;
+
+  /// No description provided for @proProfilesDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tách riêng nhật ký cho mỗi âm sắc bạn yêu.'**
+  String get proProfilesDescription;
+
+  /// No description provided for @proFiltersBenefit.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bộ lọc tiến độ nâng cao'**
+  String get proFiltersBenefit;
+
+  /// No description provided for @proFiltersDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem các khoảng thời gian dài hơn hoặc tùy chọn.'**
+  String get proFiltersDescription;
+
+  /// No description provided for @proFreeFeatures.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhật ký, công cụ, ghi âm, mục tiêu, lịch nhắc, sao lưu và xuất âm thanh vẫn miễn phí.'**
+  String get proFreeFeatures;
+
+  /// No description provided for @proPreviewTry.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dùng thử Meloop Pro'**
+  String get proPreviewTry;
+
+  /// No description provided for @proPreviewActive.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang xem thử Meloop Pro'**
+  String get proPreviewActive;
+
+  /// No description provided for @proPreviewPlan.
+  ///
+  /// In vi, this message translates to:
+  /// **'PRO · XEM THỬ'**
+  String get proPreviewPlan;
+
+  /// No description provided for @proPreviewFootnote.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bản UI mô phỏng quyền Pro, không có giao dịch thật.\nGiá chính thức do cửa hàng cung cấp.'**
+  String get proPreviewFootnote;
+
+  /// No description provided for @proPreviewConfirmTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem thử Meloop Pro'**
+  String get proPreviewConfirmTitle;
+
+  /// No description provided for @proPreviewConfirmMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thao tác này bật chế độ xem thử Pro để bạn trải nghiệm giao diện và tạo thêm hồ sơ. Không thu tiền, không kết nối cửa hàng.'**
+  String get proPreviewConfirmMessage;
+
+  /// No description provided for @proPreviewEnable.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bật xem thử'**
+  String get proPreviewEnable;
+
+  /// No description provided for @proPreviewEnabled.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã bật Pro để xem thử.'**
+  String get proPreviewEnabled;
+
+  /// No description provided for @proPreviewFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể bật Pro. Dữ liệu của bạn vẫn được giữ. Hãy thử lại.'**
+  String get proPreviewFailed;
+
+  /// No description provided for @proPreviewActiveTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Meloop Pro đang bật để xem thử.'**
+  String get proPreviewActiveTitle;
+
+  /// No description provided for @proPreviewActiveMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có thể tạo thêm hồ sơ trong chế độ xem thử. Không có khoản thanh toán nào được thực hiện.'**
+  String get proPreviewActiveMessage;
+
+  /// No description provided for @proRestoreTransaction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khôi phục giao dịch'**
+  String get proRestoreTransaction;
+
+  /// No description provided for @proRestoreFootnote.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khôi phục với cùng tài khoản và cửa hàng.'**
+  String get proRestoreFootnote;
+
+  /// No description provided for @proRestoreTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khôi phục Meloop Pro'**
+  String get proRestoreTitle;
+
+  /// No description provided for @proRestoreMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bản UI chưa kết nối Google Play nên không thể kiểm tra giao dịch. Chế độ xem thử Pro chỉ lưu trên thiết bị này.'**
+  String get proRestoreMessage;
+
+  /// No description provided for @proClose.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đóng'**
+  String get proClose;
+
+  /// No description provided for @previewResetAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa dữ liệu và bắt đầu lại'**
+  String get previewResetAction;
+
+  /// No description provided for @previewResetTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bắt đầu lại từ màn chào?'**
+  String get previewResetTitle;
+
+  /// No description provided for @previewResetMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Toàn bộ hồ sơ, lựa chọn nhạc cụ, dữ liệu thử và quyền xem thử Pro trên thiết bị sẽ được xóa. Ứng dụng trở về màn chào và gói Free để bạn bắt đầu lại.'**
+  String get previewResetMessage;
+
+  /// No description provided for @previewResetConfirm.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa và bắt đầu lại'**
+  String get previewResetConfirm;
+
+  /// No description provided for @previewResetCancel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giữ dữ liệu'**
+  String get previewResetCancel;
+
+  /// No description provided for @previewResetFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể xóa dữ liệu. Hồ sơ của bạn vẫn được giữ. Hãy thử lại.'**
+  String get previewResetFailed;
 }
 
 class _AppLocalizationsDelegate

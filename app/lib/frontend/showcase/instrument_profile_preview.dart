@@ -9,6 +9,7 @@ import '../profiles/instrument_profiles_feature.dart';
 import 'preview_data_reset_button.dart';
 import 'profile_preview_service.dart';
 import 'meloop_ui_showcase.dart';
+import 'pro_preview_page.dart';
 import 'showcase_controller.dart';
 
 /// Interactive FE flow with a replaceable local prototype service.
@@ -39,16 +40,20 @@ class _InstrumentProfilePreviewState extends State<InstrumentProfilePreview> {
   Widget build(BuildContext context) => ProviderScope(
     key: ValueKey(_generation),
     overrides: [instrumentProfileServiceProvider.overrideWithValue(_service)],
-    child: _ProfilePreview(onReset: _reset),
+    child: _ProfilePreview(
+      onReset: _reset,
+      onEnablePro: _service.enableProPreview,
+    ),
   );
 }
 
-enum _PreviewPage { loading, loadError, profiles, home, pro }
+enum _PreviewPage { loading, loadError, profiles, home }
 
 class _ProfilePreview extends ConsumerStatefulWidget {
-  const _ProfilePreview({required this.onReset});
+  const _ProfilePreview({required this.onReset, required this.onEnablePro});
 
   final Future<void> Function() onReset;
+  final Future<ProfileDirectory> Function() onEnablePro;
 
   @override
   ConsumerState<_ProfilePreview> createState() => _ProfilePreviewState();
@@ -58,6 +63,7 @@ class _ProfilePreviewState extends ConsumerState<_ProfilePreview> {
   _PreviewPage _page = _PreviewPage.loading;
   ProfileEntryPage _entryPage = ProfileEntryPage.automatic;
   InstrumentProfile? _selected;
+  bool _isPro = false;
 
   @override
   void initState() {
@@ -77,6 +83,7 @@ class _ProfilePreviewState extends ConsumerState<_ProfilePreview> {
       if (!mounted) return;
       setState(() {
         _selected = directory.selectedProfile;
+        _isPro = directory.isPro;
         _page = _selected == null ? _PreviewPage.profiles : _PreviewPage.home;
       });
     } catch (_) {
@@ -90,6 +97,18 @@ class _ProfilePreviewState extends ConsumerState<_ProfilePreview> {
       _page = _PreviewPage.profiles;
     });
   }
+
+  Future<void> _showPro() => Navigator.of(context).push<void>(
+    MaterialPageRoute(
+      builder: (_) => ProPreviewPage(
+        isPro: _isPro,
+        onEnablePreview: () async {
+          final directory = await widget.onEnablePro();
+          if (mounted) setState(() => _isPro = directory.isPro);
+        },
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) => switch (_page) {
@@ -120,7 +139,7 @@ class _ProfilePreviewState extends ConsumerState<_ProfilePreview> {
         _selected = profile;
         _page = _PreviewPage.home;
       }),
-      onViewPro: () => setState(() => _page = _PreviewPage.pro),
+      onViewPro: _showPro,
     ),
     _PreviewPage.home => ProviderScope(
       key: ValueKey(_selected!.id),
@@ -155,30 +174,11 @@ class _ProfilePreviewState extends ConsumerState<_ProfilePreview> {
       child: MeloopUiShowcase(
         developmentTools: false,
         profile: _selected,
+        isPro: _isPro,
+        onViewPro: _showPro,
         onChooseProfile: () => _showProfiles(ProfileEntryPage.picker),
         onManageProfiles: () => _showProfiles(ProfileEntryPage.manager),
         onResetData: widget.onReset,
-      ),
-    ),
-    _PreviewPage.pro => MeloopPage(
-      topBar: MeloopTopBar(
-        title: 'Meloop Pro',
-        onBack: () => _showProfiles(ProfileEntryPage.manager),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text('Thêm không gian\ncho âm nhạc.', style: TempoType.heading),
-          const SizedBox(height: TempoSpace.lg),
-          const MeloopNotice(
-            message: 'Đây là bản xem thử giao diện. Tính năng mua Pro sẽ được kết nối ở task thanh toán.',
-          ),
-          const SizedBox(height: TempoSpace.xl),
-          MeloopButton(
-            label: 'Quản lý hồ sơ',
-            onPressed: () => _showProfiles(ProfileEntryPage.manager),
-          ),
-        ],
       ),
     ),
   };

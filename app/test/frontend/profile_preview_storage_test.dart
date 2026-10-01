@@ -50,12 +50,14 @@ void main() {
       );
       await service.rename(profileId: 'preview-1', name: 'Guitar buổi tối');
       await service.select('preview-1');
+      await service.enableProPreview();
       await store.close();
 
       store = openStore();
       service = ProfilePreviewService(storage: store);
       var state = await service.load();
       expect(state.profiles, hasLength(2));
+      expect(state.isPro, isTrue);
       expect(state.selectedProfile!.name, 'Guitar buổi tối');
       expect(state.selectedProfile!.instrumentType, InstrumentType.guitar);
       expect(
@@ -87,6 +89,7 @@ void main() {
       state = await service.load();
       expect(state.profiles, isEmpty);
       expect(state.selectedProfileId, isNull);
+      expect(state.isPro, isFalse);
     },
   );
 

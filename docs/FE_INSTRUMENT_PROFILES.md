@@ -20,6 +20,12 @@ Trong Android Studio, mở thư mục `app/`, khởi động máy ảo bằng De
 
 Luồng hồ sơ dùng màn Cài đặt và localization từ `main`: đổi ngôn ngữ được lưu bằng `SqliteAppSettingsStore`, còn hồ sơ UI vẫn dùng database riêng. Trang chủ, Cài đặt và các tab dùng `MeloopShellController` trong scope theo hồ sơ; khởi động không tạo buổi luyện. Khi có buổi luyện mẫu chưa hoàn tất, UI yêu cầu hoàn tất hoặc hủy trước khi chuyển sang chọn/quản lý hồ sơ. Buổi luyện mẫu chưa được lưu thành nhật ký nghiệp vụ.
 
+## Xem thử Pro
+
+**Cài đặt → Khám phá Pro** và nút **Xem Meloop Pro** khi đủ ba hồ sơ cùng mở màn Pro theo prototype Tempo: hình minh họa, giá minh họa, quyền lợi và nút **Dùng thử Meloop Pro**. Xác nhận **Bật xem thử** ghi trạng thái Pro vào bộ lưu UI trước khi báo thành công; lỗi ghi giữ gói Free và cho thử lại. Khi bật, Cài đặt hiển thị **PRO · XEM THỬ**, có thể tạo hơn ba hồ sơ và trạng thái được giữ qua lần mở app. Mở màn Pro không làm mất buổi luyện mẫu đang mở.
+
+Đây là mô phỏng FE, không có giao dịch Google Play; bộ lọc tiến độ chưa được nối dữ liệu. **Khôi phục giao dịch** giải thích trạng thái mô phỏng, không tự bật Pro. **Xóa dữ liệu và bắt đầu lại** đặt lại cả hồ sơ và quyền xem thử Pro, trở về màn chào và Free. Hủy xác nhận hoặc lỗi ghi giữ nguyên dữ liệu và trạng thái Pro.
+
 ## Nối service hồ sơ cục bộ
 
 `instrumentProfileServiceProvider` trong `app/lib/frontend/application/instrument_profile_service.dart` là ranh giới FE. App cần cấp implementation của service hồ sơ do Khanh làm qua `MeloopApp.overrides`. Các thao tác `load`, `create`, `rename`, `select`, `deletionImpact`, `delete` trả về dữ liệu đã commit; `create` nhận request ID ổn định cho lần thử lại. App truyền callback mở Home, xem Pro và mở buổi luyện chưa hoàn tất vào `InstrumentProfilesFeature`.
@@ -32,6 +38,7 @@ UI chỉ kiểm tra trường nhập và hiển thị giới hạn. Service ph�
 flutter test test/frontend/instrument_profiles_feature_test.dart
 flutter test test/frontend/instrument_profiles_preview_test.dart
 flutter test test/frontend/profile_preview_storage_test.dart
+flutter test test/frontend/pro_preview_test.dart
 flutter test test/frontend/instrument_profiles_visual_test.dart
 flutter analyze
 flutter build apk --debug

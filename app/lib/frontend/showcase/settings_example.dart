@@ -15,12 +15,17 @@ class SettingsExample extends StatelessWidget {
     required this.language,
     required this.onLanguage,
     this.onProfiles,
+    this.isPro = false,
+    this.onPro,
+    this.onRestorePro,
   });
 
   final PreviewInstrumentProfile profile;
   final String language;
   final VoidCallback onLanguage;
   final VoidCallback? onProfiles;
+  final bool isPro;
+  final VoidCallback? onPro, onRestorePro;
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +33,14 @@ class SettingsExample extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SettingsTop(plan: strings.settingsFreePlan),
+        _SettingsTop(
+          plan: isPro ? strings.proPreviewPlan : strings.settingsFreePlan,
+        ),
         const SizedBox(height: 22),
         const _SettingsHeading(),
         _ProfileBanner(profile: profile, onTap: onProfiles),
         const SizedBox(height: 10),
-        const _ProBanner(),
+        _ProBanner(onTap: onPro),
         _SettingsGroupTitle(strings.settingsPersonalGroup),
         _SettingsList(
           children: [
@@ -68,6 +75,7 @@ class SettingsExample extends StatelessWidget {
             _SettingsRow(
               icon: MeloopIcons.refresh,
               label: strings.settingsRestorePro,
+              onTap: onRestorePro,
             ),
           ],
         ),
@@ -295,7 +303,9 @@ class _ProfileBanner extends StatelessWidget {
 }
 
 class _ProBanner extends StatelessWidget {
-  const _ProBanner();
+  const _ProBanner({this.onTap});
+
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -305,95 +315,108 @@ class _ProBanner extends StatelessWidget {
       builder: (context, constraints) {
         final expanded = constraints.maxWidth >= 410;
         final minimumHeight = largeText ? 250.0 : 180.0;
-        return Container(
-          constraints: BoxConstraints(minHeight: minimumHeight),
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
+        return Semantics(
+          button: onTap != null,
+          label: strings.settingsExplorePro,
+          child: Material(
             color: TempoColors.teal,
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                right: -20,
-                bottom: -41,
-                child: MeloopArt.scene(
-                  MeloopScene.pro,
-                  size: expanded ? 210 : 178,
+            borderRadius: BorderRadius.circular(TempoRadius.card),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              key: const Key('explore-pro'),
+              onTap: onTap,
+              child: Container(
+                constraints: BoxConstraints(minHeight: minimumHeight),
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  color: TempoColors.teal,
+                  borderRadius: BorderRadius.circular(18),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(17),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Stack(
                   children: [
-                    Text.rich(
-                      TextSpan(
+                    Positioned(
+                      right: -20,
+                      bottom: -41,
+                      child: MeloopArt.scene(
+                        MeloopScene.pro,
+                        size: expanded ? 210 : 178,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(17),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const TextSpan(text: 'Meloop '),
-                          TextSpan(
-                            text: 'Pro',
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                const TextSpan(text: 'Meloop '),
+                                TextSpan(
+                                  text: 'Pro',
+                                  style: TempoType.section.copyWith(
+                                    color: TempoColors.yellow,
+                                    fontSize: 28,
+                                    letterSpacing: -1.1,
+                                  ),
+                                ),
+                              ],
+                            ),
                             style: TempoType.section.copyWith(
-                              color: TempoColors.yellow,
+                              color: TempoColors.white,
                               fontSize: 28,
                               letterSpacing: -1.1,
                             ),
                           ),
-                        ],
-                      ),
-                      style: TempoType.section.copyWith(
-                        color: TempoColors.white,
-                        fontSize: 28,
-                        letterSpacing: -1.1,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 240),
-                      child: Text(
-                        strings.settingsProDescription,
-                        style: TempoType.caption.copyWith(
-                          color: TempoColors.white,
-                          fontSize: 13,
-                          height: 1.5,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: TempoColors.yellow,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 9,
-                        ),
-                        child: Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          spacing: 8,
-                          runSpacing: TempoSpace.xs,
-                          children: [
-                            Text(
-                              strings.settingsExplorePro,
+                          const SizedBox(height: 6),
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 240),
+                            child: Text(
+                              strings.settingsProDescription,
                               style: TempoType.caption.copyWith(
-                                color: TempoColors.ink,
-                                fontSize: 14,
-                                height: 1.3,
-                                fontWeight: FontWeight.w700,
+                                color: TempoColors.white,
+                                fontSize: 13,
+                                height: 1.5,
                               ),
                             ),
-                            const MeloopIcon(MeloopIcons.arrow, size: 20),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 12),
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: TempoColors.yellow,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 9,
+                              ),
+                              child: Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                spacing: 8,
+                                runSpacing: TempoSpace.xs,
+                                children: [
+                                  Text(
+                                    strings.settingsExplorePro,
+                                    style: TempoType.caption.copyWith(
+                                      color: TempoColors.ink,
+                                      fontSize: 14,
+                                      height: 1.3,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  const MeloopIcon(MeloopIcons.arrow, size: 20),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-            ],
+            ),
           ),
         );
       },

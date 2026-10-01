@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,7 +24,7 @@ class InstrumentProfilesFeature extends ConsumerStatefulWidget {
   });
 
   final ValueChanged<InstrumentProfile> onOpenHome;
-  final VoidCallback onViewPro;
+  final FutureOr<void> Function() onViewPro;
   final VoidCallback? onOpenUnfinishedSession;
   final ProfileEntryPage entryPage;
 
@@ -172,7 +174,13 @@ class _InstrumentProfilesFeatureState
     if (action == _LimitAction.manage) {
       setState(() => _page = _ProfilePage.manager);
     } else if (action == _LimitAction.pro) {
-      widget.onViewPro();
+      final returnPage = _page;
+      await widget.onViewPro();
+      if (!mounted) return;
+      await _load();
+      if (mounted && _loadError == null) {
+        setState(() => _page = returnPage);
+      }
     }
   }
 

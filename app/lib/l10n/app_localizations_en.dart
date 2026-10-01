@@ -709,4 +709,112 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retry => 'Try again';
+
+  @override
+  String get proTitle => 'Meloop Pro';
+
+  @override
+  String get proOneTimeBadge => 'ONE-TIME PURCHASE · NO RENEWAL';
+
+  @override
+  String get proHeading => 'More room\nfor your passion.';
+
+  @override
+  String get proSubtitle => 'A companion, your way.';
+
+  @override
+  String get proIllustrativePrice => '49,000₫';
+
+  @override
+  String get proPriceCaption => 'Illustrative price · One-time purchase';
+
+  @override
+  String get proProfilesBenefit => 'More instrument profiles';
+
+  @override
+  String get proProfilesDescription =>
+      'Keep a separate journal for every sound you love.';
+
+  @override
+  String get proFiltersBenefit => 'Advanced progress filters';
+
+  @override
+  String get proFiltersDescription => 'Explore longer or custom time ranges.';
+
+  @override
+  String get proFreeFeatures =>
+      'Journaling, tools, recording, goals, reminders, backups and audio export remain free.';
+
+  @override
+  String get proPreviewTry => 'Try Meloop Pro';
+
+  @override
+  String get proPreviewActive => 'Previewing Meloop Pro';
+
+  @override
+  String get proPreviewPlan => 'PRO · PREVIEW';
+
+  @override
+  String get proPreviewFootnote =>
+      'This UI simulates Pro access. No real transaction takes place.\nThe store provides the official price.';
+
+  @override
+  String get proPreviewConfirmTitle => 'Preview Meloop Pro';
+
+  @override
+  String get proPreviewConfirmMessage =>
+      'This enables the Pro preview so you can explore the interface and add more profiles. No charge or store connection is involved.';
+
+  @override
+  String get proPreviewEnable => 'Enable preview';
+
+  @override
+  String get proPreviewEnabled => 'Pro preview enabled.';
+
+  @override
+  String get proPreviewFailed =>
+      'Could not enable Pro. Your data is still safe. Please try again.';
+
+  @override
+  String get proPreviewActiveTitle => 'Meloop Pro preview is enabled.';
+
+  @override
+  String get proPreviewActiveMessage =>
+      'You can add more profiles in preview mode. No payment has been made.';
+
+  @override
+  String get proRestoreTransaction => 'Restore purchase';
+
+  @override
+  String get proRestoreFootnote => 'Restore using the same account and store.';
+
+  @override
+  String get proRestoreTitle => 'Restore Meloop Pro';
+
+  @override
+  String get proRestoreMessage =>
+      'This UI is not connected to Google Play and cannot verify purchases. Pro preview is saved only on this device.';
+
+  @override
+  String get proClose => 'Close';
+
+  @override
+  String get previewResetAction => 'Delete data and start again';
+
+  @override
+  String get previewResetTitle => 'Start again from the welcome screen?';
+
+  @override
+  String get previewResetMessage =>
+      'All profiles, instrument selection, preview data and Pro preview access on this device will be deleted. The app will return to the welcome screen and Free plan.';
+
+  @override
+  String get previewResetConfirm => 'Delete and start again';
+
+  @override
+  String get previewResetCancel => 'Keep data';
+
+  @override
+  String get previewResetFailed =>
+      'Could not delete data. Your profiles are still safe. Please try again.';
 }
