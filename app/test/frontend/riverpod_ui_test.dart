@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meloop/app/meloop_app.dart';
 import 'package:meloop/frontend/application/session_form_controller.dart';
 import 'package:meloop/frontend/components/meloop_ui.dart';
+import 'package:meloop/frontend/practice_sessions/practice_session.dart';
 import 'package:meloop/frontend/showcase/meloop_ui_showcase.dart';
+import 'package:meloop/frontend/showcase/practice_session_examples.dart';
 import 'package:meloop/frontend/showcase/session_form_example.dart';
 import 'package:meloop/frontend/showcase/showcase_controller.dart';
 
@@ -16,6 +19,9 @@ void main() {
       await tester.pumpWidget(
         MeloopApp(
           overrides: [
+            practiceSessionsLoaderProvider.overrideWith(
+              (ref) => ref.watch(practiceSessionsPreviewLoaderProvider),
+            ),
             sessionFormSaveProvider.overrideWith(
               (ref) => ref.read(showcaseSessionSaveProvider),
             ),
@@ -56,7 +62,11 @@ void main() {
       expect(tester.widget<Switch>(failureToggle).value, isFalse);
       await tester.tap(tab('Buổi luyện'));
       await tester.pumpAndSettle();
-      expect(find.textContaining('1 lần lưu mẫu hoàn tất.'), findsOneWidget);
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(MeloopUiShowcase)),
+      );
+      expect(container.read(showcaseControllerProvider).saveCount, 1);
+      expect(find.text('Luyện gam C'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );
@@ -133,7 +143,16 @@ void main() {
   testWidgets('showcase retains history search across tab changes', (
     tester,
   ) async {
-    await tester.pumpWidget(const MeloopApp(home: MeloopUiShowcase()));
+    await tester.pumpWidget(
+      MeloopApp(
+        overrides: [
+          practiceSessionsLoaderProvider.overrideWith(
+            (ref) => ref.watch(practiceSessionsPreviewLoaderProvider),
+          ),
+        ],
+        home: const MeloopUiShowcase(),
+      ),
+    );
     await tester.pumpAndSettle();
     Finder tab(String label) => find.descendant(
       of: find.byType(MeloopBottomNavigation),

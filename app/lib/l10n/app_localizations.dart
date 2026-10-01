@@ -794,6 +794,228 @@ abstract class AppLocalizations {
   /// **'Những nốt nhạc làm nên hành trình.'**
   String get historySubtitle;
 
+  /// No description provided for @practiceTodayLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hôm nay'**
+  String get practiceTodayLabel;
+
+  /// No description provided for @practiceYesterdayLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hôm qua'**
+  String get practiceYesterdayLabel;
+
+  /// No description provided for @practiceRatingShort.
+  ///
+  /// In vi, this message translates to:
+  /// **'{value}/5'**
+  String practiceRatingShort(int value);
+
+  /// No description provided for @practiceDurationWithBpm.
+  ///
+  /// In vi, this message translates to:
+  /// **'{duration} · {bpm} BPM'**
+  String practiceDurationWithBpm(String duration, int bpm);
+
+  /// No description provided for @practiceSort.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sắp xếp'**
+  String get practiceSort;
+
+  /// No description provided for @practiceFilters.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bộ lọc'**
+  String get practiceFilters;
+
+  /// No description provided for @practiceApplyFilters.
+  ///
+  /// In vi, this message translates to:
+  /// **'Áp dụng'**
+  String get practiceApplyFilters;
+
+  /// No description provided for @practiceClearFilters.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa bộ lọc'**
+  String get practiceClearFilters;
+
+  /// No description provided for @practiceNewest.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mới nhất'**
+  String get practiceNewest;
+
+  /// No description provided for @practiceOldest.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cũ nhất'**
+  String get practiceOldest;
+
+  /// No description provided for @practiceClearSearchAndFilters.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa tìm kiếm và bộ lọc'**
+  String get practiceClearSearchAndFilters;
+
+  /// No description provided for @practiceNoResultsMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thử từ khóa khác hoặc thay đổi bộ lọc để tìm buổi luyện của bạn.'**
+  String get practiceNoResultsMessage;
+
+  /// No description provided for @practiceEmptyMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bắt đầu buổi luyện đầu tiên, ghi lại những điều bạn muốn nhớ.'**
+  String get practiceEmptyMessage;
+
+  /// No description provided for @practiceSessionDetails.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chi tiết buổi luyện'**
+  String get practiceSessionDetails;
+
+  /// No description provided for @practiceWhatWasPracticed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã luyện'**
+  String get practiceWhatWasPracticed;
+
+  /// No description provided for @practiceSessionRecordings.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bản ghi của buổi này'**
+  String get practiceSessionRecordings;
+
+  /// No description provided for @practiceNotRated.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa đánh giá'**
+  String get practiceNotRated;
+
+  /// No description provided for @practiceNoNotes.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có ghi chú.'**
+  String get practiceNoNotes;
+
+  /// No description provided for @practiceToday.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hôm nay · {date}'**
+  String practiceToday(String date);
+
+  /// No description provided for @practiceYesterday.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hôm qua · {date}'**
+  String practiceYesterday(String date);
+
+  /// No description provided for @practiceDurationMinutes.
+  ///
+  /// In vi, this message translates to:
+  /// **'{minutes} phút'**
+  String practiceDurationMinutes(int minutes);
+
+  /// No description provided for @practiceDurationSeconds.
+  ///
+  /// In vi, this message translates to:
+  /// **'{seconds} giây'**
+  String practiceDurationSeconds(int seconds);
+
+  /// No description provided for @practiceHoursMinutes.
+  ///
+  /// In vi, this message translates to:
+  /// **'{hours} giờ {minutes} phút'**
+  String practiceHoursMinutes(int hours, int minutes);
+
+  /// No description provided for @practiceBpm.
+  ///
+  /// In vi, this message translates to:
+  /// **'{bpm} BPM'**
+  String practiceBpm(int bpm);
+
+  /// No description provided for @practiceMoodScore.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cảm xúc {value}/5'**
+  String practiceMoodScore(int value);
+
+  /// No description provided for @practiceFocusScore.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tập trung {value}/5'**
+  String practiceFocusScore(int value);
+
+  /// No description provided for @practiceRecordingCount.
+  ///
+  /// In vi, this message translates to:
+  /// **'{count} bản ghi'**
+  String practiceRecordingCount(int count);
+
+  /// No description provided for @practiceRatingValue.
+  ///
+  /// In vi, this message translates to:
+  /// **'{value} / 5'**
+  String practiceRatingValue(int value);
+
+  /// No description provided for @practiceSampleRhythm.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhịp điệu cơ bản'**
+  String get practiceSampleRhythm;
+
+  /// No description provided for @practiceSampleSong.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ôn bài nhạc yêu thích'**
+  String get practiceSampleSong;
+
+  /// No description provided for @practiceSampleMinorScale.
+  ///
+  /// In vi, this message translates to:
+  /// **'Luyện gam Am'**
+  String get practiceSampleMinorScale;
+
+  /// No description provided for @practiceSampleTechnique.
+  ///
+  /// In vi, this message translates to:
+  /// **'Luyện kỹ thuật tay'**
+  String get practiceSampleTechnique;
+
+  /// No description provided for @practiceSampleReview.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ôn lại những đoạn khó'**
+  String get practiceSampleReview;
+
+  /// No description provided for @practiceSampleSlowPractice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Luyện chậm, giữ nhịp đều'**
+  String get practiceSampleSlowPractice;
+
+  /// No description provided for @practiceSampleScaleNotes.
+  ///
+  /// In vi, this message translates to:
+  /// **'Gam C trưởng, luyện từng nốt rõ tiếng theo hai chiều.'**
+  String get practiceSampleScaleNotes;
+
+  /// No description provided for @practiceSampleSteadyNotes.
+  ///
+  /// In vi, this message translates to:
+  /// **'Luyện chậm từng đoạn, giữ nhịp đều và rõ tiếng.'**
+  String get practiceSampleSteadyNotes;
+
+  /// No description provided for @practiceSampleDifficulty.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đoạn chuyển cần mượt hơn, giữ nhịp khi tăng tốc độ.'**
+  String get practiceSampleDifficulty;
+
   /// No description provided for @unfinishedPractice.
   ///
   /// In vi, this message translates to:

@@ -22,6 +22,7 @@ enum MeloopIcons {
   shield,
   lock,
   search,
+  filter,
   edit,
   trash,
   music,

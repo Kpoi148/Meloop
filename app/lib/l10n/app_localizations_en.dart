@@ -389,6 +389,146 @@ class AppLocalizationsEn extends AppLocalizations {
   String get historySubtitle => 'The notes that shape your journey.';
 
   @override
+  String get practiceTodayLabel => 'Today';
+
+  @override
+  String get practiceYesterdayLabel => 'Yesterday';
+
+  @override
+  String practiceRatingShort(int value) {
+    return '$value/5';
+  }
+
+  @override
+  String practiceDurationWithBpm(String duration, int bpm) {
+    return '$duration · $bpm BPM';
+  }
+
+  @override
+  String get practiceSort => 'Sort by';
+
+  @override
+  String get practiceFilters => 'Filters';
+
+  @override
+  String get practiceApplyFilters => 'Apply';
+
+  @override
+  String get practiceClearFilters => 'Clear filters';
+
+  @override
+  String get practiceNewest => 'Newest first';
+
+  @override
+  String get practiceOldest => 'Oldest first';
+
+  @override
+  String get practiceClearSearchAndFilters => 'Clear search and filters';
+
+  @override
+  String get practiceNoResultsMessage =>
+      'Try another keyword or change your filters to find your practice sessions.';
+
+  @override
+  String get practiceEmptyMessage =>
+      'Start your first practice session and keep the things you want to remember.';
+
+  @override
+  String get practiceSessionDetails => 'Practice session details';
+
+  @override
+  String get practiceWhatWasPracticed => 'What you practiced';
+
+  @override
+  String get practiceSessionRecordings => 'Recordings from this session';
+
+  @override
+  String get practiceNotRated => 'Not rated yet';
+
+  @override
+  String get practiceNoNotes => 'No notes yet.';
+
+  @override
+  String practiceToday(String date) {
+    return 'Today · $date';
+  }
+
+  @override
+  String practiceYesterday(String date) {
+    return 'Yesterday · $date';
+  }
+
+  @override
+  String practiceDurationMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String practiceDurationSeconds(int seconds) {
+    return '$seconds sec';
+  }
+
+  @override
+  String practiceHoursMinutes(int hours, int minutes) {
+    return '$hours hr $minutes min';
+  }
+
+  @override
+  String practiceBpm(int bpm) {
+    return '$bpm BPM';
+  }
+
+  @override
+  String practiceMoodScore(int value) {
+    return 'Mood $value/5';
+  }
+
+  @override
+  String practiceFocusScore(int value) {
+    return 'Focus $value/5';
+  }
+
+  @override
+  String practiceRecordingCount(int count) {
+    return '$count recordings';
+  }
+
+  @override
+  String practiceRatingValue(int value) {
+    return '$value / 5';
+  }
+
+  @override
+  String get practiceSampleRhythm => 'Basic rhythm';
+
+  @override
+  String get practiceSampleSong => 'Revisit a favorite song';
+
+  @override
+  String get practiceSampleMinorScale => 'A minor scales';
+
+  @override
+  String get practiceSampleTechnique => 'Hand technique';
+
+  @override
+  String get practiceSampleReview => 'Revisit difficult passages';
+
+  @override
+  String get practiceSampleSlowPractice => 'Slow and steady practice';
+
+  @override
+  String get practiceSampleScaleNotes =>
+      'C major scales, playing each note clearly in both directions.';
+
+  @override
+  String get practiceSampleSteadyNotes =>
+      'Practice each passage slowly, keeping a steady rhythm and clear notes.';
+
+  @override
+  String get practiceSampleDifficulty =>
+      'Make the transition smoother and keep the rhythm as the tempo increases.';
+
+  @override
   String get unfinishedPractice => 'Unfinished practice session';
 
   @override
