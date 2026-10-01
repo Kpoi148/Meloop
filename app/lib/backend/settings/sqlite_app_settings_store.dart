@@ -1,14 +1,19 @@
 import '../../shared/settings/app_settings_store.dart';
-import '../database/journal_database.dart';
+import '../../shared/journal/journal_runtime.dart';
+import '../database/journal_database_owner.dart';
 
 /// Stores UC-20 alongside the other device-local application preferences.
 class SqliteAppSettingsStore implements AppSettingsStore {
-  const SqliteAppSettingsStore();
+  const SqliteAppSettingsStore({
+    required this.owner,
+    this.clock = const DeviceJournalClock(),
+  });
+  final JournalDatabaseOwner owner;
+  final JournalClock clock;
 
   @override
   Future<String?> readLanguageCode() async {
-    final database = await JournalDatabase.open();
-    try {
+    return owner.read((database) async {
       final rows = await database.query(
         'app_preferences',
         columns: const ['language'],
@@ -17,9 +22,7 @@ class SqliteAppSettingsStore implements AppSettingsStore {
         limit: 1,
       );
       return rows.isEmpty ? null : rows.single['language'] as String?;
-    } finally {
-      await database.close();
-    }
+    });
   }
 
   @override
@@ -27,8 +30,7 @@ class SqliteAppSettingsStore implements AppSettingsStore {
     if (languageCode != 'vi' && languageCode != 'en') {
       throw ArgumentError.value(languageCode, 'languageCode');
     }
-    final database = await JournalDatabase.open();
-    try {
+    await owner.transaction((database) async {
       await database.rawInsert(
         '''
 INSERT INTO app_preferences (id, language, selected_profile_id, updated_at)
@@ -37,10 +39,8 @@ ON CONFLICT(id) DO UPDATE SET
   language = excluded.language,
   updated_at = excluded.updated_at
 ''',
-        [languageCode, DateTime.now().millisecondsSinceEpoch],
+        [languageCode, clock.utcNow().millisecondsSinceEpoch],
       );
-    } finally {
-      await database.close();
-    }
+    });
   }
 }

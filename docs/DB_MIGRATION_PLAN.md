@@ -6,7 +6,7 @@ Thiết kế dựa trên Report 2 Software Requirements Specification v1.1 ngày
 
 ## Trạng thái triển khai
 
-Đã có DDL v1, opener sqflite, migration runner, cấu hình Android backup và test schema. Chưa nối DB vào entry point, Riverpod hoặc `SessionFormSave`; chưa có repository/use case, timer, capture, worker cleanup hoặc import/export. Không gọi DB thành công giả từ frontend.
+Đã có DDL v1, opener sqflite, migration runner, cấu hình Android backup và test schema. B01 bổ sung owner connection chung, model/contract thuần Dart và SQLite readers; settings/ngôn ngữ dùng owner được app cấp qua Riverpod. Chưa nối service ghi hồ sơ hoặc `SessionFormSave` vào journal; timer, capture, worker cleanup và import/export chưa có. Database profile UI preview vẫn riêng, không tự chuyển sang journal và không cấp entitlement thật.
 
 ## Quy ước
 
@@ -131,3 +131,11 @@ Flutter 3.47.5 / Dart 3.13.4 trên Windows. `flutter analyze` không có lỗi; 
 `flutter build apk --debug` chưa chạy thành công vì môi trường không có Android SDK. Không có emulator/thiết bị Android kết nối, nên integration test sqflite và hành vi backup trên Android chưa được xác minh. Desktop test không thay thế kiểm tra plugin trên Android.
 
 Nguồn kỹ thuật: [sqflite transaction callbacks](https://pub.dev/packages/sqflite), [SQLite foreign keys](https://www.sqlite.org/foreignkeys.html), [SQLite partial indexes](https://www.sqlite.org/partialindex.html), [Android Auto Backup controls](https://developer.android.com/identity/data/autobackup).
+
+### B01 — Nền tảng journal ngày 01/10/2026
+
+Thêm model/reader contract thuần Dart trong `app/lib/shared/journal/`, SQLite readers trong `app/lib/backend/journal/` và app providers. Một `JournalDatabaseOwner` lazy quản lý connection cho settings/readers; serialize cả open/transaction/close, không để store đóng DB của bên khác. Gọi lại owner từ trong callback bị từ chối để tránh deadlock. Schema và migration v1 giữ nguyên; create/save/recovery/file cleanup chưa triển khai. Hồ sơ và Pro preview tiếp tục ở store FE riêng.
+
+Kiểm chứng Windows Flutter 3.47.5 / Dart 3.13.4: 92 unit/widget/database tests đạt, gồm 16 test nền tảng mới. Test bảo vệ rollback, close khi open còn chờ, retry lỗi, dữ liệu sau reopen, query ownership, review input invalid, Unicode NFC/full case fold/diacritic search và LIKE literal escaping. Test schema/migration cũ vẫn đạt.
+
+Android API 36 x86_64: `flutter test integration_test/journal_foundation_smoke_test.dart -d emulator-5554 --no-pub` đạt 1 test với database test tên riêng; chứng minh shared owner, rollback và settings qua reopen hoạt động trên sqflite Android. Không reset database người dùng, không coi đây là kiểm thử restart/kill toàn app hoặc acceptance các feature journal chưa nối FE.
