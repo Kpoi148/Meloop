@@ -10,9 +10,11 @@ Trong `app/`:
 flutter run -t lib/main_profile_preview.dart
 ```
 
-Bản xem thử bắt đầu với danh sách trống. Có thể tạo, đổi tên, chọn, xóa hồ sơ, xem giới hạn Free và mở trang giới thiệu Pro. Dữ liệu chỉ ở bộ nhớ và mất khi đóng ứng dụng. Entry point `main.dart` cũng mở bản UI tương tác này trong giai đoạn chờ service của Khanh.
+`main.dart`, `main_showcase.dart` và `main_profile_preview.dart` cùng mở một luồng UI. Lần đầu chưa có hồ sơ mở màn chào; tạo xong vào Trang chủ Tempo. Sau khi đóng/mở app, Trang chủ mở theo hồ sơ đã chọn gần nhất, kể cả khi có nhiều hồ sơ. Bấm nhạc cụ/ảnh hồ sơ ở góc trên phải để mở danh sách chọn. Cài đặt có nút Quản lý hồ sơ để thêm, đổi tên và xóa.
 
-Để test lại lần mở đầu tiên, bấm **Xóa dữ liệu và bắt đầu lại** ở cuối màn Tổng quan rồi xác nhận. Toàn bộ service thử và trạng thái màn hình được tạo lại với danh sách trống, không còn hồ sơ đang chọn. Bấm **Giữ dữ liệu** sẽ giữ nguyên hồ sơ. Với `main_showcase.dart`, nút tương tự nằm trong Cài đặt và đưa sang màn chào của luồng hồ sơ. Thao tác chỉ tác động dữ liệu UI trong bộ nhớ.
+Để test lại lần mở đầu tiên, vào **Cài đặt → Xóa dữ liệu và bắt đầu lại** rồi xác nhận. Hồ sơ, lựa chọn và trạng thái UI được đặt lại, về màn chào; đóng/mở app vẫn giữ trạng thái trống. Bấm **Giữ dữ liệu** giữ nguyên hồ sơ. Nếu lưu/xóa lỗi, UI giữ trạng thái trước đó và cho thử lại.
+
+`ProfilePreviewService` dùng bộ lưu snapshot được inject qua `ProfilePreviewStorage`. App cấp `SqliteProfilePreviewStorage` trong `app/lib/app/`; dữ liệu UI nằm trong database riêng `meloop_profile_ui_preview.db`, chưa phải service nghiệp vụ của Khanh. Thao tác chỉ báo thành công sau khi ghi xong; ghi lỗi khôi phục trạng thái trước đó. Các widget không gọi SQLite. Nhật ký của hồ sơ mới hiển thị trống; đổi hồ sơ chỉ đổi lựa chọn, không tạo buổi luyện hoặc hiện nhật ký minh họa của hồ sơ khác.
 
 Trong Android Studio, mở thư mục `app/`, khởi động máy ảo bằng Device Manager và chọn tên máy ảo Android trên thanh công cụ trước khi Run. Windows không phải nền tảng được cấu hình trong dự án.
 
@@ -27,9 +29,10 @@ UI chỉ kiểm tra trường nhập và hiển thị giới hạn. Service ph�
 ```powershell
 flutter test test/frontend/instrument_profiles_feature_test.dart
 flutter test test/frontend/instrument_profiles_preview_test.dart
+flutter test test/frontend/profile_preview_storage_test.dart
 flutter test test/frontend/instrument_profiles_visual_test.dart
 flutter analyze
 flutter build apk --debug -t lib/main_profile_preview.dart
 ```
 
-Widget test kiểm tra tạo, đổi tên không đổi loại, giới hạn Free, xác nhận xóa, giữ form khi lỗi và đổi lựa chọn. Test hình ghi ba ảnh dưới `app/build/ui-review/` để kiểm tra bố cục; không phải golden tự động.
+Widget test kiểm tra tạo, đổi tên không đổi loại, giới hạn Free, xác nhận xóa, giữ form khi lỗi, đổi hồ sơ từ góc trên phải, khởi động lại và đặt lại dữ liệu. Test SQLite đóng/mở file để kiểm tra dữ liệu bền vững và lỗi ghi không tạo hồ sơ giả. Test hình ghi các màn hồ sơ, Trang chủ và Cài đặt dưới `app/build/ui-review/` để kiểm tra bố cục; không phải golden tự động.

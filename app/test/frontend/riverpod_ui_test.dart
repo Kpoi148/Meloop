@@ -7,49 +7,59 @@ import 'package:meloop/frontend/application/session_form_controller.dart';
 import 'package:meloop/frontend/components/meloop_ui.dart';
 import 'package:meloop/frontend/showcase/meloop_ui_showcase.dart';
 import 'package:meloop/frontend/showcase/session_form_example.dart';
-import 'package:meloop/main_showcase.dart' as showcase;
+import 'package:meloop/frontend/showcase/showcase_controller.dart';
 
 void main() {
-  testWidgets('showcase entry wires preview failure and retry across routes', (
-    tester,
-  ) async {
-    showcase.main();
-    await tester.pumpAndSettle();
-    Finder tab(String label) => find.descendant(
-      of: find.byType(MeloopBottomNavigation),
-      matching: find.text(label),
-    );
-    await tester.tap(tab('Cài đặt'));
-    await tester.pumpAndSettle();
-    final failureToggle = find.descendant(
-      of: find.widgetWithText(MeloopToggle, 'Mô phỏng lỗi ở lần lưu tiếp'),
-      matching: find.byType(Switch),
-    );
-    await tester.ensureVisible(failureToggle);
-    await tester.tap(failureToggle);
-    await tester.pumpAndSettle();
-    final open = find.widgetWithText(MeloopButton, 'Xem form lưu buổi luyện');
-    await tester.ensureVisible(open);
-    await tester.tap(open);
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextFormField).first, 'Luyện gam C');
-    final save = find.widgetWithText(MeloopButton, 'Lưu buổi luyện');
-    await tester.ensureVisible(save);
-    await tester.tap(save);
-    await tester.pump(const Duration(seconds: 1));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('Chưa thể lưu buổi luyện.'), findsOneWidget);
-    await tester.ensureVisible(save);
-    await tester.tap(save);
-    await tester.pump(const Duration(seconds: 1));
-    await tester.pumpAndSettle();
-    expect(find.byType(SessionFormExample), findsNothing);
-    expect(tester.widget<Switch>(failureToggle).value, isFalse);
-    await tester.tap(tab('Buổi luyện'));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('1 lần lưu mẫu hoàn tất.'), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'component showcase wires preview failure and retry across routes',
+    (tester) async {
+      await tester.pumpWidget(
+        MeloopApp(
+          overrides: [
+            sessionFormSaveProvider.overrideWith(
+              (ref) => ref.read(showcaseSessionSaveProvider),
+            ),
+          ],
+          home: const MeloopUiShowcase(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      Finder tab(String label) => find.descendant(
+        of: find.byType(MeloopBottomNavigation),
+        matching: find.text(label),
+      );
+      await tester.tap(tab('Cài đặt'));
+      await tester.pumpAndSettle();
+      final failureToggle = find.descendant(
+        of: find.widgetWithText(MeloopToggle, 'Mô phỏng lỗi ở lần lưu tiếp'),
+        matching: find.byType(Switch),
+      );
+      await tester.ensureVisible(failureToggle);
+      await tester.tap(failureToggle);
+      await tester.pumpAndSettle();
+      final open = find.widgetWithText(MeloopButton, 'Xem form lưu buổi luyện');
+      await tester.ensureVisible(open);
+      await tester.tap(open);
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextFormField).first, 'Luyện gam C');
+      final save = find.widgetWithText(MeloopButton, 'Lưu buổi luyện');
+      await tester.ensureVisible(save);
+      await tester.tap(save);
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Chưa thể lưu buổi luyện.'), findsOneWidget);
+      await tester.ensureVisible(save);
+      await tester.tap(save);
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
+      expect(find.byType(SessionFormExample), findsNothing);
+      expect(tester.widget<Switch>(failureToggle).value, isFalse);
+      await tester.tap(tab('Buổi luyện'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('1 lần lưu mẫu hoàn tất.'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets(
     'form uses app dependency and only navigates after successful retry',

@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-
-import 'app/meloop_app.dart';
-import 'frontend/showcase/instrument_profile_preview.dart';
+import 'app/profile_preview_app.dart';
 
 // Interactive FE preview while the local profile service is being implemented.
-void main() => runApp(const MeloopApp(home: InstrumentProfilePreview()));
+void main() => runProfilePreviewApp();

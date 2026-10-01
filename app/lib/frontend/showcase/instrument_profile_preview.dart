@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../application/instrument_profile_service.dart';
+import '../application/session_form_controller.dart';
 import '../components/meloop_ui.dart';
 import '../profiles/instrument_profiles_feature.dart';
 import 'preview_data_reset_button.dart';
 import 'profile_preview_service.dart';
+import 'meloop_ui_showcase.dart';
+import 'showcase_controller.dart';
 
-/// Interactive FE preview with its own temporary profile state.
+/// Interactive FE flow with a replaceable local prototype service.
 class InstrumentProfilePreview extends StatefulWidget {
-  const InstrumentProfilePreview({super.key});
+  const InstrumentProfilePreview({super.key, this.service});
+
+  final ProfilePreviewService? service;
 
   @override
   State<InstrumentProfilePreview> createState() =>
@@ -17,12 +22,14 @@ class InstrumentProfilePreview extends StatefulWidget {
 }
 
 class _InstrumentProfilePreviewState extends State<InstrumentProfilePreview> {
-  ProfilePreviewService _service = ProfilePreviewService();
+  late final ProfilePreviewService _service =
+      widget.service ?? ProfilePreviewService();
   int _generation = 0;
 
-  void _reset() {
+  Future<void> _reset() async {
+    await _service.reset();
+    if (!mounted) return;
     setState(() {
-      _service = ProfilePreviewService();
       _generation++;
     });
   }
@@ -35,21 +42,46 @@ class _InstrumentProfilePreviewState extends State<InstrumentProfilePreview> {
   );
 }
 
-enum _PreviewPage { profiles, home, pro }
+enum _PreviewPage { loading, loadError, profiles, home, pro }
 
-class _ProfilePreview extends StatefulWidget {
+class _ProfilePreview extends ConsumerStatefulWidget {
   const _ProfilePreview({required this.onReset});
 
-  final VoidCallback onReset;
+  final Future<void> Function() onReset;
 
   @override
-  State<_ProfilePreview> createState() => _ProfilePreviewState();
+  ConsumerState<_ProfilePreview> createState() => _ProfilePreviewState();
 }
 
-class _ProfilePreviewState extends State<_ProfilePreview> {
-  _PreviewPage _page = _PreviewPage.profiles;
+class _ProfilePreviewState extends ConsumerState<_ProfilePreview> {
+  _PreviewPage _page = _PreviewPage.loading;
   ProfileEntryPage _entryPage = ProfileEntryPage.automatic;
   InstrumentProfile? _selected;
+
+  @override
+  void initState() {
+    super.initState();
+    Future<void>.microtask(_load);
+  }
+
+  Future<void> _load() async {
+    setState(() => _page = _PreviewPage.loading);
+    try {
+      final service = ref.read(instrumentProfileServiceProvider);
+      var directory = await service.load();
+      // Reopen Home using the last profile, including when there are several.
+      if (directory.profiles.isNotEmpty && directory.selectedProfile == null) {
+        directory = await service.select(directory.profiles.first.id);
+      }
+      if (!mounted) return;
+      setState(() {
+        _selected = directory.selectedProfile;
+        _page = _selected == null ? _PreviewPage.profiles : _PreviewPage.home;
+      });
+    } catch (_) {
+      if (mounted) setState(() => _page = _PreviewPage.loadError);
+    }
+  }
 
   void _showProfiles(ProfileEntryPage entry) {
     setState(() {
@@ -60,6 +92,26 @@ class _ProfilePreviewState extends State<_ProfilePreview> {
 
   @override
   Widget build(BuildContext context) => switch (_page) {
+    _PreviewPage.loading => const MeloopPage(
+      child: MeloopStateView(
+        state: MeloopViewState.loading,
+        title: 'Đang mở hồ sơ…',
+      ),
+    ),
+    _PreviewPage.loadError => MeloopPage(
+      child: Column(
+        children: [
+          MeloopStateView(
+            state: MeloopViewState.error,
+            title: 'Chưa thể mở hồ sơ trên thiết bị.',
+            actionLabel: 'Thử lại',
+            onAction: _load,
+          ),
+          const SizedBox(height: TempoSpace.lg),
+          PreviewDataResetButton(onReset: widget.onReset),
+        ],
+      ),
+    ),
     _PreviewPage.profiles => InstrumentProfilesFeature(
       key: ValueKey(_entryPage),
       entryPage: _entryPage,
@@ -69,42 +121,22 @@ class _ProfilePreviewState extends State<_ProfilePreview> {
       }),
       onViewPro: () => setState(() => _page = _PreviewPage.pro),
     ),
-    _PreviewPage.home => MeloopPage(
-      topBar: const MeloopTopBar(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: TempoSpace.xl),
-          Text('Tổng quan', style: TempoType.heading),
-          const SizedBox(height: TempoSpace.sm),
-          Text(_selected!.name, style: TempoType.section),
-          Text(
-            _selected!.instrumentLabel,
-            style: TempoType.body.copyWith(color: TempoColors.muted),
-          ),
-          const SizedBox(height: TempoSpace.xl),
-          MeloopArt.instrument(
-            MeloopInstrument.values[_selected!.instrumentType.index],
-            size: 220,
-          ),
-          const SizedBox(height: TempoSpace.xl),
-          const MeloopNotice(
-            message: 'Bản xem thử giao diện: hồ sơ chỉ nằm trong bộ nhớ và sẽ mất khi đóng ứng dụng.',
-          ),
-          const SizedBox(height: TempoSpace.xl),
-          MeloopButton(
-            label: 'Đổi nhạc cụ',
-            onPressed: () => _showProfiles(ProfileEntryPage.picker),
-            style: MeloopButtonStyle.outline,
-          ),
-          const SizedBox(height: TempoSpace.md),
-          MeloopButton(
-            label: 'Quản lý hồ sơ',
-            onPressed: () => _showProfiles(ProfileEntryPage.manager),
-          ),
-          const SizedBox(height: TempoSpace.md),
-          PreviewDataResetButton(onReset: widget.onReset),
-        ],
+    _PreviewPage.home => ProviderScope(
+      key: ValueKey(_selected!.id),
+      overrides: [
+        showcaseControllerProvider.overrideWith(ShowcaseController.new),
+        sessionFormSaveProvider.overrideWith(
+          (ref) =>
+              (values) => ref
+                  .read(showcaseControllerProvider.notifier)
+                  .simulateSave(values),
+        ),
+      ],
+      child: MeloopUiShowcase(
+        profile: _selected,
+        onChooseProfile: () => _showProfiles(ProfileEntryPage.picker),
+        onManageProfiles: () => _showProfiles(ProfileEntryPage.manager),
+        onResetData: widget.onReset,
       ),
     ),
     _PreviewPage.pro => MeloopPage(

@@ -25,9 +25,9 @@ MeloopApp(
 
 `saveSession` và `yourHomePage` là dependency/màn hình do tính năng cung cấp. Import provider từ `package:meloop/frontend/application/session_form_controller.dart` và kiểu dữ liệu từ `package:meloop/frontend/application/session_form_values.dart`. Callback phải trả Future hoàn tất đúng khi thao tác lưu hoàn tất; nếu lưu lỗi phải throw. Adapter tại app chuyển giá trị form sang model/backend contract do nhóm backend thống nhất. Không thêm SQLite hoặc nghiệp vụ vào widget/controller frontend.
 
-Dependency lưu buổi luyện mặc định báo lỗi khi chưa được cấu hình, để giao diện không báo lưu thành công giả. `main.dart` mở màn chào và luồng hồ sơ dùng service tạm trong bộ nhớ cho việc test UI; chưa nối lưu trữ hoặc nhật ký thật.
+Dependency lưu buổi luyện mặc định báo lỗi khi chưa được cấu hình. Luồng UI hiện tại giữ hồ sơ qua lần mở app bằng bộ lưu thử cục bộ; nhật ký nghiệp vụ chưa được nối.
 
-`main_showcase.dart` override dependency lưu bằng `showcaseSessionSaveProvider`. Mô phỏng có độ trễ, lỗi một lần và bộ đếm lưu mẫu; không ghi dữ liệu thiết bị. Chạy:
+`InstrumentProfilePreview` cấp controller và dependency lưu buổi luyện mẫu trong một scope theo profile ID. Mô phỏng có độ trễ và bộ đếm lưu mẫu, không ghi nhật ký thật. `main.dart`, `main_showcase.dart` và `main_profile_preview.dart` dùng cùng luồng UI. Chạy:
 
 ```powershell
 cd app

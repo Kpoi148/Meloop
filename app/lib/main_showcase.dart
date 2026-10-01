@@ -1,17 +1,4 @@
-import 'package:flutter/material.dart';
+import 'app/profile_preview_app.dart';
 
-import 'app/meloop_app.dart';
-import 'frontend/application/session_form_controller.dart';
-import 'frontend/showcase/meloop_ui_showcase.dart';
-import 'frontend/showcase/showcase_controller.dart';
-
-void main() => runApp(
-  MeloopApp(
-    overrides: [
-      sessionFormSaveProvider.overrideWith(
-        (ref) => ref.read(showcaseSessionSaveProvider),
-      ),
-    ],
-    home: const MeloopUiShowcase(),
-  ),
-);
+// Keep older Android Studio run configurations on the same profile flow.
+void main() => runProfilePreviewApp();

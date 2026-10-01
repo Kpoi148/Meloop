@@ -16,7 +16,7 @@ Không tạo HTTP API giữa frontend và backend. Frontend gọi backend qua co
 
 ## Theme và UI Tempo (task 10)
 
-Project Flutter Android đã được khởi tạo. Mở bộ mẫu bằng `flutter run -t lib/main_showcase.dart` trong `app/`. Dữ liệu mẫu chỉ thuộc showcase và không được ghi vào storage. Trong Cài đặt có nút **Xóa dữ liệu và bắt đầu lại** để chuyển sang màn chào và luồng hồ sơ tương tác.
+Project Flutter Android đã được khởi tạo. `main.dart`, `main_showcase.dart` và `main_profile_preview.dart` cùng mở luồng hồ sơ → Trang chủ Tempo để các cấu hình Run trong Android Studio có cùng hành vi. Nhật ký mẫu của bộ thành phần vẫn là dữ liệu minh họa.
 
 Hướng dẫn tokens, component, ví dụ cho Wei và kiểm chứng: [`../docs/FE_SHARED_UI.md`](../docs/FE_SHARED_UI.md). Import từ `package:meloop/frontend/components/meloop_ui.dart`.
 
@@ -30,4 +30,4 @@ Hướng dẫn tokens, component, ví dụ cho Wei và kiểm chứng: [`../docs
 
 ## Xem thử màn hồ sơ nhạc cụ
 
-Chạy `flutter run` hoặc `flutter run -t lib/main_profile_preview.dart` trên máy ảo Android để dùng các màn chọn, tạo, đổi tên và xóa hồ sơ theo Tempo. Cả hai bắt đầu ở màn chào với danh sách hồ sơ trống. Nút **Xóa dữ liệu và bắt đầu lại** ở cuối màn Tổng quan xóa hồ sơ thử, lựa chọn hiện tại và quay về màn chào sau khi xác nhận. Dữ liệu xem thử chỉ ở bộ nhớ, chờ nối service lưu trữ. Trong Android Studio, chọn thiết bị Android trên thanh công cụ trước khi Run; project không cấu hình Windows. Cách nối service và phạm vi kiểm chứng nằm trong [`../docs/FE_INSTRUMENT_PROFILES.md`](../docs/FE_INSTRUMENT_PROFILES.md).
+Chạy `flutter run` trên máy ảo Android. Lần đầu chưa có hồ sơ sẽ mở màn chào; tạo hồ sơ xong vào Trang chủ. Hồ sơ và lựa chọn hiện tại được lưu cục bộ để các lần mở app sau vào thẳng Trang chủ. Bấm nhạc cụ ở góc trên phải để chọn hồ sơ khác. Trong **Cài đặt** có **Quản lý hồ sơ** và **Xóa dữ liệu và bắt đầu lại**; xác nhận đặt lại sẽ xóa hồ sơ UI đã lưu rồi về màn chào, kể cả sau khi đóng/mở app. Bộ lưu thử dùng database riêng `meloop_profile_ui_preview.db`, chờ thay bằng service của Khanh. Trong Android Studio, chọn thiết bị Android trước khi Run. Cách nối service và phạm vi kiểm chứng nằm trong [`../docs/FE_INSTRUMENT_PROFILES.md`](../docs/FE_INSTRUMENT_PROFILES.md).

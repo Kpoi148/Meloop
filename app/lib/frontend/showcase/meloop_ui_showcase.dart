@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../application/instrument_profile_service.dart';
 import '../components/meloop_ui.dart';
 import 'component_catalog.dart';
 import 'home_example.dart';
@@ -12,7 +15,17 @@ import 'setup_example.dart';
 
 /// Development entry point; sample records are never written to storage.
 class MeloopUiShowcase extends ConsumerStatefulWidget {
-  const MeloopUiShowcase({super.key});
+  const MeloopUiShowcase({
+    super.key,
+    this.profile,
+    this.onChooseProfile,
+    this.onManageProfiles,
+    this.onResetData,
+  });
+
+  final InstrumentProfile? profile;
+  final VoidCallback? onChooseProfile, onManageProfiles;
+  final FutureOr<void> Function()? onResetData;
   @override
   ConsumerState<MeloopUiShowcase> createState() => _MeloopUiShowcaseState();
 }
@@ -60,6 +73,14 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
           onCreate: _setup,
           onHistory: () => controller.selectTab(1),
           onCatalog: _catalog,
+          profile: widget.profile,
+          onChooseProfile:
+              widget.onChooseProfile ??
+              () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const InstrumentProfilePreview(),
+                ),
+              ),
         ),
         1 => _history(state, controller),
         2 => const Column(
@@ -80,96 +101,137 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
     );
   }
 
-  Widget _history(ShowcaseState state, ShowcaseController controller) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    spacing: TempoSpace.page,
-    children: [
-      const MeloopTopBar(),
-      const Text('Buổi luyện', style: TempoType.heading),
-      const Text('Những nốt nhạc làm nên hành trình.'),
-      MeloopSearch(controller: _search, onChanged: controller.search),
-      MeloopChoiceGroup<int>(
-        label: 'Khoảng thời gian',
-        initialValue: 0,
-        requirement: MeloopFieldRequirement.required,
-        choices: const [
-          MeloopChoice(value: 0, label: 'Tất cả'),
-          MeloopChoice(value: 7, label: '7 ngày'),
-          MeloopChoice(value: 30, label: '30 ngày'),
-        ],
-        onChanged: (_) {},
-      ),
-      if (state.query.isNotEmpty &&
-          !'luyện gam c'.contains(state.query.toLowerCase()))
-        MeloopStateView(
-          state: MeloopViewState.empty,
-          title: 'Không có buổi luyện phù hợp.',
-          actionLabel: 'Xóa tìm kiếm',
-          onAction: () {
-            _search.clear();
-            controller.search('');
-          },
-        )
-      else
-        const MeloopCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Luyện gam C', style: TempoType.title),
-              Text('23/09/2026 · 30 phút'),
-            ],
-          ),
-        ),
-      MeloopButton(
-        label: 'Tạo buổi luyện',
-        icon: MeloopIcons.plus,
-        onPressed: _setup,
-      ),
-      Text(
-        'Mẫu UI · ${state.saveCount} lần lưu mẫu hoàn tất. Không ghi dữ liệu lên thiết bị.',
-        style: TempoType.caption,
-      ),
-    ],
-  );
-  Widget _settings(ShowcaseState state, ShowcaseController controller) =>
-      Column(
+  Widget _history(ShowcaseState state, ShowcaseController controller) {
+    if (widget.profile case final profile?) {
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: TempoSpace.page,
         children: [
-          const MeloopTopBar(title: 'Cài đặt'),
-          const Text('Theo cách\ncủa bạn.', style: TempoType.heading),
-          MeloopButton(
-            label: 'Bộ thành phần cho Wei',
-            style: MeloopButtonStyle.yellow,
-            onPressed: _catalog,
+          const MeloopTopBar(),
+          const Text('Buổi luyện', style: TempoType.heading),
+          Text('${profile.name} · ${profile.instrumentLabel}'),
+          const MeloopStateView(
+            state: MeloopViewState.empty,
+            title: 'Chưa có buổi luyện.',
+            message: 'Bắt đầu một buổi luyện để ghi lại hành trình của bạn.',
           ),
-          MeloopButton(
-            label: 'Xem màn chào Tempo',
-            style: MeloopButtonStyle.outline,
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const InstrumentProfilePreview(),
-              ),
-            ),
-          ),
-          MeloopButton(
-            label: 'Xem form lưu buổi luyện',
-            style: MeloopButtonStyle.outline,
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const SessionFormExample(),
-              ),
-            ),
-          ),
-          MeloopToggle(
-            label: 'Mô phỏng lỗi ở lần lưu tiếp',
-            value: state.failNextSave,
-            onChanged: controller.simulateFailure,
-          ),
-          PreviewDataResetButton(onReset: _resetData),
-          const MeloopNotice(
-            message: 'Đây là màn mẫu phát triển UI. Các thao tác không lưu nhật ký thật.',
-          ),
+          MeloopButton(label: 'Tạo buổi luyện', onPressed: _setup),
         ],
       );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: TempoSpace.page,
+      children: [
+        const MeloopTopBar(),
+        const Text('Buổi luyện', style: TempoType.heading),
+        const Text('Những nốt nhạc làm nên hành trình.'),
+        MeloopSearch(controller: _search, onChanged: controller.search),
+        MeloopChoiceGroup<int>(
+          label: 'Khoảng thời gian',
+          initialValue: 0,
+          requirement: MeloopFieldRequirement.required,
+          choices: const [
+            MeloopChoice(value: 0, label: 'Tất cả'),
+            MeloopChoice(value: 7, label: '7 ngày'),
+            MeloopChoice(value: 30, label: '30 ngày'),
+          ],
+          onChanged: (_) {},
+        ),
+        if (state.query.isNotEmpty &&
+            !'luyện gam c'.contains(state.query.toLowerCase()))
+          MeloopStateView(
+            state: MeloopViewState.empty,
+            title: 'Không có buổi luyện phù hợp.',
+            actionLabel: 'Xóa tìm kiếm',
+            onAction: () {
+              _search.clear();
+              controller.search('');
+            },
+          )
+        else
+          const MeloopCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Luyện gam C', style: TempoType.title),
+                Text('23/09/2026 · 30 phút'),
+              ],
+            ),
+          ),
+        MeloopButton(
+          label: 'Tạo buổi luyện',
+          icon: MeloopIcons.plus,
+          onPressed: _setup,
+        ),
+        Text(
+          'Mẫu UI · ${state.saveCount} lần lưu mẫu hoàn tất. Không ghi dữ liệu lên thiết bị.',
+          style: TempoType.caption,
+        ),
+      ],
+    );
+  }
+
+  Widget _settings(
+    ShowcaseState state,
+    ShowcaseController controller,
+  ) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    spacing: TempoSpace.page,
+    children: [
+      const MeloopTopBar(title: 'Cài đặt'),
+      const Text('Theo cách\ncủa bạn.', style: TempoType.heading),
+      if (widget.profile case final profile?) ...[
+        MeloopCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(profile.name, style: TempoType.title),
+              Text(profile.instrumentLabel),
+            ],
+          ),
+        ),
+        MeloopButton(
+          label: 'Quản lý hồ sơ',
+          onPressed: widget.onManageProfiles,
+        ),
+        PreviewDataResetButton(
+          onReset: widget.onResetData ?? () {},
+          onComplete: widget.onResetData == null ? _resetData : null,
+        ),
+        const MeloopNotice(message: 'Hồ sơ của bạn được lưu trên thiết bị.'),
+      ] else ...[
+        MeloopButton(
+          label: 'Bộ thành phần cho Wei',
+          style: MeloopButtonStyle.yellow,
+          onPressed: _catalog,
+        ),
+        MeloopButton(
+          label: 'Xem màn chào Tempo',
+          style: MeloopButtonStyle.outline,
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => const InstrumentProfilePreview(),
+            ),
+          ),
+        ),
+        MeloopButton(
+          label: 'Xem form lưu buổi luyện',
+          style: MeloopButtonStyle.outline,
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const SessionFormExample()),
+          ),
+        ),
+        MeloopToggle(
+          label: 'Mô phỏng lỗi ở lần lưu tiếp',
+          value: state.failNextSave,
+          onChanged: controller.simulateFailure,
+        ),
+        PreviewDataResetButton(onReset: () {}, onComplete: _resetData),
+        const MeloopNotice(
+          message: 'Đây là màn mẫu phát triển UI. Các thao tác không lưu nhật ký thật.',
+        ),
+      ],
+    ],
+  );
 }

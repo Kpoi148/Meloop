@@ -34,7 +34,7 @@ final showcaseSaveDelayProvider = Provider<Duration>(
   (ref) => const Duration(seconds: 1),
 );
 
-/// Only main_showcase.dart installs this simulation as the form's dependency.
+/// The component showcase installs this simulation as the form's dependency.
 final showcaseSessionSaveProvider = Provider<SessionFormSave>(
   (ref) =>
       (values) =>

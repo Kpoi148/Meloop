@@ -1,27 +1,32 @@
 import 'package:flutter/material.dart';
 
+import '../application/instrument_profile_service.dart';
 import '../components/meloop_ui.dart';
 
-/// Synthetic content matching the Tempo screenshot; never persisted.
+/// Tempo Home, with synthetic journal content only in the component showcase.
 class HomeExample extends StatelessWidget {
   const HomeExample({
     super.key,
     required this.onCreate,
     required this.onHistory,
     required this.onCatalog,
+    this.profile,
+    this.onChooseProfile,
   });
   final VoidCallback onCreate, onHistory, onCatalog;
+  final InstrumentProfile? profile;
+  final VoidCallback? onChooseProfile;
   @override
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      const _HomeHeader(),
-      const _StatisticsCard(),
+      _HomeHeader(profile: profile, onChooseProfile: onChooseProfile),
+      _StatisticsCard(showSampleData: profile == null),
       const SizedBox(height: TempoSpace.lg),
-      const Row(
+      Row(
         children: [
-          MeloopIcon(MeloopIcons.target, size: 57),
-          SizedBox(width: TempoSpace.md),
+          const MeloopIcon(MeloopIcons.target, size: 57),
+          const SizedBox(width: TempoSpace.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -30,20 +35,23 @@ class HomeExample extends StatelessWidget {
                   alignment: WrapAlignment.spaceBetween,
                   spacing: 8,
                   children: [
-                    Text('Mục tiêu tuần', style: TempoType.label),
-                    Text('3/5 ngày', style: TempoType.caption),
+                    const Text('Mục tiêu tuần', style: TempoType.label),
+                    Text(
+                      profile == null ? '3/5 ngày' : '0/5 ngày',
+                      style: TempoType.caption,
+                    ),
                   ],
                 ),
-                SizedBox(height: TempoSpace.sm),
+                const SizedBox(height: TempoSpace.sm),
                 LinearProgressIndicator(
-                  value: .6,
+                  value: profile == null ? .6 : 0,
                   minHeight: 10,
                   color: TempoColors.yellow,
                   backgroundColor: TempoColors.line,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
                 ),
-                SizedBox(height: TempoSpace.xs),
-                Text('Thứ Hai – Chủ nhật', style: TempoType.caption),
+                const SizedBox(height: TempoSpace.xs),
+                const Text('Thứ Hai – Chủ nhật', style: TempoType.caption),
               ],
             ),
           ),
@@ -108,31 +116,42 @@ class HomeExample extends StatelessWidget {
         },
       ),
       const SizedBox(height: TempoSpace.sm),
-      const _RecentCard(),
+      if (profile == null)
+        const _RecentCard()
+      else
+        const MeloopStateView(
+          state: MeloopViewState.empty,
+          title: 'Chưa có buổi luyện.',
+          message: 'Buổi luyện của hồ sơ này sẽ hiển thị ở đây.',
+        ),
     ],
   );
 }
 
 class _HomeHeader extends StatelessWidget {
-  const _HomeHeader();
+  const _HomeHeader({this.profile, this.onChooseProfile});
+  final InstrumentProfile? profile;
+  final VoidCallback? onChooseProfile;
   @override
   Widget build(BuildContext context) {
-    const copy = Column(
+    final copy = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Tổng quan', style: TempoType.heading),
-        Text('Guitar của tôi'),
+        const Text('Tổng quan', style: TempoType.heading),
+        Text(profile?.name ?? 'Guitar của tôi'),
       ],
     );
-    const top = MeloopTopBar(trailing: _InstrumentChip());
+    final top = MeloopTopBar(
+      trailing: _InstrumentChip(profile: profile, onTap: onChooseProfile),
+    );
     if (MediaQuery.textScalerOf(context).scale(16) > 20) {
-      return const Column(
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           top,
-          SizedBox(height: TempoSpace.page),
+          const SizedBox(height: TempoSpace.page),
           copy,
-          SizedBox(height: TempoSpace.page),
+          const SizedBox(height: TempoSpace.page),
         ],
       );
     }
@@ -144,7 +163,14 @@ class _HomeHeader extends StatelessWidget {
           top: -32,
           child: Transform.rotate(
             angle: .105,
-            child: const MeloopArt.scene(MeloopScene.guitar, size: 285),
+            child:
+                profile == null ||
+                    profile!.instrumentType == InstrumentType.guitar
+                ? const MeloopArt.scene(MeloopScene.guitar, size: 285)
+                : MeloopArt.instrument(
+                    MeloopInstrument.values[profile!.instrumentType.index],
+                    size: 285,
+                  ),
           ),
         ),
         Positioned.fill(
@@ -163,9 +189,14 @@ class _HomeHeader extends StatelessWidget {
             ),
           ),
         ),
-        const Column(
+        Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [top, SizedBox(height: 19), copy, SizedBox(height: 16)],
+          children: [
+            top,
+            const SizedBox(height: 19),
+            copy,
+            const SizedBox(height: 16),
+          ],
         ),
       ],
     );
@@ -173,31 +204,55 @@ class _HomeHeader extends StatelessWidget {
 }
 
 class _InstrumentChip extends StatelessWidget {
-  const _InstrumentChip();
+  const _InstrumentChip({this.profile, this.onTap});
+  final InstrumentProfile? profile;
+  final VoidCallback? onTap;
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.fromLTRB(3, 3, 11, 3),
-    decoration: BoxDecoration(
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    label: 'Đổi hồ sơ nhạc cụ',
+    child: Material(
       color: TempoColors.paper.withValues(alpha: .9),
-      border: Border.all(color: TempoColors.line),
-      borderRadius: BorderRadius.circular(TempoRadius.pill),
-    ),
-    child: const Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        MeloopArt.instrument(MeloopInstrument.guitar, size: 39),
-        SizedBox(width: 7),
-        Flexible(child: Text('Guitar')),
-        SizedBox(width: 7),
-        MeloopIcon(MeloopIcons.down, size: 18),
-      ],
+      shape: RoundedRectangleBorder(
+        side: const BorderSide(color: TempoColors.line),
+        borderRadius: BorderRadius.circular(TempoRadius.pill),
+      ),
+      child: InkWell(
+        key: const Key('choose-profile'),
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(TempoRadius.pill),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(3, 3, 11, 3),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              MeloopArt.instrument(
+                MeloopInstrument.values[profile?.instrumentType.index ?? 0],
+                size: 39,
+              ),
+              const SizedBox(width: 7),
+              Flexible(
+                child: Text(
+                  profile?.instrumentLabel ?? 'Guitar',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 7),
+              const MeloopIcon(MeloopIcons.down, size: 18),
+            ],
+          ),
+        ),
+      ),
     ),
   );
 }
 
 class _StatisticsCard extends StatelessWidget {
-  const _StatisticsCard();
-  static const values = [20, 0, 25, 0, 30, 25, 35];
+  const _StatisticsCard({required this.showSampleData});
+  final bool showSampleData;
+  List<int> get values =>
+      showSampleData ? [20, 0, 25, 0, 30, 25, 35] : List.filled(7, 0);
   @override
   Widget build(BuildContext context) => MeloopCard(
     color: TempoColors.teal,
@@ -216,11 +271,11 @@ class _StatisticsCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 9),
-          const MeloopResponsiveRow(
+          MeloopResponsiveRow(
             children: [
-              _Metric('135', 'phút luyện'),
-              _Metric('5', 'buổi luyện'),
-              _Metric('3', 'ngày liên tiếp'),
+              _Metric(showSampleData ? '135' : '0', 'phút luyện'),
+              _Metric(showSampleData ? '5' : '0', 'buổi luyện'),
+              _Metric(showSampleData ? '3' : '0', 'ngày liên tiếp'),
             ],
           ),
           const SizedBox(height: TempoSpace.xs),
