@@ -17,7 +17,7 @@ import 'showcase_controller.dart';
 class InstrumentProfilePreview extends StatefulWidget {
   const InstrumentProfilePreview({super.key, this.service});
 
-  final ProfilePreviewService? service;
+  final InstrumentProfileService? service;
 
   @override
   State<InstrumentProfilePreview> createState() =>
@@ -25,12 +25,14 @@ class InstrumentProfilePreview extends StatefulWidget {
 }
 
 class _InstrumentProfilePreviewState extends State<InstrumentProfilePreview> {
-  late final ProfilePreviewService _service =
+  late final InstrumentProfileService _service =
       widget.service ?? ProfilePreviewService();
   int _generation = 0;
 
   Future<void> _reset() async {
-    await _service.reset();
+    final service = _service;
+    if (service is! ProfilePreviewService) return;
+    await service.reset();
     if (!mounted) return;
     setState(() {
       _generation++;
@@ -47,8 +49,12 @@ class _InstrumentProfilePreviewState extends State<InstrumentProfilePreview> {
       ),
     ],
     child: _ProfilePreview(
-      onReset: _reset,
-      onEnablePro: _service.enableProPreview,
+      onReset: _service is ProfilePreviewService ? _reset : null,
+      onEnablePro: () async {
+        final service = _service;
+        if (service is ProfilePreviewService) return service.enableProPreview();
+        throw const ProfileServiceException(ProfileServiceError.storage);
+      },
     ),
   );
 }
@@ -58,7 +64,7 @@ enum _PreviewPage { loading, loadError, profiles, home }
 class _ProfilePreview extends ConsumerStatefulWidget {
   const _ProfilePreview({required this.onReset, required this.onEnablePro});
 
-  final Future<void> Function() onReset;
+  final Future<void> Function()? onReset;
   final Future<ProfileDirectory> Function() onEnablePro;
 
   @override
@@ -134,7 +140,8 @@ class _ProfilePreviewState extends ConsumerState<_ProfilePreview> {
             onAction: _load,
           ),
           const SizedBox(height: TempoSpace.lg),
-          PreviewDataResetButton(onReset: widget.onReset),
+          if (widget.onReset != null)
+            PreviewDataResetButton(onReset: widget.onReset!),
         ],
       ),
     ),

@@ -6,7 +6,7 @@ Thiết kế dựa trên Report 2 Software Requirements Specification v1.1 ngày
 
 ## Trạng thái triển khai
 
-Đã có DDL v1, opener sqflite, migration runner, cấu hình Android backup và test schema. B01 bổ sung owner connection chung, model/contract thuần Dart và SQLite readers; settings/ngôn ngữ dùng owner được app cấp qua Riverpod. Chưa nối service ghi hồ sơ hoặc `SessionFormSave` vào journal; timer, capture, worker cleanup và import/export chưa có. Database profile UI preview vẫn riêng, không tự chuyển sang journal và không cấp entitlement thật.
+Đã có DDL v1, opener sqflite, migration runner, cấu hình Android backup và test schema. B01 bổ sung owner connection chung, model/contract thuần Dart và SQLite readers; settings/ngôn ngữ dùng owner được app cấp qua Riverpod. B02 nối form tạo hồ sơ vào SQLite journal: UUID request ổn định, validation và giới hạn Free tại BE, profile/disabled goal/selection commit cùng transaction. Các control load/select/rename và delete hồ sơ không recording dùng journal. Delete có recording còn chặn đến khi worker cleanup được triển khai. `SessionFormSave`, timer, capture và import/export chưa nối journal. Database profile UI preview vẫn riêng, không tự chuyển sang journal và không cấp entitlement thật.
 
 ## Quy ước
 

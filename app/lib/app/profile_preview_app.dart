@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+
+import '../backend/journal/sqlite_instrument_profile_service.dart';
 
 import '../frontend/application/app_settings_controller.dart';
 import '../frontend/practice_sessions/practice_session.dart';
@@ -33,4 +37,32 @@ MeloopApp createProfilePreviewApp({
 void runProfilePreviewApp() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(createProfilePreviewApp());
+}
+
+/// Profile storage is real; practice/session screens remain FE previews until
+/// their journal integration steps. Preview snapshots are never imported.
+MeloopApp createJournalProfileApp({List<Override> overrides = const []}) =>
+    MeloopApp(
+      overrides: [
+        appSettingsStoreProvider.overrideWith(
+          (ref) => ref.watch(journalSettingsStoreProvider),
+        ),
+        practiceSessionsLoaderProvider.overrideWith(
+          (ref) => ref.watch(practiceSessionsPreviewLoaderProvider),
+        ),
+        ...overrides,
+      ],
+      home: const _JournalProfiles(),
+    );
+
+class _JournalProfiles extends ConsumerWidget {
+  const _JournalProfiles();
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => InstrumentProfilePreview(
+    service: SqliteInstrumentProfileService(
+      owner: ref.watch(journalDatabaseOwnerProvider),
+      clock: ref.watch(journalClockProvider),
+      initialLanguage: Localizations.localeOf(context).languageCode,
+    ),
+  );
 }

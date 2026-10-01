@@ -1,7 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
+import '../../shared/journal/journal_runtime.dart';
 import '../application/instrument_profile_service.dart';
 import '../components/meloop_ui.dart';
 
@@ -47,11 +46,7 @@ class ProfileFormState extends State<ProfileForm> {
     _name = TextEditingController(text: widget.profile?.name ?? '');
     _customType = TextEditingController(text: widget.profile?.customType ?? '');
     _type = widget.profile?.instrumentType;
-    final random = Random.secure();
-    _requestId = List<int>.generate(
-      16,
-      (_) => random.nextInt(256),
-    ).map((value) => value.toRadixString(16).padLeft(2, '0')).join();
+    _requestId = const UuidJournalIdentifiers().newId();
   }
 
   @override
@@ -111,13 +106,13 @@ class ProfileFormState extends State<ProfileForm> {
     if (!_formKey.currentState!.validate() || type == null) return;
     setState(() => _saving = true);
     try {
-      final name = _name.text.trim();
+      final name = _name.text;
       if (widget.profile == null) {
         await widget.onCreate(
           _requestId,
           name,
           type,
-          type == InstrumentType.other ? _customType.text.trim() : '',
+          type == InstrumentType.other ? _customType.text : '',
         );
       } else if (name == widget.profile!.name) {
         widget.onBack();

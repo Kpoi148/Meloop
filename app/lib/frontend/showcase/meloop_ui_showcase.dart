@@ -246,13 +246,13 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
       onPro: widget.onViewPro,
       onRestorePro: () => showProRestoreNotice(context),
     );
-    if (widget.profile != null) {
+    if (widget.profile != null && widget.onResetData != null) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           settings,
           const SizedBox(height: TempoSpace.page),
-          PreviewDataResetButton(onReset: widget.onResetData ?? () {}),
+          PreviewDataResetButton(onReset: widget.onResetData!),
         ],
       );
     }
