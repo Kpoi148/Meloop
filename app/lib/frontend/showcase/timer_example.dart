@@ -28,6 +28,7 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
   late bool _running;
   String? _draftProfileId;
   PracticeTimerService? _journal;
+  bool _finishing = false;
 
   Future<void> _journalAction(Future<void> Function() action) async {
     try {
@@ -128,28 +129,42 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
   }
 
   Future<void> _finish() async {
-    _running = false;
-    _syncTicker();
-    final shell = ref.read(meloopShellControllerProvider.notifier);
-    shell.checkpointDraft(seconds: _seconds, isRunning: false);
-    shell.finishDraft();
-    await Navigator.of(context).push<void>(
-      MaterialPageRoute(
-        builder: (_) => SessionFormExample(
-          sessionId: ref.read(meloopShellControllerProvider).draft?.sessionId,
-          initialTitle:
-              ref.read(meloopShellControllerProvider).draft?.title ?? '',
-          initialDurationSeconds: _seconds.clamp(
-            1,
-            PracticeRules.maximumDuration.inSeconds,
+    if (_finishing) return;
+    setState(() => _finishing = true);
+    try {
+      final journal = _journal;
+      if (journal != null) {
+        await _journalAction(journal.pause);
+        if (!mounted || journal.snapshot?.failed == true) return;
+        _seconds =
+            journal.snapshot!.elapsedMilliseconds ~/
+            Duration.millisecondsPerSecond;
+      }
+      _running = false;
+      _syncTicker();
+      final shell = ref.read(meloopShellControllerProvider.notifier);
+      shell.checkpointDraft(seconds: _seconds, isRunning: false);
+      shell.finishDraft();
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute(
+          builder: (_) => SessionFormExample(
+            sessionId: ref.read(meloopShellControllerProvider).draft?.sessionId,
+            initialTitle:
+                ref.read(meloopShellControllerProvider).draft?.title ?? '',
+            initialDurationSeconds: _seconds.clamp(
+              1,
+              PracticeRules.maximumDuration.inSeconds,
+            ),
+            onSave: (values) async {
+              await ref.read(sessionFormSaveProvider)(values);
+              shell.completeDraft();
+            },
           ),
-          onSave: (values) async {
-            await ref.read(sessionFormSaveProvider)(values);
-            shell.completeDraft();
-          },
         ),
-      ),
-    );
+      );
+    } finally {
+      if (mounted) setState(() => _finishing = false);
+    }
   }
 
   String _duration(int elapsedSeconds) {
@@ -297,7 +312,13 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
             MeloopButton(
               label: strings.finish,
               style: MeloopButtonStyle.orange,
-              onPressed: widget.readOnly || _journal != null ? null : _finish,
+              onPressed:
+                  widget.readOnly ||
+                      _finishing ||
+                      timer?.busy == true ||
+                      timer?.failed == true
+                  ? null
+                  : _finish,
             ),
           ],
         ),

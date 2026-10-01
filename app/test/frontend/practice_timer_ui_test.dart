@@ -16,6 +16,7 @@ import 'package:meloop/frontend/components/meloop_ui.dart';
 import 'package:meloop/frontend/showcase/home_example.dart';
 import 'package:meloop/frontend/showcase/meloop_ui_showcase.dart';
 import 'package:meloop/frontend/showcase/timer_example.dart';
+import 'package:meloop/frontend/showcase/session_form_example.dart';
 import 'package:meloop/shared/journal/journal_failure.dart';
 import 'package:meloop/shared/journal/journal_models.dart';
 import 'package:meloop/shared/journal/practice_date.dart';
@@ -255,8 +256,23 @@ void main() {
                   find.widgetWithText(MeloopButton, 'Kết thúc'),
                 )
                 .onPressed,
-            isNull,
+            isNotNull,
           );
+          await tap(tester, find.text('Tiếp tục'));
+          if (timer.snapshot!.busy) {
+            await timer.changes.firstWhere((snapshot) => !snapshot.busy);
+          }
+          mono.advance(2000);
+          await tap(tester, find.text('Kết thúc'));
+          final form = tester.widget<SessionFormExample>(
+            find.byType(SessionFormExample),
+          );
+          expect(form.sessionId, id(10));
+          expect(form.initialDurationSeconds, 15);
+          expect(timer.snapshot!.state, PracticeState.paused);
+          expect(store.elapsed, 15300);
+          mono.advance(30000);
+          expect(timer.snapshot!.elapsedMilliseconds, 15300);
           expect(timer.snapshot!.sessionId, id(10));
           expect(store.observedSessionId, id(10));
           expect(store.observedProfileId, id(1));

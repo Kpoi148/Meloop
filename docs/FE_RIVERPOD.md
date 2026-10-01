@@ -72,3 +72,4 @@ Khi kiểm tra tìm kiếm thủ công, đóng bàn phím bằng Back Android tr
 Trong lần thử thủ công trên Medium_Phone ngày 29/09, log ghi nhận ANR do input timeout ở cả Meloop và System UI. Chưa xác định nguyên nhân; cần kiểm tra lại trên máy ảo khởi động sạch và thiết bị thật trước khi kết luận về hiệu năng.
 
 Tài liệu API: [Providers](https://riverpod.dev/docs/concepts2/providers), [Provider overrides](https://riverpod.dev/docs/concepts2/overrides), [Refs](https://riverpod.dev/docs/concepts2/refs).
+Cập nhật Finish cho FE: nút Kết thúc journal đã mở để vào SessionFormExample hiện có. Trước khi mở form, Pause ghi checkpoint; lỗi giữ màn timer/Retry, pending khóa thao tác trùng. Form nhận session ID và measured duration thật; dữ liệu draft bền vững vẫn Paused. Đây là mở điều hướng UI để FE điều chỉnh; chuyển Review bền vững, lưu input và Save session còn B06. Không fake Save; đóng/mở app quay về checkpoint Paused, không hứa phục hồi input form.
