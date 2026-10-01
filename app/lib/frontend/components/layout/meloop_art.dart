@@ -14,12 +14,14 @@ class MeloopArt extends StatelessWidget {
     MeloopInstrument this.instrument, {
     super.key,
     this.size = 118,
+    this.backgroundColor,
   }) : tool = null,
        scene = null,
        columns = 4,
        asset = 'instruments-v2.png';
   const MeloopArt.tool(MeloopTool this.tool, {super.key, this.size = 118})
     : instrument = null,
+      backgroundColor = null,
       scene = null,
       columns = 2,
       asset = 'tools-v2.png';
@@ -27,6 +29,7 @@ class MeloopArt extends StatelessWidget {
   final MeloopTool? tool;
   const MeloopArt.scene(this.scene, {super.key, this.size = 118})
     : instrument = null,
+      backgroundColor = null,
       tool = null,
       columns = 3,
       asset = 'illustrations.png';
@@ -35,6 +38,9 @@ class MeloopArt extends StatelessWidget {
   final int columns;
   final String asset;
   final double size;
+
+  /// Matches Tempo's darken blend when the sprite sits on a colored surface.
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) => ExcludeSemantics(
@@ -53,6 +59,8 @@ class MeloopArt extends StatelessWidget {
             width: size * columns,
             height: size * 2,
             fit: BoxFit.fill,
+            color: backgroundColor,
+            colorBlendMode: backgroundColor == null ? null : BlendMode.darken,
           ),
         ),
       ),

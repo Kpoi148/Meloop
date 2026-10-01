@@ -341,6 +341,7 @@ class _ReadOnlyInstrument extends StatelessWidget {
         MeloopArt.instrument(
           MeloopInstrument.values[profile.instrumentType.index],
           size: 70,
+          backgroundColor: TempoColors.soft,
         ),
         const SizedBox(width: TempoSpace.md),
         Expanded(
@@ -369,35 +370,41 @@ class _InstrumentChoice extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => Semantics(
-    button: true,
-    selected: selected,
-    label: type.label,
-    child: InkWell(
-      key: Key('profile-type-${type.name}'),
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(TempoRadius.action),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.only(bottom: 12),
-        decoration: BoxDecoration(
-          color: selected ? TempoColors.selection : const Color(0xFFF6F2E5),
-          border: Border.all(
-            color: selected ? TempoColors.teal : TempoColors.line,
-            width: selected ? 2 : 1,
-          ),
-          borderRadius: BorderRadius.circular(TempoRadius.action),
-        ),
-        child: Column(
-          children: [
-            MeloopArt.instrument(
-              MeloopInstrument.values[type.index],
-              size: 118,
+  Widget build(BuildContext context) {
+    final backgroundColor = selected
+        ? TempoColors.selection
+        : const Color(0xFFF6F2E5);
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: type.label,
+      child: InkWell(
+        key: Key('profile-type-${type.name}'),
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(TempoRadius.action),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            border: Border.all(
+              color: selected ? TempoColors.teal : TempoColors.line,
+              width: selected ? 2 : 1,
             ),
-            Text(type.label, style: TempoType.label),
-          ],
+            borderRadius: BorderRadius.circular(TempoRadius.action),
+          ),
+          child: Column(
+            children: [
+              MeloopArt.instrument(
+                MeloopInstrument.values[type.index],
+                size: 118,
+                backgroundColor: backgroundColor,
+              ),
+              Text(type.label, style: TempoType.label),
+            ],
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
