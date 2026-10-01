@@ -16,7 +16,7 @@ Không tạo HTTP API giữa frontend và backend. Frontend gọi backend qua co
 
 ## Theme và UI Tempo (task 10)
 
-Project Flutter Android đã được khởi tạo. Mở bộ mẫu bằng `flutter run -t lib/main_showcase.dart` trong `app/`. Entry point mặc định chỉ có màn chào, chờ nối controller tính năng; dữ liệu mẫu chỉ thuộc showcase và không được ghi vào storage.
+Project Flutter Android đã được khởi tạo. Mở bộ mẫu bằng `flutter run -t lib/main_showcase.dart` trong `app/`. Dữ liệu mẫu chỉ thuộc showcase và không được ghi vào storage. Trong Cài đặt có nút **Xóa dữ liệu và bắt đầu lại** để chuyển sang màn chào và luồng hồ sơ tương tác.
 
 Hướng dẫn tokens, component, ví dụ cho Wei và kiểm chứng: [`../docs/FE_SHARED_UI.md`](../docs/FE_SHARED_UI.md). Import từ `package:meloop/frontend/components/meloop_ui.dart`.
 
@@ -30,4 +30,4 @@ Hướng dẫn tokens, component, ví dụ cho Wei và kiểm chứng: [`../docs
 
 ## Xem thử màn hồ sơ nhạc cụ
 
-Chạy `flutter run -t lib/main_profile_preview.dart` để dùng các màn chọn, tạo, đổi tên và xóa hồ sơ theo Tempo. Dữ liệu xem thử chỉ ở bộ nhớ, không phải service lưu trữ. Cách nối service hồ sơ cục bộ và phạm vi kiểm chứng nằm trong [`../docs/FE_INSTRUMENT_PROFILES.md`](../docs/FE_INSTRUMENT_PROFILES.md).
+Chạy `flutter run` hoặc `flutter run -t lib/main_profile_preview.dart` trên máy ảo Android để dùng các màn chọn, tạo, đổi tên và xóa hồ sơ theo Tempo. Cả hai bắt đầu ở màn chào với danh sách hồ sơ trống. Nút **Xóa dữ liệu và bắt đầu lại** ở cuối màn Tổng quan xóa hồ sơ thử, lựa chọn hiện tại và quay về màn chào sau khi xác nhận. Dữ liệu xem thử chỉ ở bộ nhớ, chờ nối service lưu trữ. Trong Android Studio, chọn thiết bị Android trên thanh công cụ trước khi Run; project không cấu hình Windows. Cách nối service và phạm vi kiểm chứng nằm trong [`../docs/FE_INSTRUMENT_PROFILES.md`](../docs/FE_INSTRUMENT_PROFILES.md).

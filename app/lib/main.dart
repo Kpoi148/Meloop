@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'app/meloop_app.dart';
-import 'frontend/showcase/welcome_example.dart';
+import 'frontend/showcase/instrument_profile_preview.dart';
 
-// Backend controllers will be injected by the feature work. No seeded journal.
-void main() => runApp(const MeloopApp(home: WelcomeExample()));
+// Interactive FE preview while the local profile service is being implemented.
+void main() => runApp(const MeloopApp(home: InstrumentProfilePreview()));

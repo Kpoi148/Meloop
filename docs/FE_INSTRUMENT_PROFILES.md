@@ -10,7 +10,11 @@ Trong `app/`:
 flutter run -t lib/main_profile_preview.dart
 ```
 
-Bản xem thử bắt đầu với danh sách trống. Có thể tạo, đổi tên, chọn, xóa hồ sơ, xem giới hạn Free và mở trang giới thiệu Pro. Dữ liệu chỉ ở bộ nhớ và mất khi đóng ứng dụng. Entry point `main.dart` không dùng dữ liệu xem thử.
+Bản xem thử bắt đầu với danh sách trống. Có thể tạo, đổi tên, chọn, xóa hồ sơ, xem giới hạn Free và mở trang giới thiệu Pro. Dữ liệu chỉ ở bộ nhớ và mất khi đóng ứng dụng. Entry point `main.dart` cũng mở bản UI tương tác này trong giai đoạn chờ service của Khanh.
+
+Để test lại lần mở đầu tiên, bấm **Xóa dữ liệu và bắt đầu lại** ở cuối màn Tổng quan rồi xác nhận. Toàn bộ service thử và trạng thái màn hình được tạo lại với danh sách trống, không còn hồ sơ đang chọn. Bấm **Giữ dữ liệu** sẽ giữ nguyên hồ sơ. Với `main_showcase.dart`, nút tương tự nằm trong Cài đặt và đưa sang màn chào của luồng hồ sơ. Thao tác chỉ tác động dữ liệu UI trong bộ nhớ.
+
+Trong Android Studio, mở thư mục `app/`, khởi động máy ảo bằng Device Manager và chọn tên máy ảo Android trên thanh công cụ trước khi Run. Windows không phải nền tảng được cấu hình trong dự án.
 
 ## Nối service hồ sơ cục bộ
 
@@ -22,6 +26,7 @@ UI chỉ kiểm tra trường nhập và hiển thị giới hạn. Service ph�
 
 ```powershell
 flutter test test/frontend/instrument_profiles_feature_test.dart
+flutter test test/frontend/instrument_profiles_preview_test.dart
 flutter test test/frontend/instrument_profiles_visual_test.dart
 flutter analyze
 flutter build apk --debug -t lib/main_profile_preview.dart

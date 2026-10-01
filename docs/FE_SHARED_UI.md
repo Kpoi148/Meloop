@@ -12,7 +12,7 @@ Font Be Vietnam Pro 400/500/600/700, đường SVG, hình mặt cảm xúc và m
 
 Validation theo SRS: tên buổi luyện bắt buộc (100 code point), tên hồ sơ 50, nhạc cụ khác 40, ghi chú tùy chọn 2.000, BPM nguyên 40–240, thời lượng 1–86.400 giây. Prototype cũ cho tên trống và giới hạn khác nên các quy tắc này không được sao chép từ HTML.
 
-Đây là thư viện UI và màn mẫu, chưa triển khai toàn bộ 23 luồng của prototype. Controller lưu trữ, đồng hồ, audio, purchase và draft recovery thuộc task tính năng. Entry point mặc định chỉ có màn chào; CTA chờ callback tạo hồ sơ. Dữ liệu giả và mô phỏng lỗi nằm riêng trong `main_showcase.dart`, không đưa vào production navigation.
+Đây là thư viện UI và màn mẫu, chưa triển khai toàn bộ 23 luồng của prototype. Controller lưu trữ, đồng hồ, audio, purchase và draft recovery thuộc task tính năng. Entry point mặc định mở màn chào và luồng hồ sơ tương tác bằng service tạm trong bộ nhớ, chờ service cục bộ của Khanh. Dữ liệu nhật ký giả và mô phỏng lỗi nằm riêng trong `main_showcase.dart`.
 
 ## Chạy mẫu
 

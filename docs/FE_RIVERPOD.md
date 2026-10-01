@@ -25,7 +25,7 @@ MeloopApp(
 
 `saveSession` và `yourHomePage` là dependency/màn hình do tính năng cung cấp. Import provider từ `package:meloop/frontend/application/session_form_controller.dart` và kiểu dữ liệu từ `package:meloop/frontend/application/session_form_values.dart`. Callback phải trả Future hoàn tất đúng khi thao tác lưu hoàn tất; nếu lưu lỗi phải throw. Adapter tại app chuyển giá trị form sang model/backend contract do nhóm backend thống nhất. Không thêm SQLite hoặc nghiệp vụ vào widget/controller frontend.
 
-Dependency mặc định báo lỗi khi chưa được cấu hình, để giao diện không báo lưu thành công giả. `main.dart` chỉ mở màn chào và không cài dependency giả.
+Dependency lưu buổi luyện mặc định báo lỗi khi chưa được cấu hình, để giao diện không báo lưu thành công giả. `main.dart` mở màn chào và luồng hồ sơ dùng service tạm trong bộ nhớ cho việc test UI; chưa nối lưu trữ hoặc nhật ký thật.
 
 `main_showcase.dart` override dependency lưu bằng `showcaseSessionSaveProvider`. Mô phỏng có độ trễ, lỗi một lần và bộ đếm lưu mẫu; không ghi dữ liệu thiết bị. Chạy:
 

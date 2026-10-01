@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../components/meloop_ui.dart';
 import 'component_catalog.dart';
 import 'home_example.dart';
+import 'instrument_profile_preview.dart';
+import 'preview_data_reset_button.dart';
 import 'session_form_example.dart';
 import 'showcase_controller.dart';
 import 'setup_example.dart';
@@ -29,6 +31,14 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
   void _setup() =>
       Navigator.of(context)
           .push(MaterialPageRoute<void>(builder: (_) => const SetupExample()));
+
+  void _resetData() {
+    ref.invalidate(showcaseControllerProvider);
+    Navigator.of(context).pushAndRemoveUntil<void>(
+      MaterialPageRoute(builder: (_) => const InstrumentProfilePreview()),
+      (_) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,6 +167,7 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
             value: state.failNextSave,
             onChanged: controller.simulateFailure,
           ),
+          PreviewDataResetButton(onReset: _resetData),
           const MeloopNotice(
             message: 'Đây là màn mẫu phát triển UI. Các thao tác không lưu nhật ký thật.',
           ),
