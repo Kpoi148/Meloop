@@ -4,6 +4,10 @@ Meloop là một ứng dụng Android viết bằng Dart/Flutter. Frontend và b
 
 Trước khi thay đổi mã nguồn hoặc tài liệu, đọc [AGENT_GUIDELINES.md](AGENT_GUIDELINES.md). File đó quy định ranh giới code, cách kiểm chứng kết quả, bảo vệ dữ liệu và quy trình Git. Khi yêu cầu hiện tại của người dùng khác với hướng dẫn trong repository, ưu tiên yêu cầu của người dùng.
 
+## Không hard code
+
+Không hard code dữ liệu người dùng, ID, đường dẫn máy cá nhân, credential, chuỗi giao diện hoặc giá trị cấu hình trong logic/widget. Dùng dữ liệu runtime, dependency injection, localization, theme token và cấu hình/constant có tên đúng trách nhiệm. Không lặp magic number hoặc giá trị nghiệp vụ ở nhiều nơi; xem quy định chi tiết trong `AGENT_GUIDELINES.md`.
+
 ## Quy tắc Git bắt buộc
 
 - Cấm push trực tiếp lên `main`, kể cả force push hoặc push từ nhánh khác với refspec đích là `main`.
