@@ -1,4 +1,4 @@
-# SQLite journal readers
+# SQLite journal services và readers
 
 Implement các port trong `shared/journal/`, đọc schema v1 qua cùng `JournalDatabaseOwner`. Không mở/đóng database riêng cho mỗi query.
 
@@ -10,3 +10,7 @@ Implement các port trong `shared/journal/`, đọc schema v1 qua cùng `Journal
 ID đầu vào phải là lowercase UUID v4. DB/query failure trả storage error; lỗi dữ liệu không hợp lệ trả corruptData; closed owner vẫn là closed. Không log payload hoặc SQL exception. Mọi mutation nghiệp vụ, recovery và file cleanup chưa thuộc readers.
 
 `JournalDatabaseOwner` serialize open/read/transaction/close, retry được sau lỗi và close chờ thao tác đã nhận. Callback chỉ dùng executor trong thời gian callback; không giữ executor, đóng connection hoặc gọi lại owner từ trong callback/transaction (gây chờ lẫn nhau). Chủ app scope đóng owner; client store không được đóng.
+
+`SqliteInstrumentProfileService` implement contract thuần Dart trong `shared/profiles/`. Create validate NFC/code points, name key giữ dấu, Free tối đa 3; UUID request là profile ID để retry sau reopen không tạo thêm. Insert profile, disabled weekly goal và selected preference cùng transaction; lỗi giữ nguyên DB. Không nhận Pro mô phỏng. Adapter load/select/rename/delete giữ các control FE đang có hoạt động trên journal; count chỉ lấy saved sessions. Delete chặn unfinished và hồ sơ có recording vì worker xóa file chưa triển khai; không báo đã xóa file khi chưa xử lý. Không sửa schema v1.
+
+Android QA: `flutter test integration_test/profile_create_smoke_test.dart -d emulator-5554 --no-uninstall` dùng file UUID riêng và dọn đúng file đó. Khi kiểm tra process restart, dùng cùng `--dart-define=PROFILE_TEST_DB=profile-process-<uuid>.db`, chạy phase `create`, force-stop package rồi chạy phase `reopen`. Luôn thêm `--no-uninstall`: runner Flutter mặc định gỡ app sau test và xóa cả sandbox, khiến phép kiểm tra restart sai và có thể mất dữ liệu app trên thiết bị test. Không chạy test gỡ app trên thiết bị có journal cần giữ.

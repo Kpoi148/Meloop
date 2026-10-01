@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/journal/journal_text.dart';
+import '../../../shared/journal/journal_failure.dart';
 
 /// Presentation validation only. The domain must validate before committing.
 abstract final class MeloopValidation {
@@ -38,21 +40,42 @@ abstract final class MeloopValidation {
       );
   static String? profileName(String? value) => profileNameFor(value, _vi);
   static String? profileNameFor(String? value, AppLocalizations strings) =>
-      singleLine(
+      _profile(
         value,
-        label: strings.profileName,
-        maxLength: 50,
-        strings: strings,
+        strings.profileName,
+        ProfileRules.nameMaxCodePoints,
+        strings,
       );
   static String? customInstrument(String? value) =>
       customInstrumentFor(value, _vi);
   static String? customInstrumentFor(String? value, AppLocalizations strings) =>
-      singleLine(
+      _profile(
         value,
-        label: strings.customInstrumentName,
-        maxLength: 40,
+        strings.customInstrumentName,
+        ProfileRules.customTypeMaxCodePoints,
+        strings,
+      );
+
+  static String? _profile(
+    String? value,
+    String label,
+    int limit,
+    AppLocalizations strings,
+  ) {
+    try {
+      JournalText.profileName(value ?? '', maxCodePoints: limit);
+      return null;
+    } on JournalFailure {
+      final basic = singleLine(
+        value,
+        label: label,
+        maxLength: limit,
         strings: strings,
       );
+      return basic ?? strings.invalidSingleLine(label);
+    }
+  }
+
   static String? note(String? value) => noteFor(value, _vi);
   static String? noteFor(String? value, AppLocalizations strings) {
     if (_noteControls.hasMatch(value ?? '')) {
