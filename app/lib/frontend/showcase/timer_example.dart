@@ -11,6 +11,7 @@ import '../application/practice_timer_service.dart';
 import '../application/session_form_controller.dart';
 import '../application/startup_controller.dart';
 import '../components/meloop_ui.dart';
+import 'metronome_example.dart';
 import 'preview_copy.dart';
 import 'session_form_example.dart';
 
@@ -171,6 +172,10 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
     }
   }
 
+  void _metronome() => Navigator.of(context).push<void>(
+    MaterialPageRoute(builder: (_) => MetronomeExample(onHome: _back)),
+  );
+
   String _duration(int elapsedSeconds) {
     final hours = elapsedSeconds ~/ 3600;
     final minutes = elapsedSeconds % 3600 ~/ 60;
@@ -247,11 +252,6 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
                 ],
               ),
             ),
-            if (draft.wasRecovered)
-              MeloopNotice(
-                message:
-                    '${strings.recoveredDraftTitle}\n${strings.recoveredDraftMessage}',
-              ),
             if (widget.readOnly && _journal == null)
               MeloopNotice(message: strings.journalRecoveryPending),
             if (_journal != null && timer?.failed == true) ...[
@@ -309,7 +309,7 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
               label: strings.practiceTools,
               icon: MeloopIcons.music,
               style: MeloopButtonStyle.soft,
-              onPressed: widget.readOnly || _journal != null ? null : () {},
+              onPressed: widget.readOnly ? null : _metronome,
             ),
             MeloopButton(
               label: strings.finish,

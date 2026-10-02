@@ -1652,6 +1652,72 @@ abstract class AppLocalizations {
   /// **'Tốc độ (BPM)'**
   String get tempoBpm;
 
+  /// No description provided for @metronomeTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Máy đếm nhịp'**
+  String get metronomeTitle;
+
+  /// No description provided for @metronomeBpmUnit.
+  ///
+  /// In vi, this message translates to:
+  /// **'nhịp / phút'**
+  String get metronomeBpmUnit;
+
+  /// No description provided for @decreaseMetronomeBpm.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giảm nhịp'**
+  String get decreaseMetronomeBpm;
+
+  /// No description provided for @increaseMetronomeBpm.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tăng nhịp'**
+  String get increaseMetronomeBpm;
+
+  /// No description provided for @startMetronome.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bắt đầu'**
+  String get startMetronome;
+
+  /// No description provided for @stopMetronome.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dừng máy đếm nhịp'**
+  String get stopMetronome;
+
+  /// No description provided for @metronomeFootnote.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhấn ở phách đầu để dễ bắt nhịp.\nÂm thanh phát trực tiếp trên thiết bị của bạn.'**
+  String get metronomeFootnote;
+
+  /// No description provided for @metronomeCurrentBeat.
+  ///
+  /// In vi, this message translates to:
+  /// **'Phách {current} / {total}'**
+  String metronomeCurrentBeat(int current, int total);
+
+  /// No description provided for @metronomeBpmRangeError.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tốc độ phải từ {min} đến {max} BPM.'**
+  String metronomeBpmRangeError(int min, int max);
+
+  /// No description provided for @metronomeBeatsRangeError.
+  ///
+  /// In vi, this message translates to:
+  /// **'Số phách mỗi ô nhịp phải từ {min} đến {max}.'**
+  String metronomeBeatsRangeError(int min, int max);
+
+  /// No description provided for @metronomeAudioBusy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Một công cụ âm thanh khác đang hoạt động. Hãy dừng công cụ đó trước khi bật máy đếm nhịp.'**
+  String get metronomeAudioBusy;
+
   /// No description provided for @bpm.
   ///
   /// In vi, this message translates to:
