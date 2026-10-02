@@ -4,12 +4,13 @@ import 'migration_runner.dart';
 import 'migrations/v001_initial_schema.dart';
 import 'migrations/v002_session_bpm.dart';
 import 'migrations/v003_profile_practice_drafts.dart';
+import 'migrations/v004_saved_session_deletion.dart';
 
 class JournalDatabase {
   JournalDatabase._();
 
   static const filename = 'meloop.db';
-  static const schemaVersion = 3;
+  static const schemaVersion = 4;
 
   static Future<Database> open({DatabaseFactory? factory, String? path}) async {
     final selectedFactory = factory ?? databaseFactory;
@@ -25,6 +26,7 @@ class JournalDatabase {
           initialSchema,
           sessionBpmSchema,
           profilePracticeDraftsSchema,
+          savedSessionDeletionSchema,
         ]);
     return OpenDatabaseOptions(
       version: migrations.version,
