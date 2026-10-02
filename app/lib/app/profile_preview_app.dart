@@ -12,6 +12,7 @@ import '../frontend/profiles/journal_profile_entry.dart';
 
 import '../frontend/application/app_settings_controller.dart';
 import '../frontend/practice_sessions/practice_session.dart';
+import '../frontend/practice_sessions/practice_session_actions.dart';
 import '../shared/settings/app_settings_store.dart';
 import '../frontend/showcase/instrument_profile_preview.dart';
 import '../frontend/showcase/practice_session_examples.dart';
@@ -33,6 +34,7 @@ MeloopApp createProfilePreviewApp({
     practiceSessionsLoaderProvider.overrideWith(
       (ref) => ref.watch(practiceSessionsPreviewLoaderProvider),
     ),
+    ..._sessionPreviewActions,
   ],
   home: InstrumentProfilePreview(
     service: ProfilePreviewService(
@@ -60,10 +62,25 @@ MeloopApp createJournalProfileApp({List<Override> overrides = const []}) =>
         practiceSessionsLoaderProvider.overrideWith(
           (ref) => ref.watch(practiceSessionsPreviewLoaderProvider),
         ),
+        ..._sessionPreviewActions,
         ...overrides,
       ],
       home: const JournalPracticeLifecycle(child: _JournalProfiles()),
     );
+
+final _sessionPreviewActions = <Override>[
+  practiceSessionUpdateProvider.overrideWith(
+    (ref) => ref.read(practiceSessionPreviewChangesProvider.notifier).update,
+  ),
+  practiceSessionDeleteProvider.overrideWith(
+    (ref) => ref.read(practiceSessionPreviewChangesProvider.notifier).delete,
+  ),
+  practiceRecordingDeleteProvider.overrideWith(
+    (ref) => ref
+        .read(practiceSessionPreviewChangesProvider.notifier)
+        .deleteRecording,
+  ),
+];
 
 class _JournalProfiles extends ConsumerWidget {
   const _JournalProfiles();

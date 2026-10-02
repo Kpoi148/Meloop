@@ -878,6 +878,174 @@ abstract class AppLocalizations {
   /// **'Chi tiết buổi luyện'**
   String get practiceSessionDetails;
 
+  /// No description provided for @practiceFocusLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tập trung'**
+  String get practiceFocusLabel;
+
+  /// No description provided for @practiceEmptyRating.
+  ///
+  /// In vi, this message translates to:
+  /// **'—'**
+  String get practiceEmptyRating;
+
+  /// No description provided for @sessionOptionalSuffix.
+  ///
+  /// In vi, this message translates to:
+  /// **' (không bắt buộc)'**
+  String get sessionOptionalSuffix;
+
+  /// No description provided for @sessionMoodHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'1 · Không vui → 5 · Rất vui · Bấm lại để bỏ chọn.'**
+  String get sessionMoodHint;
+
+  /// No description provided for @sessionFocusHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'1 · Khó tập trung → 5 · Rất tập trung · Bấm lại để bỏ chọn.'**
+  String get sessionFocusHint;
+
+  /// No description provided for @nextPracticeHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Một lời nhắn cho bạn ở buổi sau…'**
+  String get nextPracticeHint;
+
+  /// No description provided for @practiceSampleGuitarDifficulty.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chuyển từ G sang Am cần mượt hơn.'**
+  String get practiceSampleGuitarDifficulty;
+
+  /// No description provided for @practiceRatingSuffix.
+  ///
+  /// In vi, this message translates to:
+  /// **' / 5'**
+  String get practiceRatingSuffix;
+
+  /// No description provided for @practiceNextEmpty.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hẹn bạn ở buổi luyện tiếp theo.'**
+  String get practiceNextEmpty;
+
+  /// No description provided for @editSessionJournal.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sửa nhật ký'**
+  String get editSessionJournal;
+
+  /// No description provided for @editSessionTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sửa buổi luyện'**
+  String get editSessionTitle;
+
+  /// No description provided for @editSessionHeading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhìn lại buổi luyện.'**
+  String get editSessionHeading;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lưu thay đổi'**
+  String get saveChanges;
+
+  /// No description provided for @sessionDurationMinutes.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thời lượng (phút)'**
+  String get sessionDurationMinutes;
+
+  /// No description provided for @sessionPracticeBpm.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tốc độ luyện (BPM)'**
+  String get sessionPracticeBpm;
+
+  /// No description provided for @notRequired.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không bắt buộc'**
+  String get notRequired;
+
+  /// No description provided for @deleteSessionTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa buổi luyện?'**
+  String get deleteSessionTitle;
+
+  /// No description provided for @sessionDeleted.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã xóa buổi luyện.'**
+  String get sessionDeleted;
+
+  /// No description provided for @deleteSessionFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể xóa. Buổi luyện và bản ghi âm vẫn được giữ. Vui lòng thử lại.'**
+  String get deleteSessionFailed;
+
+  /// No description provided for @deleteRecordingTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa bản ghi âm?'**
+  String get deleteRecordingTitle;
+
+  /// No description provided for @deleteRecording.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa bản ghi'**
+  String get deleteRecording;
+
+  /// No description provided for @deleteRecordingMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉ bản ghi âm này bị xóa. Nhật ký buổi luyện được giữ nguyên.'**
+  String get deleteRecordingMessage;
+
+  /// No description provided for @listenRecording.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nghe lại'**
+  String get listenRecording;
+
+  /// No description provided for @exportRecording.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xuất bản ghi'**
+  String get exportRecording;
+
+  /// No description provided for @recordingActionFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể mở bản ghi âm. Vui lòng thử lại.'**
+  String get recordingActionFailed;
+
+  /// No description provided for @noSessionRecordings.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có bản ghi âm.'**
+  String get noSessionRecordings;
+
+  /// No description provided for @noSessionRecordingsMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Buổi luyện này chưa có bản ghi âm được lưu.'**
+  String get noSessionRecordingsMessage;
+
+  /// No description provided for @practiceRecordingTake.
+  ///
+  /// In vi, this message translates to:
+  /// **'{title} · Lần {take}'**
+  String practiceRecordingTake(String title, int take);
+
   /// No description provided for @practiceWhatWasPracticed.
   ///
   /// In vi, this message translates to:
@@ -1535,7 +1703,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteSessionMessage.
   ///
   /// In vi, this message translates to:
-  /// **'Nhật ký và bản ghi âm của buổi này sẽ bị xóa.'**
+  /// **'Buổi luyện này sẽ được xóa khỏi nhật ký và thống kê. Bản ghi âm vẫn được giữ riêng.'**
   String get deleteSessionMessage;
 
   /// No description provided for @openChoiceSheet.

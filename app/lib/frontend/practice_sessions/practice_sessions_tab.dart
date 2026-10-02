@@ -23,12 +23,14 @@ class PracticeSessionsTab extends ConsumerStatefulWidget {
     required this.bottomNavigation,
     required this.scrollController,
     this.draft,
+    this.onHome,
   });
 
   final PreviewInstrumentProfile profile;
   final PreviewPracticeDraft? draft;
   final Future<void> Function() onCreate;
   final VoidCallback onContinue, onInstrument;
+  final VoidCallback? onHome;
   final Widget bottomNavigation;
   final ScrollController scrollController;
 
@@ -69,6 +71,12 @@ class _PracticeSessionsTabState extends ConsumerState<PracticeSessionsTab> {
           session: session,
           profile: widget.profile,
           now: ref.read(practiceSessionsClockProvider)(),
+          onHome: widget.onHome == null
+              ? null
+              : () {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  widget.onHome!();
+                },
         ),
       ),
     );

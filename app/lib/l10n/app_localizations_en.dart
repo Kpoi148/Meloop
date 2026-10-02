@@ -437,6 +437,99 @@ class AppLocalizationsEn extends AppLocalizations {
   String get practiceSessionDetails => 'Practice session details';
 
   @override
+  String get practiceFocusLabel => 'Focus';
+
+  @override
+  String get practiceEmptyRating => '—';
+
+  @override
+  String get sessionOptionalSuffix => ' (optional)';
+
+  @override
+  String get sessionMoodHint =>
+      '1 · Unhappy → 5 · Very happy · Tap again to clear.';
+
+  @override
+  String get sessionFocusHint =>
+      '1 · Distracted → 5 · Very focused · Tap again to clear.';
+
+  @override
+  String get nextPracticeHint => 'A note for your next session…';
+
+  @override
+  String get practiceSampleGuitarDifficulty =>
+      'Make the transition from G to Am smoother.';
+
+  @override
+  String get practiceRatingSuffix => ' / 5';
+
+  @override
+  String get practiceNextEmpty => 'See you at your next practice session.';
+
+  @override
+  String get editSessionJournal => 'Edit journal';
+
+  @override
+  String get editSessionTitle => 'Edit practice session';
+
+  @override
+  String get editSessionHeading => 'Look back on your practice.';
+
+  @override
+  String get saveChanges => 'Save changes';
+
+  @override
+  String get sessionDurationMinutes => 'Duration (minutes)';
+
+  @override
+  String get sessionPracticeBpm => 'Practice tempo (BPM)';
+
+  @override
+  String get notRequired => 'Optional';
+
+  @override
+  String get deleteSessionTitle => 'Delete practice session?';
+
+  @override
+  String get sessionDeleted => 'Practice session deleted.';
+
+  @override
+  String get deleteSessionFailed =>
+      'Could not delete. Your session and recordings are still here. Please try again.';
+
+  @override
+  String get deleteRecordingTitle => 'Delete recording?';
+
+  @override
+  String get deleteRecording => 'Delete recording';
+
+  @override
+  String get deleteRecordingMessage =>
+      'Only this recording will be deleted. Your practice journal will be kept.';
+
+  @override
+  String get listenRecording => 'Listen again';
+
+  @override
+  String get exportRecording => 'Export recording';
+
+  @override
+  String get recordingActionFailed =>
+      'Could not open the recording. Please try again.';
+
+  @override
+  String get noSessionRecordings => 'No recordings yet.';
+
+  @override
+  String get noSessionRecordingsMessage =>
+      'This practice session has no saved recordings.';
+
+  @override
+  String practiceRecordingTake(String title, int take) {
+    return '$title · Take $take';
+  }
+
+  @override
   String get practiceWhatWasPracticed => 'What you practiced';
 
   @override
@@ -804,7 +897,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteSessionMessage =>
-      'This session\'s journal entry and recordings will be deleted.';
+      'This session will be removed from your journal and statistics. Recordings will be kept separately.';
 
   @override
   String get openChoiceSheet => 'Open choice sheet';

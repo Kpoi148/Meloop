@@ -6,6 +6,7 @@ import '../application/app_settings_controller.dart';
 import '../application/startup_controller.dart';
 import '../components/layout/meloop_art.dart';
 import '../practice_sessions/practice_session.dart';
+import '../application/session_form_values.dart';
 
 /// Temporary, memory-only content for reviewing UC-06 before storage is wired.
 final practiceSessionsPreviewLoaderProvider = Provider<PracticeSessionsLoader>((
@@ -14,8 +15,64 @@ final practiceSessionsPreviewLoaderProvider = Provider<PracticeSessionsLoader>((
   final locale = ref.watch(appLocaleProvider).value ?? const Locale('vi');
   final strings = lookupAppLocalizations(locale);
   final clock = ref.watch(practiceSessionsClockProvider);
-  return (profile) async => practiceSessionExamples(strings, profile, clock());
+  final changes = ref.watch(practiceSessionPreviewChangesProvider);
+  return (profile) async => List.unmodifiable([
+    for (final session in practiceSessionExamples(strings, profile, clock()))
+      if (!changes.containsKey(session.id) || changes[session.id] != null)
+        changes[session.id] ?? session,
+  ]);
 });
+
+/// Only the showcase owns these transient edits; no journal data is written.
+final practiceSessionPreviewChangesProvider =
+    NotifierProvider<
+      PracticeSessionPreviewChanges,
+      Map<String, PracticeSession?>
+    >(PracticeSessionPreviewChanges.new);
+
+class PracticeSessionPreviewChanges
+    extends Notifier<Map<String, PracticeSession?>> {
+  @override
+  Map<String, PracticeSession?> build() => const {};
+
+  Future<PracticeSession> update(
+    PracticeSession session,
+    SessionFormValues values,
+  ) async {
+    final updated = PracticeSession(
+      id: session.id,
+      profileId: session.profileId,
+      date: values.date,
+      title: values.title,
+      duration: Duration(seconds: values.durationSeconds),
+      practiced: values.practiced,
+      difficulty: values.difficulty,
+      nextPractice: values.next,
+      mood: values.mood,
+      focus: values.focus,
+      bpm: values.bpm,
+      recordingCount: session.recordingCount,
+      recordings: session.recordings,
+    );
+    state = {...state, session.id: updated};
+    return updated;
+  }
+
+  Future<void> delete(PracticeSession session) async {
+    state = {...state, session.id: null};
+  }
+
+  Future<PracticeSession> deleteRecording(
+    PracticeSession session,
+    PracticeSessionRecording recording,
+  ) async {
+    final updated = session.withRecordings(
+      session.recordings.where((item) => item.id != recording.id).toList(),
+    );
+    state = {...state, session.id: updated};
+    return updated;
+  }
+}
 
 List<PracticeSession> practiceSessionExamples(
   AppLocalizations strings,
@@ -59,11 +116,23 @@ List<PracticeSession> practiceSessionExamples(
                   ? strings.sampleSessionNotes
                   : strings.practiceSampleScaleNotes
             : strings.practiceSampleSteadyNotes,
-        difficulty: index == 0 ? strings.practiceSampleDifficulty : '',
+        difficulty: index == 0
+            ? profile.instrument == MeloopInstrument.guitar
+                  ? strings.practiceSampleGuitarDifficulty
+                  : strings.practiceSampleDifficulty
+            : '',
         nextPractice: strings.sampleNextNotes,
         mood: samples[index].mood == 0 ? null : samples[index].mood,
         focus: samples[index].focus == 0 ? null : samples[index].focus,
         recordingCount: samples[index].recordings,
+        recordings: [
+          for (var take = 0; take < samples[index].recordings; take++)
+            PracticeSessionRecording(
+              id: '${profile.id}:session-$index:recording-$take',
+              title: strings.practiceRecordingTake(titles[index], take + 1),
+              duration: Duration(seconds: take == 0 ? 84 : 58),
+            ),
+        ],
       ),
   ]);
 }

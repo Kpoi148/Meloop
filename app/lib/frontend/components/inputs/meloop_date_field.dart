@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../l10n/l10n.dart';
 import '../../theme/tokens/tempo_tokens.dart';
@@ -12,19 +13,27 @@ class MeloopDateField extends StatelessWidget {
     required this.value,
     required this.onChanged,
     this.enabled = true,
+    this.compact = false,
   });
   final String label;
   final DateTime value;
   final ValueChanged<DateTime> onChanged;
   final bool enabled;
+  final bool compact;
   @override
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      MeloopFieldLabel(
-        label: label,
-        requirement: MeloopFieldRequirement.required,
-      ),
+      if (compact)
+        Text(
+          '$label${context.l10n.requiredSuffix}',
+          style: TempoType.label.copyWith(height: 1.3, letterSpacing: 0),
+        )
+      else
+        MeloopFieldLabel(
+          label: label,
+          requirement: MeloopFieldRequirement.required,
+        ),
       const SizedBox(height: TempoSpace.sm),
       FormField<DateTime>(
         initialValue: DateUtils.dateOnly(value),
@@ -76,10 +85,24 @@ class MeloopDateField extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    MaterialLocalizations.of(context).formatMediumDate(value),
+                    compact
+                        ? DateFormat(
+                            'dd/MM/yyyy',
+                            context.l10n.localeName,
+                          ).format(value)
+                        : MaterialLocalizations.of(context)
+                              .formatMediumDate(value),
+                    style: compact
+                        ? TempoType.body.copyWith(height: 1.3, letterSpacing: 0)
+                        : null,
                   ),
                 ),
-                const MeloopIcon(MeloopIcons.down, size: TempoSize.smallIcon),
+                compact
+                    ? const Icon(Icons.calendar_today_outlined, size: 14)
+                    : const MeloopIcon(
+                        MeloopIcons.down,
+                        size: TempoSize.smallIcon,
+                      ),
               ],
             ),
           ),
