@@ -22,10 +22,6 @@ class SqliteJournalBootstrap implements JournalBootstrapReader {
     try {
       return await owner.transaction((db) async {
         var directory = await readProfileDirectory(db);
-        final draft = await readUnfinishedDraft(db);
-        if (draft != null && directory.byId(draft.session.profileId) == null) {
-          throw const JournalFailure(JournalFailureCode.corruptData);
-        }
         final selected = directory.profiles.length == 1
             ? directory.profiles.single.id
             : directory.selectedProfile?.id;
@@ -43,6 +39,9 @@ selected_profile_id=excluded.selected_profile_id, updated_at=excluded.updated_at
           );
           directory = await readProfileDirectory(db);
         }
+        final draft = selected == null
+            ? null
+            : await readUnfinishedDraft(db, profileId: selected);
         return JournalBootstrapSnapshot(directory: directory, draft: draft);
       });
     } on JournalFailure {

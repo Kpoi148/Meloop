@@ -49,24 +49,29 @@ class _JournalProfileEntryState extends ConsumerState<JournalProfileEntry> {
     try {
       final snapshot = await ref.read(journalBootstrapLoaderProvider)();
       if (!mounted || request != _request) return;
-      if (snapshot.draft != null) {
-        await ref.read(practiceTimerServiceProvider)?.open(snapshot.draft!);
+      final directory = snapshot.directory;
+      final selected =
+          directory.byId(selectedId ?? directory.selectedProfileId ?? '') ??
+          directory.profiles.firstOrNull;
+      final draft = snapshot.draft?.session.profileId == selected?.id
+          ? snapshot.draft
+          : null;
+      final timer = ref.read(practiceTimerServiceProvider);
+      await timer?.pause();
+      if (draft != null) {
+        await timer?.open(draft);
         if (!mounted || request != _request) return;
       }
-      final directory = snapshot.directory;
+      if (!mounted || request != _request) return;
       setState(() {
         _snapshot = snapshot;
-        _selected =
-            directory.byId(selectedId ?? directory.selectedProfileId ?? '') ??
-            directory.profiles.firstOrNull;
+        _selected = selected;
         _loading = false;
         _generation++;
-        _recoverOnEntry = freshEntry && snapshot.draft != null;
+        _recoverOnEntry = freshEntry && draft != null;
         _profilesVisible =
             directory.profiles.isEmpty ||
-            (freshEntry &&
-                snapshot.draft == null &&
-                directory.profiles.length > 1);
+            (freshEntry && draft == null && directory.profiles.length > 1);
         _entry = ProfileEntryPage.automatic;
       });
     } catch (_) {
@@ -122,10 +127,16 @@ class _JournalProfileEntryState extends ConsumerState<JournalProfileEntry> {
     String profileId,
     String title,
   ) async {
+    final timer = ref.read(practiceTimerServiceProvider);
+    await timer?.pause();
+    if (timer?.snapshot?.failed == true) await timer?.retry();
     final draft = await ref
         .read(practiceStartServiceProvider)
         .start(requestId: requestId, profileId: profileId, title: title);
     if (!mounted) throw StateError('Journal entry was disposed.');
+    if (draft.session.profileId != profileId) {
+      throw StateError('Start returned a draft from another profile.');
+    }
     await ref
         .read(practiceTimerServiceProvider)
         ?.open(draft, newlyStarted: draft.session.id == requestId);
@@ -170,7 +181,9 @@ class _JournalProfileEntryState extends ConsumerState<JournalProfileEntry> {
       );
     }
     final snapshot = _snapshot!;
-    final draft = snapshot.draft;
+    final draft = snapshot.draft?.session.profileId == _selected?.id
+        ? snapshot.draft
+        : null;
     final shellDraft = draft == null ? null : _presentDraft(draft);
     final profiles = [
       for (final p in snapshot.directory.profiles)

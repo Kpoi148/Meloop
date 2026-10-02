@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:meloop/backend/database/journal_database.dart';
 import 'package:meloop/backend/database/migration_runner.dart';
 import 'package:meloop/backend/database/migrations/v001_initial_schema.dart';
+import 'package:meloop/backend/database/migrations/v002_session_bpm.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 const profileId = '00000000-0000-4000-8000-000000000001';
@@ -142,7 +143,7 @@ void main() {
   );
 
   test(
-    'one unfinished session globally, including a different profile',
+    'one unfinished session per profile and only one running session',
     () async {
       await addProfile(db);
       await addProfile(db, id: otherProfileId, name: 'Second');
@@ -156,11 +157,23 @@ void main() {
         ),
         throwsA(isA<DatabaseException>()),
       );
+      await expectLater(
+        db.insert(
+          'practice_sessions',
+          sessionRow(id: otherSessionId, state: 'paused'),
+        ),
+        throwsA(isA<DatabaseException>()),
+      );
       await db.insert(
         'practice_sessions',
-        sessionRow(id: otherSessionId, state: 'saved'),
+        sessionRow(
+          id: otherSessionId,
+          profile: otherProfileId,
+          state: 'paused',
+        ),
       );
-      expect(await db.query('saved_practice_sessions'), hasLength(1));
+      expect(await db.query('session_drafts'), hasLength(2));
+      expect(await db.query('saved_practice_sessions'), isEmpty);
     },
   );
 
@@ -418,6 +431,82 @@ void main() {
         throwsA(isA<DatabaseException>()),
       );
       expect(await db.query('instrument_profiles'), isEmpty);
+    },
+  );
+
+  test(
+    'v2 upgrade preserves draft, review input, BPM and recording links',
+    () async {
+      final directory = await Directory.systemTemp.createTemp(
+        'meloop-v3-upgrade-',
+      );
+      final path = '${directory.path}/journal.db';
+      const review = '{"title":"Review QA","duration_seconds":754}';
+      try {
+        final old = await databaseFactoryFfi.openDatabase(
+          path,
+          options: JournalDatabase.options(
+            runner: MigrationRunner(const [initialSchema, sessionBpmSchema]),
+          ),
+        );
+        await addProfile(old);
+        await addProfile(old, id: otherProfileId, name: 'Flute');
+        await old.insert('practice_sessions', {
+          ...sessionRow(state: 'review'),
+          'bpm': 90,
+        });
+        await old.update('session_drafts', {
+          'accumulated_ms': 754000,
+          'review_input_json': review,
+        });
+        await addRecording(old);
+        await old.insert(
+          'practice_sessions',
+          sessionRow(
+            id: otherSessionId,
+            profile: otherProfileId,
+            state: 'saved',
+          ),
+        );
+        final sessions = await old.query('practice_sessions', orderBy: 'id');
+        final drafts = await old.query('session_drafts');
+        final recordings = await old.query('recordings');
+        await old.close();
+        final upgraded = await JournalDatabase.open(
+          factory: databaseFactoryFfi,
+          path: path,
+        );
+        try {
+          expect(await upgraded.getVersion(), 3);
+          expect(
+            await upgraded.query('practice_sessions', orderBy: 'id'),
+            sessions,
+          );
+          expect(await upgraded.query('session_drafts'), drafts);
+          expect(await upgraded.query('recordings'), recordings);
+          await upgraded.insert(
+            'practice_sessions',
+            sessionRow(
+              id: '00000000-0000-4000-8000-000000000013',
+              profile: otherProfileId,
+              state: 'paused',
+            ),
+          );
+          expect(await upgraded.query('session_drafts'), hasLength(2));
+          expect(await upgraded.rawQuery('PRAGMA foreign_key_check'), isEmpty);
+          expect(
+            (await upgraded.rawQuery('PRAGMA integrity_check'))
+                .single
+                .values
+                .single,
+            'ok',
+          );
+        } finally {
+          await upgraded.close();
+        }
+      } finally {
+        await directory.delete(recursive: true);
+      }
     },
   );
 

@@ -237,8 +237,13 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
   Widget build(BuildContext context) {
     final state = ref.watch(meloopShellControllerProvider);
     ref.watch(practiceTimerSnapshotProvider);
-    final draft = state.draft;
-    final timer = _journal?.snapshot;
+    final draft = state.selectedDraft;
+    final snapshot = _journal?.snapshot;
+    final timer =
+        snapshot?.sessionId == draft?.sessionId &&
+            snapshot?.profileId == draft?.profileId
+        ? snapshot
+        : null;
     final profile = state.profiles
         .where((p) => p.id == draft?.profileId)
         .firstOrNull;

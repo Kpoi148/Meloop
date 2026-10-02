@@ -105,11 +105,15 @@ void main() {
       initialLanguage: 'vi',
     );
     await service.select(id(2));
+    final otherSnapshot = await bootstrap.read();
+    expect(otherSnapshot.draft, isNull);
+    expect(otherSnapshot.directory.selectedProfileId, id(2));
+    await service.select(id(1));
     final snapshot = await bootstrap.read();
     expect(snapshot.draft!.session.profileId, id(1));
     expect(snapshot.draft!.session.state, PracticeState.running);
     expect(snapshot.draft!.accumulatedMilliseconds, 754000);
-    expect(snapshot.directory.selectedProfileId, id(2));
+    expect(snapshot.directory.selectedProfileId, id(1));
     expect(snapshot.directory.byId(id(1))!.savedSessionCount, 0);
     expect(snapshot.directory.byId(id(2))!.savedSessionCount, 1);
     await owner.close();

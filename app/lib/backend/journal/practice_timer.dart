@@ -109,9 +109,17 @@ class PracticeTimer implements PracticeTimerService {
         if (_sessionId == draft.session.id) {
           return; // Keep newer in-memory values after a failed checkpoint.
         }
-        if (_sessionId != null || draft.session.state == PracticeState.saved) {
+        if (draft.session.state == PracticeState.saved) {
           throw const JournalFailure(JournalFailureCode.invalidInput);
         }
+        if (_sessionId != null) {
+          _freeze();
+          await screenAwake.setEnabled(false);
+          // Commit the previous profile before replacing its in-memory clock.
+          // A storage failure keeps its identity and elapsed time for Retry.
+          await _persist();
+        }
+        _failed = false;
         _sessionId = draft.session.id;
         _profileId = draft.session.profileId;
         _base = _persisted = draft.accumulatedMilliseconds;

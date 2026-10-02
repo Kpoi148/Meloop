@@ -6,4 +6,4 @@
 - `migration_runner.dart`: chạy tuần tự các migration trong transaction do sqflite quản lý.
 - `migrations/`: DDL đã đánh số phiên bản; không sửa migration đã phát hành.
 
-Schema và ranh giới validation được mô tả tại [`../../../../docs/DB_MIGRATION_PLAN.md`](../../../../docs/DB_MIGRATION_PLAN.md). Chưa nối database vào form hoặc entry point; repository/use case sẽ được triển khai riêng.
+Schema và ranh giới validation được mô tả tại [`../../../../docs/DB_MIGRATION_PLAN.md`](../../../../docs/DB_MIGRATION_PLAN.md). Entry Android và form dùng journal SQLite thật. Migration v3 thay index một draft toàn app bằng một draft mỗi hồ sơ, giữ tối đa một buổi Running; không sửa migration v1/v2 hoặc tạo lại database.

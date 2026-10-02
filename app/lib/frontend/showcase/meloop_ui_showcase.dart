@@ -120,7 +120,7 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
   );
 
   Future<void> _setup(PreviewInstrumentProfile profile) async {
-    if (ref.read(meloopShellControllerProvider).draft != null) {
+    if (ref.read(meloopShellControllerProvider).selectedDraft != null) {
       ref.read(meloopShellControllerProvider.notifier).showTimer();
       return;
     }
@@ -226,7 +226,7 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
       return PracticeSessionsTab(
         key: ValueKey(profile.id),
         profile: profile,
-        draft: shell.draft,
+        draft: shell.selectedDraft,
         scrollController: _practiceScrollControllers.putIfAbsent(
           profile.id,
           ScrollController.new,
@@ -253,10 +253,8 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
                 ),
           showSampleData: widget.profile == null,
           profile: profile,
-          draft: shell.draft,
-          onCreate: () => shell.draft == null
-              ? _setup(profile)
-              : shellController.showTimer(),
+          draft: shell.selectedDraft,
+          onCreate: () => _setup(profile),
           onHistory: () => shellController.selectTab(1),
           onCatalog: _metronome,
           onInstrument: () => _openProfilePage(

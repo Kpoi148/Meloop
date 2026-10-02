@@ -9,6 +9,7 @@ import '../../shared/journal/journal_text.dart';
 import '../../shared/journal/practice_timer_service.dart';
 import '../database/journal_database_owner.dart';
 import 'sqlite_journal_readers.dart';
+import 'pause_other_practice_sessions.dart';
 
 class SqlitePracticeTimerStore implements PracticeTimerStore {
   const SqlitePracticeTimerStore({
@@ -34,7 +35,11 @@ class SqlitePracticeTimerStore implements PracticeTimerStore {
     }
     try {
       return await owner.transaction((db) async {
-        final draft = await readUnfinishedDraft(db);
+        final draft = await readUnfinishedDraft(
+          db,
+          profileId: profileId,
+          sessionId: sessionId,
+        );
         if (draft == null ||
             draft.session.id != sessionId ||
             draft.session.profileId != profileId ||
@@ -50,6 +55,9 @@ class SqlitePracticeTimerStore implements PracticeTimerStore {
             draft.session.updatedAt.millisecondsSinceEpoch,
           ),
         );
+        if (state == PracticeState.running) {
+          await pauseOtherPracticeSessions(db, sessionId: sessionId, now: now);
+        }
         await db.update(
           'session_drafts',
           {
@@ -66,7 +74,11 @@ class SqlitePracticeTimerStore implements PracticeTimerStore {
           where: 'id = ? AND profile_id = ?',
           whereArgs: [sessionId, profileId],
         );
-        return (await readUnfinishedDraft(db))!;
+        return (await readUnfinishedDraft(
+          db,
+          profileId: profileId,
+          sessionId: sessionId,
+        ))!;
       });
     } on DatabaseException {
       throw const JournalFailure(JournalFailureCode.storage);

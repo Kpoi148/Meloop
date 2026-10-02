@@ -8,8 +8,9 @@ abstract interface class JournalProfileReader {
 }
 
 abstract interface class JournalSessionReader {
-  /// Global unfinished session; reading does not transition its state.
-  Future<PracticeDraft?> unfinished();
+  /// Scope by profile/session for user flows. Without a scope, returns the
+  /// running or most recently updated draft for diagnostics. Never resumes it.
+  Future<PracticeDraft?> unfinished({String? profileId, String? sessionId});
   Future<PracticeSession?> findSaved({
     required String profileId,
     required String sessionId,

@@ -179,6 +179,82 @@ void main() {
     await timer.pause();
     expect((await stored()).accumulatedMilliseconds, 6000);
   });
+
+  test('switching profiles checkpoints each clock and preserves both drafts after reopen', () async {
+    await owner.transaction((db) => insertProfile(db, id(2), 'Flute'));
+    await timer.open(draft, newlyStarted: true);
+    mono.advance(3200);
+    await timer.pause();
+    final flute = await SqlitePracticeStartService(
+      owner: owner,
+      clock: wall,
+    ).start(requestId: id(11), profileId: id(2), title: 'Flute QA');
+    await timer.open(flute, newlyStarted: true);
+    mono.advance(4500);
+    final reader = SqliteJournalSessionReader(owner);
+    final guitar = (await reader.unfinished(profileId: id(1)))!;
+    await timer.open(guitar);
+    expect(timer.snapshot!.profileId, id(1));
+    expect(timer.snapshot!.elapsedMilliseconds, 3200);
+    expect(
+      (await reader.unfinished(profileId: id(2)))!.accumulatedMilliseconds,
+      4500,
+    );
+    mono.advance(100000);
+    await timer.resume();
+    mono.advance(700);
+    await timer.close();
+    await owner.close();
+    owner = JournalDatabaseOwner(
+      open: () => JournalDatabase.open(
+        factory: databaseFactoryFfi,
+        path: '${temp.path}/journal.db',
+      ),
+    );
+    final reopened = SqliteJournalSessionReader(owner);
+    expect(
+      (await reopened.unfinished(profileId: id(1)))!.accumulatedMilliseconds,
+      3900,
+    );
+    expect(
+      (await reopened.unfinished(profileId: id(2)))!.accumulatedMilliseconds,
+      4500,
+    );
+    expect(
+      (await reopened.unfinished(profileId: id(2)))!.session.state,
+      PracticeState.paused,
+    );
+  });
+
+  test(
+    'failed handoff retains the old identity and newer RAM elapsed for Retry',
+    () async {
+      await owner.transaction((db) => insertProfile(db, id(2), 'Flute'));
+      await timer.open(draft, newlyStarted: true);
+      mono.advance(2700);
+      await timer.pause();
+      final flute = await SqlitePracticeStartService(
+        owner: owner,
+        clock: wall,
+      ).start(requestId: id(11), profileId: id(2), title: 'Flute QA');
+      await timer.resume();
+      mono.advance(2300);
+      await injectFailure();
+      await expectLater(timer.open(flute), throwsA(isA<JournalFailure>()));
+      expect(timer.snapshot!.sessionId, id(10));
+      expect(timer.snapshot!.elapsedMilliseconds, 5000);
+      expect(timer.snapshot!.failed, true);
+      await removeFailure();
+      await timer.retry();
+      await timer.open(flute);
+      expect(timer.snapshot!.sessionId, id(11));
+      expect(
+        (await SqliteJournalSessionReader(owner).unfinished(profileId: id(1)))!
+            .accumulatedMilliseconds,
+        5000,
+      );
+    },
+  );
   test('Review recovery preserves raw form input and cannot resume', () async {
     final raw = jsonEncode({
       'title': 'Edited',
