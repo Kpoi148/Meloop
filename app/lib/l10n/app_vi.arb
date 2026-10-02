@@ -260,6 +260,7 @@
 
   "saveSessionTitle": "Lưu buổi luyện",
   "sessionFormHeading": "Một buổi luyện,\nmột bước tiến.",
+  "sessionFormTitleHint": "Buổi luyện",
   "sessionFormSubtitle": "Ghi lại điều bạn muốn nhớ.",
   "practiceDate": "Ngày luyện",
   "hours": "Giờ",

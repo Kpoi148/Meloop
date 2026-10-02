@@ -207,10 +207,16 @@ void main() {
           ),
         ),
       );
-      await tester.enterText(
-        find.byType(TextFormField).at(4),
-        'Giữ nguyên ghi chú này',
+      final notes = find.ancestor(
+        of: find.byWidgetPredicate(
+          (widget) =>
+              widget is TextField &&
+              widget.decoration?.hintText == 'Gam, hợp âm, bài nhạc…',
+        ),
+        matching: find.byType(TextFormField),
       );
+      await tester.ensureVisible(notes);
+      await tester.enterText(notes, 'Giữ nguyên ghi chú này');
       final save = find.widgetWithText(MeloopButton, 'Lưu buổi luyện');
       await tester.ensureVisible(save);
       await tester.tap(save);
@@ -230,7 +236,10 @@ void main() {
           .widgetList<TextFormField>(find.byType(TextFormField))
           .toList();
       expect(fields[0].controller!.text, 'Luyện gam C');
-      expect(fields[4].controller!.text, 'Giữ nguyên ghi chú này');
+      expect(
+        tester.widget<TextFormField>(notes).controller!.text,
+        'Giữ nguyên ghi chú này',
+      );
       expect(
         tester
             .widget<TextButton>(

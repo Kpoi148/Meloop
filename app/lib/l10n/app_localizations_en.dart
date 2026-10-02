@@ -761,6 +761,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionFormHeading => 'One practice session,\none step forward.';
 
   @override
+  String get sessionFormTitleHint => 'Practice session';
+
+  @override
   String get sessionFormSubtitle => 'Keep what you want to remember.';
 
   @override

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/tokens/tempo_tokens.dart';
 
-abstract final class PracticeSessionEditTokens {
+abstract final class PracticeSessionFormTokens {
   static const introHeight = 128.0;
   static const introInset = EdgeInsets.only(left: 4, right: 4, bottom: 18);
   static const artSize = 116.0;
@@ -15,8 +15,6 @@ abstract final class PracticeSessionEditTokens {
   static const fieldGap = 17.0;
   static const dateRowGap = fieldGap;
   static const dividerGap = 37.0;
-  static const minimumBpm = 20;
-  static const maximumBpm = 400;
   static final heading = TempoType.heading.copyWith(fontSize: 31, height: 1.18);
   static final subtitle = TempoType.body.copyWith(
     fontSize: 15,
@@ -38,4 +36,14 @@ abstract final class PracticeSessionEditTokens {
     height: 1.55,
     letterSpacing: 0,
   );
+}
+
+abstract final class PracticeSessionFormLimits {
+  static const minimumNewMinutes = 1;
+  static const minimumEditMinutes = 0;
+  static const maximumMinutes = Duration.minutesPerDay;
+  static const minimumSeconds = 1;
+  static const maximumSeconds = maximumMinutes * Duration.secondsPerMinute;
+  static const minimumBpm = 20;
+  static const maximumBpm = 400;
 }

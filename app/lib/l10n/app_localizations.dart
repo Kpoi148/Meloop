@@ -1442,6 +1442,12 @@ abstract class AppLocalizations {
   /// **'Một buổi luyện,\nmột bước tiến.'**
   String get sessionFormHeading;
 
+  /// No description provided for @sessionFormTitleHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Buổi luyện'**
+  String get sessionFormTitleHint;
+
   /// No description provided for @sessionFormSubtitle.
   ///
   /// In vi, this message translates to:

@@ -757,6 +757,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get sessionFormHeading => 'Một buổi luyện,\nmột bước tiến.';
 
   @override
+  String get sessionFormTitleHint => 'Buổi luyện';
+
+  @override
   String get sessionFormSubtitle => 'Ghi lại điều bạn muốn nhớ.';
 
   @override

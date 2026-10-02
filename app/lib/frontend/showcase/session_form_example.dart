@@ -7,7 +7,8 @@ import '../../l10n/l10n.dart';
 import '../application/session_form_controller.dart';
 import '../application/session_form_values.dart';
 import '../components/meloop_ui.dart';
-import '../practice_sessions/practice_session_edit_fields.dart';
+import '../practice_sessions/practice_session_form_fields.dart';
+import '../practice_sessions/practice_session_form_tokens.dart';
 import '../practice_sessions/practice_session_top_bar.dart';
 
 export '../application/session_form_values.dart';
@@ -17,7 +18,7 @@ class SessionFormExample extends ConsumerStatefulWidget {
     super.key,
     this.onSave,
     this.initialTitle = '',
-    this.initialDurationSeconds = 60,
+    this.initialDurationSeconds = Duration.secondsPerMinute,
     this.sessionId,
     this.initialValues,
     this.editing = false,
@@ -49,17 +50,17 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
         difficulty: '',
         next: '',
       );
+  late final int _initialMinutes = widget.editing
+      ? _initial.durationSeconds ~/ Duration.secondsPerMinute
+      : (_initial.durationSeconds / Duration.secondsPerMinute)
+            .round()
+            .clamp(
+              PracticeSessionFormLimits.minimumNewMinutes,
+              PracticeSessionFormLimits.maximumMinutes,
+            )
+            .toInt();
   late final _title = TextEditingController(text: _initial.title);
-  late final _hours = TextEditingController(
-    text: '${_initial.durationSeconds ~/ Duration.secondsPerHour}',
-  );
-  late final _minutes = TextEditingController(
-    text:
-        '${widget.editing ? _initial.durationSeconds ~/ Duration.secondsPerMinute : _initial.durationSeconds % Duration.secondsPerHour ~/ Duration.secondsPerMinute}',
-  );
-  late final _seconds = TextEditingController(
-    text: '${_initial.durationSeconds % Duration.secondsPerMinute}',
-  );
+  late final _minutes = TextEditingController(text: '$_initialMinutes');
   late final _practiced = TextEditingController(text: _initial.practiced);
   late final _difficulty = TextEditingController(text: _initial.difficulty);
   late final _next = TextEditingController(text: _initial.next);
@@ -82,20 +83,13 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
       _focus != _initial.focus ||
       _date != DateUtils.dateOnly(_initial.date) ||
       _bpm.text != (_initial.bpm?.toString() ?? '') ||
-      (!widget.editing &&
-          _hours.text !=
-              '${_initial.durationSeconds ~/ Duration.secondsPerHour}') ||
-      _minutes.text !=
-          '${widget.editing ? _initial.durationSeconds ~/ Duration.secondsPerMinute : _initial.durationSeconds % Duration.secondsPerHour ~/ Duration.secondsPerMinute}' ||
-      _seconds.text !=
-          '${_initial.durationSeconds % Duration.secondsPerMinute}';
+      _minutes.text != '$_initialMinutes';
+
   @override
   void dispose() {
     for (final controller in [
       _title,
-      _hours,
       _minutes,
-      _seconds,
       _practiced,
       _difficulty,
       _next,
@@ -114,16 +108,19 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
     );
     controller.clearError();
     final valid = _form.currentState!.validate();
-    final h = int.tryParse(_hours.text.trim()),
-        m = int.tryParse(_minutes.text.trim()),
-        s = int.tryParse(_seconds.text.trim());
-    final total = h == null || m == null || s == null
+    final minutes = int.tryParse(_minutes.text.trim());
+    // Keep the saved seconds when its displayed duration is unchanged.
+    final remainingSeconds = widget.editing && minutes == _initialMinutes
+        ? _initial.durationSeconds % Duration.secondsPerMinute
+        : 0;
+    final total = minutes == null
         ? 0
-        : widget.editing
-        ? m * Duration.secondsPerMinute + s
-        : h * Duration.secondsPerHour + m * Duration.secondsPerMinute + s;
+        : minutes * Duration.secondsPerMinute + remainingSeconds;
     setState(() {
-      _durationError = total < 1 || total > 86400
+      _durationError =
+          valid &&
+              (total < PracticeSessionFormLimits.minimumSeconds ||
+                  total > PracticeSessionFormLimits.maximumSeconds)
           ? context.l10n.durationRange
           : null;
     });
@@ -144,7 +141,7 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
         next: _next.text.trim().isEmpty ? '' : _next.text,
         mood: _mood,
         focus: _focus,
-        bpm: widget.editing ? int.tryParse(_bpm.text.trim()) : _initial.bpm,
+        bpm: int.tryParse(_bpm.text.trim()),
       ),
       onSave: widget.onSave,
     );
@@ -186,180 +183,61 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
         if (!didPop) unawaited(_back());
       },
       child: MeloopPage(
-        hideBottomNavigationWithKeyboard: !widget.editing,
-        topBar: widget.editing
-            ? PracticeSessionTopBar(
-                title: strings.editSessionTitle,
-                onBack: saving ? null : _back,
-                onHome: saving || widget.onHome == null ? null : _home,
-              )
-            : MeloopTopBar(
-                title: strings.saveSessionTitle,
-                onBack: saving ? null : _back,
-              ),
-        bottomNavigation: widget.editing
-            ? SafeArea(
-                top: false,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    TempoSpace.page,
-                    TempoSpace.page,
-                    TempoSpace.page,
-                    TempoSpace.sm,
-                  ),
-                  child: MeloopButton(
-                    label: strings.saveChanges,
-                    icon: MeloopIcons.check,
-                    onPressed: _save,
-                    isLoading: saving,
-                  ),
-                ),
-              )
-            : null,
+        hideBottomNavigationWithKeyboard: false,
+        topBar: PracticeSessionTopBar(
+          title: widget.editing
+              ? strings.editSessionTitle
+              : strings.saveSessionTitle,
+          onBack: saving ? null : _back,
+          onHome: saving || widget.onHome == null ? null : _home,
+        ),
+        bottomNavigation: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              TempoSpace.page,
+              TempoSpace.page,
+              TempoSpace.page,
+              TempoSpace.sm,
+            ),
+            child: MeloopButton(
+              label: widget.editing
+                  ? strings.saveChanges
+                  : strings.savePractice,
+              icon: MeloopIcons.check,
+              onPressed: _save,
+              isLoading: saving,
+            ),
+          ),
+        ),
         child: Form(
           key: _form,
-          child: widget.editing
-              ? PracticeSessionEditFields(
-                  title: _title,
-                  minutes: _minutes,
-                  practiced: _practiced,
-                  difficulty: _difficulty,
-                  next: _next,
-                  bpm: _bpm,
-                  date: _date,
-                  mood: _mood,
-                  focus: _focus,
-                  titleFocus: _titleFocus,
-                  saving: saving,
-                  onDate: (value) => setState(() => _date = value),
-                  onMood: (value) => setState(() => _mood = value),
-                  onFocus: (value) => setState(() => _focus = value),
-                  error: saveError,
-                  durationError: _durationError,
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  spacing: TempoSpace.page,
-                  children: [
-                    Text(strings.sessionFormHeading, style: TempoType.heading),
-                    Text(strings.sessionFormSubtitle),
-                    MeloopField(
-                      label: strings.sessionTitle,
-                      controller: _title,
-                      focusNode: _titleFocus,
-                      requirement: MeloopFieldRequirement.required,
-                      hint: strings.sessionTitleHint,
-                      validator: (value) =>
-                          MeloopValidation.titleFor(value, strings),
-                      enabled: !saving,
-                    ),
-                    MeloopDateField(
-                      label: strings.practiceDate,
-                      value: _date,
-                      enabled: !saving,
-                      onChanged: (date) => setState(() => _date = date),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        MeloopResponsiveRow(
-                          children: [
-                            _durationField(strings.hours, _hours, 24),
-                            _durationField(strings.minutes, _minutes, 59),
-                            _durationField(strings.seconds, _seconds, 59),
-                          ],
-                        ),
-                        if (_durationError != null)
-                          Semantics(
-                            liveRegion: true,
-                            child: Text(
-                              _durationError!,
-                              style: TempoType.caption.copyWith(
-                                color: TempoColors.error,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                    _rating(
-                      strings.mood,
-                      _mood,
-                      (value) => setState(() => _mood = value),
-                    ),
-                    _rating(
-                      strings.focusLevel,
-                      _focus,
-                      (value) => setState(() => _focus = value),
-                    ),
-                    const Divider(),
-                    MeloopField(
-                      label: strings.practicedWhat,
-                      controller: _practiced,
-                      type: MeloopInputType.multiline,
-                      hint: strings.practicedHint,
-                      validator: (value) =>
-                          MeloopValidation.noteFor(value, strings),
-                      enabled: !saving,
-                    ),
-                    MeloopField(
-                      label: strings.difficulty,
-                      controller: _difficulty,
-                      type: MeloopInputType.multiline,
-                      hint: strings.difficultyHint,
-                      validator: (value) =>
-                          MeloopValidation.noteFor(value, strings),
-                      enabled: !saving,
-                    ),
-                    MeloopField(
-                      label: strings.nextPractice,
-                      controller: _next,
-                      type: MeloopInputType.multiline,
-                      validator: (value) =>
-                          MeloopValidation.noteFor(value, strings),
-                      enabled: !saving,
-                    ),
-                    if (saveError != null)
-                      MeloopNotice(
-                        message: saveError,
-                        kind: MeloopNoticeKind.error,
-                      ),
-                    MeloopButton(
-                      label: strings.savePractice,
-                      icon: MeloopIcons.check,
-                      onPressed: _save,
-                      isLoading: saving,
-                    ),
-                  ],
-                ),
+          child: PracticeSessionFormFields(
+            heading: widget.editing
+                ? strings.editSessionHeading
+                : strings.sessionFormHeading,
+            title: _title,
+            minutes: _minutes,
+            practiced: _practiced,
+            difficulty: _difficulty,
+            next: _next,
+            bpm: _bpm,
+            date: _date,
+            mood: _mood,
+            focus: _focus,
+            titleFocus: _titleFocus,
+            minimumMinutes: widget.editing
+                ? PracticeSessionFormLimits.minimumEditMinutes
+                : PracticeSessionFormLimits.minimumNewMinutes,
+            saving: saving,
+            onDate: (value) => setState(() => _date = value),
+            onMood: (value) => setState(() => _mood = value),
+            onFocus: (value) => setState(() => _focus = value),
+            error: saveError,
+            durationError: _durationError,
+          ),
         ),
       ),
     );
   }
-
-  Widget _durationField(
-    String label,
-    TextEditingController controller,
-    int max,
-  ) => MeloopField(
-    label: label,
-    controller: controller,
-    type: MeloopInputType.integer,
-    requirement: MeloopFieldRequirement.required,
-    enabled: !_saving,
-    validator: (value) => MeloopValidation.integer(
-      value,
-      label: label,
-      min: 0,
-      max: max,
-      strings: context.l10n,
-    ),
-  );
-  Widget _rating(String label, int? value, ValueChanged<int?> onChanged) =>
-      MeloopRating(
-        label: label,
-        initialValue: value,
-        mood: label == context.l10n.mood,
-        enabled: !_saving,
-        onChanged: onChanged,
-      );
 }

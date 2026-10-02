@@ -248,6 +248,7 @@
 
   "saveSessionTitle": "Save practice session",
   "sessionFormHeading": "One practice session,\none step forward.",
+  "sessionFormTitleHint": "Practice session",
   "sessionFormSubtitle": "Keep what you want to remember.",
   "practiceDate": "Practice date",
   "hours": "Hours",
