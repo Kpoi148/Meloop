@@ -9,12 +9,13 @@ class SessionFormValues {
     required this.next,
     this.mood,
     this.focus,
+    this.bpm,
   });
 
   final String title, practiced, difficulty, next;
   final DateTime date;
   final int durationSeconds;
-  final int? mood, focus;
+  final int? mood, focus, bpm;
 }
 
 typedef SessionFormSave = Future<void> Function(SessionFormValues values);

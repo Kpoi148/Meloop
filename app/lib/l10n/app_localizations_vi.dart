@@ -434,6 +434,99 @@ class AppLocalizationsVi extends AppLocalizations {
   String get practiceSessionDetails => 'Chi tiết buổi luyện';
 
   @override
+  String get practiceFocusLabel => 'Tập trung';
+
+  @override
+  String get practiceEmptyRating => '—';
+
+  @override
+  String get sessionOptionalSuffix => ' (không bắt buộc)';
+
+  @override
+  String get sessionMoodHint =>
+      '1 · Không vui → 5 · Rất vui · Bấm lại để bỏ chọn.';
+
+  @override
+  String get sessionFocusHint =>
+      '1 · Khó tập trung → 5 · Rất tập trung · Bấm lại để bỏ chọn.';
+
+  @override
+  String get nextPracticeHint => 'Một lời nhắn cho bạn ở buổi sau…';
+
+  @override
+  String get practiceSampleGuitarDifficulty =>
+      'Chuyển từ G sang Am cần mượt hơn.';
+
+  @override
+  String get practiceRatingSuffix => ' / 5';
+
+  @override
+  String get practiceNextEmpty => 'Hẹn bạn ở buổi luyện tiếp theo.';
+
+  @override
+  String get editSessionJournal => 'Sửa nhật ký';
+
+  @override
+  String get editSessionTitle => 'Sửa buổi luyện';
+
+  @override
+  String get editSessionHeading => 'Nhìn lại buổi luyện.';
+
+  @override
+  String get saveChanges => 'Lưu thay đổi';
+
+  @override
+  String get sessionDurationMinutes => 'Thời lượng (phút)';
+
+  @override
+  String get sessionPracticeBpm => 'Tốc độ luyện (BPM)';
+
+  @override
+  String get notRequired => 'Không bắt buộc';
+
+  @override
+  String get deleteSessionTitle => 'Xóa buổi luyện?';
+
+  @override
+  String get sessionDeleted => 'Đã xóa buổi luyện.';
+
+  @override
+  String get deleteSessionFailed =>
+      'Chưa thể xóa. Buổi luyện và bản ghi âm vẫn được giữ. Vui lòng thử lại.';
+
+  @override
+  String get deleteRecordingTitle => 'Xóa bản ghi âm?';
+
+  @override
+  String get deleteRecording => 'Xóa bản ghi';
+
+  @override
+  String get deleteRecordingMessage =>
+      'Chỉ bản ghi âm này bị xóa. Nhật ký buổi luyện được giữ nguyên.';
+
+  @override
+  String get listenRecording => 'Nghe lại';
+
+  @override
+  String get exportRecording => 'Xuất bản ghi';
+
+  @override
+  String get recordingActionFailed =>
+      'Chưa thể mở bản ghi âm. Vui lòng thử lại.';
+
+  @override
+  String get noSessionRecordings => 'Chưa có bản ghi âm.';
+
+  @override
+  String get noSessionRecordingsMessage =>
+      'Buổi luyện này chưa có bản ghi âm được lưu.';
+
+  @override
+  String practiceRecordingTake(String title, int take) {
+    return '$title · Lần $take';
+  }
+
+  @override
   String get practiceWhatWasPracticed => 'Đã luyện';
 
   @override
@@ -798,7 +891,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get deleteSessionMessage =>
-      'Nhật ký và bản ghi âm của buổi này sẽ bị xóa.';
+      'Buổi luyện này sẽ được xóa khỏi nhật ký và thống kê. Bản ghi âm vẫn được giữ riêng.';
 
   @override
   String get openChoiceSheet => 'Mở bảng lựa chọn';

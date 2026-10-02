@@ -17,6 +17,7 @@ class PracticeSession {
     this.mood,
     this.focus,
     this.recordingCount = 0,
+    this.recordings = const [],
   });
 
   final String id, profileId, title, practiced, difficulty, nextPractice;
@@ -24,6 +25,39 @@ class PracticeSession {
   final Duration duration;
   final int? bpm, mood, focus;
   final int recordingCount;
+  final List<PracticeSessionRecording> recordings;
+
+  PracticeSession withRecordings(List<PracticeSessionRecording> recordings) =>
+      PracticeSession(
+        id: id,
+        profileId: profileId,
+        date: date,
+        title: title,
+        duration: duration,
+        practiced: practiced,
+        difficulty: difficulty,
+        nextPractice: nextPractice,
+        bpm: bpm,
+        mood: mood,
+        focus: focus,
+        recordingCount: recordings.length,
+        recordings: List.unmodifiable(recordings),
+      );
+}
+
+class PracticeSessionRecording {
+  const PracticeSessionRecording({
+    required this.id,
+    required this.title,
+    required this.duration,
+    this.canPlay = true,
+    this.canExport = true,
+    this.canDelete = true,
+  });
+
+  final String id, title;
+  final Duration duration;
+  final bool canPlay, canExport, canDelete;
 }
 
 typedef PracticeSessionsLoader = Future<List<PracticeSession>> Function(

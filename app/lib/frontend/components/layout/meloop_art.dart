@@ -62,6 +62,7 @@ class MeloopArt extends StatelessWidget {
             width: size * columns,
             height: size * 2,
             fit: BoxFit.fill,
+            filterQuality: FilterQuality.medium,
             color: backgroundColor,
             colorBlendMode: backgroundColor == null ? null : BlendMode.darken,
           ),

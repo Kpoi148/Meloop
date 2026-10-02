@@ -41,6 +41,17 @@ abstract final class TempoRadius {
   static const pill = 50.0;
 }
 
+abstract final class TempoRatingTokens {
+  static const journalSelected = Color(0xFFFFECAA);
+  static const journalFill = Color(0x88FFFFFF);
+  static const journalInset = 6.0;
+  static final journalLabel = TempoType.label.copyWith(
+    fontSize: 16,
+    height: 1.3,
+    letterSpacing: 0,
+  );
+}
+
 abstract final class TempoSize {
   static const contentMaxWidth = 460.0;
   static const touchTarget = 48.0;

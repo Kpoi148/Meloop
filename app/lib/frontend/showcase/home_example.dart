@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/l10n.dart';
 import '../application/startup_controller.dart';
 import '../components/meloop_ui.dart';
+import '../practice_sessions/practice_session_summary.dart';
 import 'preview_copy.dart';
 
 /// Synthetic content matching the Tempo screenshot; never persisted.
@@ -16,6 +17,7 @@ class HomeExample extends StatelessWidget {
     this.draft,
     this.onInstrument,
     this.showSampleData = true,
+    this.sessionSummary,
   });
   final VoidCallback onCreate, onHistory;
   final VoidCallback? onCatalog;
@@ -23,6 +25,7 @@ class HomeExample extends StatelessWidget {
   final PreviewPracticeDraft? draft;
   final VoidCallback? onInstrument;
   final bool showSampleData;
+  final PracticeSessionSummary? sessionSummary;
   @override
   Widget build(BuildContext context) {
     final strings = context.l10n;
@@ -30,7 +33,10 @@ class HomeExample extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _HomeHeader(profile: profile, onInstrument: onInstrument),
-        _StatisticsCard(showSampleData: showSampleData),
+        _StatisticsCard(
+          showSampleData: showSampleData,
+          summary: sessionSummary,
+        ),
         const SizedBox(height: TempoSpace.lg),
         Row(
           children: [
@@ -256,11 +262,14 @@ class _InstrumentChip extends StatelessWidget {
 }
 
 class _StatisticsCard extends StatelessWidget {
-  const _StatisticsCard({required this.showSampleData});
+  const _StatisticsCard({required this.showSampleData, this.summary});
   final bool showSampleData;
-  List<int> get values => showSampleData
-      ? const [20, 0, 25, 0, 30, 25, 35]
-      : List<int>.filled(7, 0);
+  final PracticeSessionSummary? summary;
+  List<int> get values =>
+      summary?.minutesByDay ??
+      (showSampleData
+          ? const [20, 0, 25, 0, 30, 25, 35]
+          : List<int>.filled(7, 0));
   @override
   Widget build(BuildContext context) {
     final strings = context.l10n;
@@ -284,9 +293,19 @@ class _StatisticsCard extends StatelessWidget {
             const SizedBox(height: 9),
             MeloopResponsiveRow(
               children: [
-                _Metric(showSampleData ? '135' : '0', strings.practiceMinutes),
-                _Metric(showSampleData ? '5' : '0', strings.practiceSessions),
-                _Metric(showSampleData ? '3' : '0', strings.consecutiveDays),
+                _Metric(
+                  summary?.minutes.toString() ?? (showSampleData ? '135' : '0'),
+                  strings.practiceMinutes,
+                ),
+                _Metric(
+                  summary?.count.toString() ?? (showSampleData ? '5' : '0'),
+                  strings.practiceSessions,
+                ),
+                _Metric(
+                  summary?.consecutiveDays.toString() ??
+                      (showSampleData ? '3' : '0'),
+                  strings.consecutiveDays,
+                ),
               ],
             ),
             const SizedBox(height: TempoSpace.xs),

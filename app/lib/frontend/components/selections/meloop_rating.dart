@@ -15,14 +15,35 @@ class MeloopRating extends FormField<int> {
     super.initialValue,
     super.enabled = true,
     bool mood = true,
+    bool compact = false,
   }) : super(
          builder: (field) => Column(
            crossAxisAlignment: CrossAxisAlignment.start,
            children: [
-             MeloopFieldLabel(
-               label: label,
-               requirement: MeloopFieldRequirement.optional,
-             ),
+             if (compact)
+               Text.rich(
+                 TextSpan(
+                   children: [
+                     TextSpan(
+                       text: label,
+                       style: TempoRatingTokens.journalLabel,
+                     ),
+                     TextSpan(
+                       text: field.context.l10n.sessionOptionalSuffix,
+                       style: TempoType.caption.copyWith(
+                         color: TempoColors.muted,
+                         fontSize: 12,
+                         height: 1.6,
+                       ),
+                     ),
+                   ],
+                 ),
+               )
+             else
+               MeloopFieldLabel(
+                 label: label,
+                 requirement: MeloopFieldRequirement.optional,
+               ),
              const SizedBox(height: TempoSpace.sm),
              Row(
                spacing: TempoSpace.sm,
@@ -35,7 +56,11 @@ class MeloopRating extends FormField<int> {
                        button: true,
                        child: Material(
                          color: field.value == i
-                             ? TempoColors.selection
+                             ? compact
+                                   ? TempoRatingTokens.journalSelected
+                                   : TempoColors.selection
+                             : compact
+                             ? TempoRatingTokens.journalFill
                              : TempoColors.fieldFill,
                          shape: RoundedRectangleBorder(
                            borderRadius: BorderRadius.circular(
@@ -60,7 +85,11 @@ class MeloopRating extends FormField<int> {
                                    onChanged(next);
                                  },
                            child: Padding(
-                             padding: const EdgeInsets.symmetric(vertical: 8),
+                             padding: EdgeInsets.symmetric(
+                               vertical: compact
+                                   ? TempoRatingTokens.journalInset
+                                   : 8,
+                             ),
                              child: Column(
                                mainAxisSize: MainAxisSize.min,
                                children: [
@@ -82,7 +111,16 @@ class MeloopRating extends FormField<int> {
                                    ),
                                  const SizedBox(height: 3),
                                  ExcludeSemantics(
-                                   child: Text('$i', style: TempoType.caption),
+                                   child: Text(
+                                     '$i',
+                                     style: compact
+                                         ? TempoType.caption.copyWith(
+                                             fontSize: 12,
+                                             height: 1.6,
+                                             letterSpacing: 0,
+                                           )
+                                         : TempoType.caption,
+                                   ),
                                  ),
                                ],
                              ),
@@ -95,10 +133,18 @@ class MeloopRating extends FormField<int> {
              ),
              const SizedBox(height: TempoSpace.xs),
              Text(
-               mood
+               compact
+                   ? mood
+                         ? field.context.l10n.sessionMoodHint
+                         : field.context.l10n.sessionFocusHint
+                   : mood
                    ? field.context.l10n.moodRatingHint
                    : field.context.l10n.focusRatingHint,
-               style: TempoType.caption.copyWith(color: TempoColors.muted),
+               style: TempoType.caption.copyWith(
+                 color: TempoColors.muted,
+                 fontSize: compact ? 12 : 13,
+                 letterSpacing: compact ? 0 : null,
+               ),
              ),
            ],
          ),

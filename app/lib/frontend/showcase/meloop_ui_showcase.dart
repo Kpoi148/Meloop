@@ -10,6 +10,8 @@ import '../application/startup_controller.dart';
 import '../application/practice_timer_service.dart';
 import '../components/meloop_ui.dart';
 import '../practice_sessions/practice_sessions_tab.dart';
+import '../practice_sessions/practice_session.dart';
+import '../practice_sessions/practice_session_summary.dart';
 import 'component_catalog.dart';
 import 'home_example.dart';
 import 'instrument_profile_preview.dart';
@@ -222,6 +224,7 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
         bottomNavigation: navigation,
         onCreate: () => _setup(profile),
         onContinue: shellController.showTimer,
+        onHome: () => shellController.selectTab(0),
         onInstrument: () => _openProfilePage(
           widget.onChooseProfile ?? shellController.showProfilePicker,
         ),
@@ -231,6 +234,13 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
       bottomNavigation: navigation,
       child: switch (shell.selectedTab) {
         0 => HomeExample(
+          sessionSummary: widget.profile == null
+              ? null
+              : PracticeSessionSummary(
+                  ref.watch(practiceSessionsProvider(profile)).value ??
+                      const [],
+                  ref.read(practiceSessionsClockProvider)(),
+                ),
           showSampleData: widget.profile == null,
           profile: profile,
           draft: shell.draft,

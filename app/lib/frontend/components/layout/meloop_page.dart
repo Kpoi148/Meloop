@@ -12,6 +12,7 @@ class MeloopPage extends StatelessWidget {
     this.padding,
     this.scrollController,
     this.topBarGap = TempoSpace.xl,
+    this.hideBottomNavigationWithKeyboard = true,
   });
   final Widget child;
   final Widget? topBar;
@@ -19,6 +20,7 @@ class MeloopPage extends StatelessWidget {
   final EdgeInsets? padding;
   final ScrollController? scrollController;
   final double topBarGap;
+  final bool hideBottomNavigationWithKeyboard;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -52,9 +54,20 @@ class MeloopPage extends StatelessWidget {
         ),
       ),
     ),
-    bottomNavigationBar: MediaQuery.viewInsetsOf(context).bottom > 0
+    bottomNavigationBar:
+        hideBottomNavigationWithKeyboard &&
+            MediaQuery.viewInsetsOf(context).bottom > 0
         ? null
-        : bottomNavigation,
+        : bottomNavigation == null
+        ? null
+        : Padding(
+            padding: EdgeInsets.only(
+              bottom: hideBottomNavigationWithKeyboard
+                  ? 0
+                  : MediaQuery.viewInsetsOf(context).bottom,
+            ),
+            child: bottomNavigation,
+          ),
   );
 }
 
