@@ -864,6 +864,47 @@ class AppLocalizationsVi extends AppLocalizations {
   String get tempoBpm => 'Tốc độ (BPM)';
 
   @override
+  String get metronomeTitle => 'Máy đếm nhịp';
+
+  @override
+  String get metronomeBpmUnit => 'nhịp / phút';
+
+  @override
+  String get decreaseMetronomeBpm => 'Giảm nhịp';
+
+  @override
+  String get increaseMetronomeBpm => 'Tăng nhịp';
+
+  @override
+  String get startMetronome => 'Bắt đầu';
+
+  @override
+  String get stopMetronome => 'Dừng máy đếm nhịp';
+
+  @override
+  String get metronomeFootnote =>
+      'Nhấn ở phách đầu để dễ bắt nhịp.\nÂm thanh phát trực tiếp trên thiết bị của bạn.';
+
+  @override
+  String metronomeCurrentBeat(int current, int total) {
+    return 'Phách $current / $total';
+  }
+
+  @override
+  String metronomeBpmRangeError(int min, int max) {
+    return 'Tốc độ phải từ $min đến $max BPM.';
+  }
+
+  @override
+  String metronomeBeatsRangeError(int min, int max) {
+    return 'Số phách mỗi ô nhịp phải từ $min đến $max.';
+  }
+
+  @override
+  String get metronomeAudioBusy =>
+      'Một công cụ âm thanh khác đang hoạt động. Hãy dừng công cụ đó trước khi bật máy đếm nhịp.';
+
+  @override
   String get bpm => 'BPM';
 
   @override

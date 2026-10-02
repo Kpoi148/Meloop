@@ -16,6 +16,7 @@ import '../practice/practice_tools_page.dart';
 import '../practice_sessions/practice_session.dart' as ui;
 import '../practice_sessions/practice_session_detail_page.dart';
 import '../theme/tokens/practice_tokens.dart';
+import 'metronome_example.dart';
 import 'preview_copy.dart';
 import 'session_form_example.dart';
 
@@ -156,6 +157,24 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
     }
   }
 
+  void _tools(String sessionId) => Navigator.of(context).push<void>(
+    MaterialPageRoute(
+      builder: (toolsContext) => PracticeToolsPage(
+        sessionId: sessionId,
+        onOpenMetronome: () => Navigator.of(toolsContext).push<void>(
+          MaterialPageRoute(
+            builder: (_) => MetronomeExample(
+              onHome: () {
+                Navigator.of(toolsContext).pop();
+                unawaited(_back());
+              },
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
   Future<void> _rename() async {
     final draft = ref.read(meloopShellControllerProvider).draft!;
     final update = ref.read(practiceTitleUpdateProvider);
@@ -250,13 +269,6 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
                   ? null
                   : _rename,
             ),
-            if (draft.wasRecovered) ...[
-              const SizedBox(height: TempoSpace.md),
-              MeloopNotice(
-                message:
-                    '${strings.recoveredDraftTitle}\n${strings.recoveredDraftMessage}',
-              ),
-            ],
             if (widget.readOnly && timer == null)
               MeloopNotice(message: strings.journalRecoveryPending),
             _TimerStage(
@@ -302,12 +314,7 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
                   backgroundColor: PracticeTempo.toolsActionBackground,
                   onPressed: widget.readOnly || timer == null
                       ? null
-                      : () => Navigator.of(context).push<void>(
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                PracticeToolsPage(sessionId: timer.sessionId),
-                          ),
-                        ),
+                      : () => _tools(timer.sessionId),
                 ),
                 MeloopButton(
                   label: strings.finish,

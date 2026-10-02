@@ -18,6 +18,7 @@ import 'instrument_profile_preview.dart';
 import 'instrument_profiles_example.dart';
 import 'instrument_picker_example.dart';
 import 'language_selector.dart';
+import 'metronome_example.dart';
 import 'profile_form_example.dart';
 import 'preview_data_reset_button.dart';
 import 'pro_preview_page.dart';
@@ -76,6 +77,15 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
 
   void _catalog() => Navigator.of(context)
       .push(MaterialPageRoute<void>(builder: (_) => const ComponentCatalog()));
+
+  void _metronome() => Navigator.of(context).push<void>(
+    MaterialPageRoute(
+      builder: (_) => MetronomeExample(
+        onHome: () =>
+            ref.read(meloopShellControllerProvider.notifier).selectTab(0),
+      ),
+    ),
+  );
 
   void _resetData() {
     ref.invalidate(showcaseControllerProvider);
@@ -248,7 +258,7 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
               ? _setup(profile)
               : shellController.showTimer(),
           onHistory: () => shellController.selectTab(1),
-          onCatalog: widget.developmentTools ? _catalog : null,
+          onCatalog: _metronome,
           onInstrument: () => _openProfilePage(
             widget.onChooseProfile ?? shellController.showProfilePicker,
           ),

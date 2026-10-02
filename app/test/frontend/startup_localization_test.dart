@@ -102,7 +102,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.textContaining('Practice session restored'), findsOneWidget);
+    expect(find.textContaining('Practice session restored'), findsNothing);
     expect(find.text('12:34'), findsOneWidget);
     expect(find.widgetWithText(MeloopButton, 'Resume'), findsOneWidget);
     expect(tester.takeException(), isNull);

@@ -869,6 +869,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tempoBpm => 'Tempo (BPM)';
 
   @override
+  String get metronomeTitle => 'Metronome';
+
+  @override
+  String get metronomeBpmUnit => 'beats / minute';
+
+  @override
+  String get decreaseMetronomeBpm => 'Decrease tempo';
+
+  @override
+  String get increaseMetronomeBpm => 'Increase tempo';
+
+  @override
+  String get startMetronome => 'Start';
+
+  @override
+  String get stopMetronome => 'Stop metronome';
+
+  @override
+  String get metronomeFootnote =>
+      'Accent the first beat to find your rhythm.\nAudio plays directly on your device.';
+
+  @override
+  String metronomeCurrentBeat(int current, int total) {
+    return 'Beat $current / $total';
+  }
+
+  @override
+  String metronomeBpmRangeError(int min, int max) {
+    return 'Tempo must be between $min and $max BPM.';
+  }
+
+  @override
+  String metronomeBeatsRangeError(int min, int max) {
+    return 'Beats per bar must be between $min and $max.';
+  }
+
+  @override
+  String get metronomeAudioBusy =>
+      'Another audio tool is active. Stop it before starting the metronome.';
+
+  @override
   String get bpm => 'BPM';
 
   @override

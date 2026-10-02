@@ -8,8 +8,13 @@ import '../theme/tokens/practice_tokens.dart';
 
 /// Opening this route leaves the service's active timer and session ID intact.
 class PracticeToolsPage extends ConsumerWidget {
-  const PracticeToolsPage({super.key, required this.sessionId});
+  const PracticeToolsPage({
+    super.key,
+    required this.sessionId,
+    this.onOpenMetronome,
+  });
   final String sessionId;
+  final Future<void> Function()? onOpenMetronome;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -55,6 +60,11 @@ class PracticeToolsPage extends ConsumerWidget {
                         number: index + 1,
                         largeText: large,
                         onOpen: () async {
+                          if (tools[index].$1 == MeloopTool.metro &&
+                              onOpenMetronome != null) {
+                            await onOpenMetronome!();
+                            return;
+                          }
                           final open = ref.read(practiceToolOpenProvider);
                           if (open == null) {
                             MeloopNotifications.show(
