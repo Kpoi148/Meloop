@@ -22,6 +22,7 @@ abstract final class PracticeSessionDetailTokens {
   static const cardFill = Color(0x55FFFFFF);
   static const nextPadding = EdgeInsets.all(18);
   static const recordingsMargin = EdgeInsets.only(top: 10, bottom: 14);
+  // Include the CSS border in the content inset (3px 13px + 1px border).
   static const recordingsPadding = EdgeInsets.symmetric(
     horizontal: 14,
     vertical: 4,
@@ -29,6 +30,8 @@ abstract final class PracticeSessionDetailTokens {
   static const recordingsArtSize = 47.0;
   static const recordingsGap = 15.0;
   static const actionsGap = 11.0;
+  static const compactActionsWidth = 300.0;
+  static const largeActionTextSize = 20.0;
   static const actionIconGap = 10.0;
   static const outlineBorder = Color(0xFFB6C3BB);
   static const destructiveFill = Color(0xFFA74331);
@@ -41,7 +44,11 @@ abstract final class PracticeSessionDetailTokens {
   static const dialogMessageTop = 20.0;
   static const dialogActionsTop = 20.0;
 
-  static final heading = TempoType.heading.copyWith(fontSize: 34, height: 1.18);
+  static final heading = TempoType.heading.copyWith(
+    fontSize: 34,
+    height: 1.18,
+    letterSpacing: -1.5,
+  );
   static final meta = TempoType.body.copyWith(
     fontSize: 14,
     color: TempoColors.muted,

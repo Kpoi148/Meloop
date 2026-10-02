@@ -138,6 +138,7 @@ class _PracticeSessionDetailPageState
                 : MeloopArt.instrument(
                     widget.profile.instrument,
                     size: PracticeSessionDetailTokens.instrumentArtSize,
+                    backgroundColor: TempoColors.paper,
                   ),
           ),
           Padding(
@@ -239,23 +240,48 @@ class _PracticeSessionDetailPageState
               ),
             ),
           ),
-          MeloopResponsiveRow(
-            children: [
-              MeloopButton(
-                label: strings.editSessionJournal,
-                icon: MeloopIcons.edit,
-                iconGap: PracticeSessionDetailTokens.actionIconGap,
-                style: MeloopButtonStyle.outline,
-                onPressed: () => unawaited(_edit()),
-              ),
-              MeloopButton(
-                label: strings.deleteSession,
-                icon: MeloopIcons.trash,
-                iconGap: PracticeSessionDetailTokens.actionIconGap,
-                style: MeloopButtonStyle.soft,
-                onPressed: () => unawaited(_delete()),
-              ),
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final actions = [
+                MeloopButton(
+                  label: strings.editSessionJournal,
+                  icon: MeloopIcons.edit,
+                  iconGap: PracticeSessionDetailTokens.actionIconGap,
+                  style: MeloopButtonStyle.outline,
+                  borderColor: PracticeSessionDetailTokens.outlineBorder,
+                  borderRadius: TempoRadius.action,
+                  onPressed: _acting ? null : () => unawaited(_edit()),
+                ),
+                MeloopButton(
+                  label: strings.deleteSession,
+                  icon: MeloopIcons.trash,
+                  iconGap: PracticeSessionDetailTokens.actionIconGap,
+                  style: MeloopButtonStyle.soft,
+                  borderRadius: TempoRadius.action,
+                  onPressed: _acting ? null : () => unawaited(_delete()),
+                ),
+              ];
+              if (constraints.maxWidth <
+                      PracticeSessionDetailTokens.compactActionsWidth ||
+                  MediaQuery.textScalerOf(context)
+                          .scale(TempoType.body.fontSize!) >
+                      PracticeSessionDetailTokens.largeActionTextSize) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  spacing: PracticeSessionDetailTokens.actionsGap,
+                  children: actions,
+                );
+              }
+              return IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  spacing: PracticeSessionDetailTokens.actionsGap,
+                  children: actions
+                      .map((action) => Expanded(child: action))
+                      .toList(),
+                ),
+              );
+            },
           ),
         ],
       ),

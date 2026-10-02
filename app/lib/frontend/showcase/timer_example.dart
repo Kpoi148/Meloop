@@ -15,6 +15,7 @@ import '../practice/practice_instrument_art.dart';
 import '../practice/practice_tools_page.dart';
 import '../practice_sessions/practice_session.dart' as ui;
 import '../practice_sessions/practice_session_detail_page.dart';
+import '../practice_sessions/practice_sessions_controller.dart';
 import '../theme/tokens/practice_tokens.dart';
 import 'preview_copy.dart';
 import 'session_form_example.dart';
@@ -124,19 +125,28 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
                   values,
                 );
                 await service.complete(id);
-                container.invalidate(ui.practiceSessionsProvider);
+                container.invalidate(ui.practiceSessionsProvider(profile));
               },
               onSaved: () {
+                container
+                    .read(practiceSessionsControllerProvider.notifier)
+                    .clear(profile.id);
                 shell.completeDraft();
+                shell.selectProfile(profile.id);
                 shell.selectTab(1);
                 Navigator.of(routeContext).pushReplacement<void, void>(
                   MaterialPageRoute(
-                    builder: (_) => UncontrolledProviderScope(
+                    builder: (detailContext) => UncontrolledProviderScope(
                       container: container,
                       child: PracticeSessionDetailPage(
                         session: saved!,
                         profile: profile,
                         now: container.read(ui.practiceSessionsClockProvider)(),
+                        onHome: () {
+                          Navigator.of(detailContext)
+                              .popUntil((route) => route.isFirst);
+                          shell.selectTab(0);
+                        },
                       ),
                     ),
                   ),
