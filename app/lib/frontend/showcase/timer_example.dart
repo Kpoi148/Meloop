@@ -263,8 +263,6 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
                     : () => _journalAction(_journal!.retry),
               ),
             ],
-            if (_journal != null)
-              MeloopNotice(message: strings.timerReviewPending),
             Stack(
               alignment: Alignment.center,
               children: [

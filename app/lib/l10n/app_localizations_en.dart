@@ -1076,8 +1076,4 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get timerCheckpointFailed =>
       'Practice paused after an error. The latest time has not been confirmed saved; please retry.';
-
-  @override
-  String get timerReviewPending =>
-      'You can finish to open the practice form. Saving is not available in this version yet.';
 }
