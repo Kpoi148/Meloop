@@ -125,6 +125,7 @@ void main() {
       'draft recovery $practiceState preserves owner and time while browsing another profile',
       (tester) async {
         final service = await profiles(2);
+        await service.select('preview-1');
         final now = DateTime.utc(2026, 10, 1);
         final draft = PracticeDraft(
           session: PracticeSession(
@@ -167,6 +168,10 @@ void main() {
         expect(find.byType(ProfilePickerScreen), findsOneWidget);
         await tap(tester, find.byKey(const Key('select-profile-preview-2')));
         expect((await service.load()).selectedProfileId, 'preview-2');
+        expect(find.text('Tiếp tục · Nhạc cụ 0'), findsNothing);
+        expect(find.text('Tạo buổi luyện'), findsOneWidget);
+        await tap(tester, find.byKey(const Key('choose-profile')));
+        await tap(tester, find.byKey(const Key('select-profile-preview-1')));
         expect(find.text('Tiếp tục · Nhạc cụ 0'), findsOneWidget);
         await tap(tester, find.text('Tiếp tục · Nhạc cụ 0'));
         expect(find.byType(TimerExample), findsOneWidget);

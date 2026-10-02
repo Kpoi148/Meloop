@@ -37,7 +37,8 @@ abstract interface class PracticeTimerService {
   PracticeTimerSnapshot? get snapshot;
   Stream<PracticeTimerSnapshot> get changes;
 
-  /// Cold recovery pauses without adding wall-clock time; Review is preserved.
+  /// Checkpoint the previous profile before opening another draft. Cold recovery
+  /// pauses without adding wall-clock time; Review is preserved.
   Future<void> open(PracticeDraft draft, {bool newlyStarted = false});
   Future<void> pause();
   Future<void> resume();

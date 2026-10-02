@@ -8,6 +8,7 @@ import '../../shared/journal/practice_date.dart';
 import '../../shared/journal/practice_start_service.dart';
 import '../database/journal_database_owner.dart';
 import 'sqlite_journal_readers.dart';
+import 'pause_other_practice_sessions.dart';
 
 class SqlitePracticeStartService implements PracticeStartService {
   const SqlitePracticeStartService({
@@ -29,7 +30,7 @@ class SqlitePracticeStartService implements PracticeStartService {
     final normalized = JournalText.sessionTitle(title);
     try {
       return await owner.transaction((db) async {
-        final existing = await readUnfinishedDraft(db);
+        final existing = await readUnfinishedDraft(db, profileId: profileId);
         if (existing != null) return existing;
         final profiles = await db.query(
           'instrument_profiles',
@@ -48,6 +49,7 @@ class SqlitePracticeStartService implements PracticeStartService {
         }
         final local = clock.localNow();
         final now = clock.utcNow().millisecondsSinceEpoch;
+        await pauseOtherPracticeSessions(db, sessionId: requestId, now: now);
         await db.insert('practice_sessions', {
           'id': requestId,
           'profile_id': profileId,
@@ -61,7 +63,11 @@ class SqlitePracticeStartService implements PracticeStartService {
         });
         // Schema v1 creates the sidecar in this same transaction. Read it before
         // returning so malformed/incomplete data never produces success.
-        return (await readUnfinishedDraft(db))!;
+        return (await readUnfinishedDraft(
+          db,
+          profileId: profileId,
+          sessionId: requestId,
+        ))!;
       });
     } on DatabaseException {
       throw const JournalFailure(JournalFailureCode.storage);

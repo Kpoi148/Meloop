@@ -134,6 +134,9 @@ class MeloopShellState {
   final int selectedTab;
   final bool requiresProfileSelection;
 
+  PreviewPracticeDraft? get selectedDraft =>
+      draft?.profileId == selectedProfile?.id ? draft : null;
+
   PreviewInstrumentProfile? get selectedProfile {
     for (final profile in profiles) {
       if (profile.id == selectedProfileId) return profile;
@@ -184,13 +187,13 @@ class MeloopShellController extends Notifier<MeloopShellState> {
     final draft = ids.contains(snapshot.draft?.profileId)
         ? snapshot.draft!.copyWith(isRunning: false, wasRecovered: true)
         : null;
-    final selectedId =
-        snapshot.recoverDraftOnEntry && ids.contains(draft?.profileId)
-        ? draft!.profileId
-        : ids.contains(snapshot.selectedProfileId)
+    final selectedId = ids.contains(snapshot.selectedProfileId)
         ? snapshot.selectedProfileId
         : profiles.firstOrNull?.id;
-    final destination = draft != null && snapshot.recoverDraftOnEntry
+    final destination =
+        draft != null &&
+            draft.profileId == selectedId &&
+            snapshot.recoverDraftOnEntry
         ? StartupDestination.recoveredTimer
         : profiles.isEmpty
         ? StartupDestination.welcome
@@ -234,7 +237,7 @@ class MeloopShellController extends Notifier<MeloopShellState> {
   }
 
   void showTimer() {
-    if (state.draft == null) return;
+    if (state.selectedDraft == null) return;
     state = state.copyWith(destination: StartupDestination.recoveredTimer);
   }
 
@@ -281,8 +284,8 @@ class MeloopShellController extends Notifier<MeloopShellState> {
   }
 
   void openStoredDraft(PreviewPracticeDraft draft) {
-    if (!state.profiles.any((p) => p.id == draft.profileId)) {
-      throw StateError('Draft owner is not in the profile directory.');
+    if (state.selectedProfile?.id != draft.profileId) {
+      throw StateError('Draft does not belong to the selected profile.');
     }
     state = state.copyWith(
       draft: draft,

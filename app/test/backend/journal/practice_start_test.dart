@@ -74,25 +74,34 @@ void main() {
     expect(restored!.session.id, id(10));
     expect(restored.session.title, 'Luyện đàn');
   });
-  test('concurrent Start across owners and repeated request preserve original draft', () async {
+  test('concurrent Start keeps one draft per profile and retries keep each identity', () async {
     final results = await Future.wait([
       start(),
       start(profile: 2, request: 11),
+      start(request: 12),
+      start(profile: 2, request: 13),
     ]);
-    expect(results.map((d) => d.session.id).toSet(), {id(10)});
+    expect(results.map((d) => d.session.id).toSet(), {id(10), id(11)});
     expect(
       (await start(profile: 2, title: 'Changed')).session.profileId,
-      id(1),
+      id(2),
     );
     expect(
       await owner.read((db) => db.query('practice_sessions')),
+      hasLength(2),
+    );
+    expect(await owner.read((db) => db.query('session_drafts')), hasLength(2));
+    expect((await start(request: 12, title: 'Changed')).session.id, id(10));
+    expect(
+      await owner.read(
+        (db) => db.query('practice_sessions', where: "state = 'running'"),
+      ),
       hasLength(1),
     );
-    expect(await owner.read((db) => db.query('session_drafts')), hasLength(1));
   });
   for (final state in ['paused', 'review']) {
     test(
-      'existing $state draft from another profile is opened without mutation',
+      'existing $state draft in another profile stays intact while starting this profile',
       () async {
         await owner.transaction((db) async {
           await insertSession(db, id: id(20), ownerId: id(2), state: state);
@@ -103,7 +112,11 @@ void main() {
             whereArgs: [id(20)],
           );
         });
-        final existing = await start();
+        final created = await start();
+        expect(created.session.id, id(10));
+        expect(created.session.profileId, id(1));
+        final existing = (await SqliteJournalSessionReader(owner)
+            .unfinished(profileId: id(2)))!;
         expect(existing.session.id, id(20));
         expect(existing.session.profileId, id(2));
         expect(existing.session.state.name, state);
@@ -169,6 +182,40 @@ void main() {
     expect(
       await owner.read((db) => db.query('practice_sessions')),
       hasLength(1),
+    );
+  });
+
+  test('failed Start in another profile rolls back its pause and keeps the original checkpoint', () async {
+    await start();
+    await owner.transaction((db) async {
+      await db.update(
+        'session_drafts',
+        {'accumulated_ms': 7000},
+        where: 'session_id = ?',
+        whereArgs: [id(10)],
+      );
+      await db.execute(
+        "CREATE TRIGGER injected_start BEFORE INSERT ON session_drafts BEGIN SELECT RAISE(ABORT,'injected'); END",
+      );
+    });
+    await expectLater(
+      start(profile: 2, request: 11),
+      throwsA(isA<JournalFailure>()),
+    );
+    final reader = SqliteJournalSessionReader(owner);
+    final retained = (await reader.unfinished(profileId: id(1)))!;
+    expect(retained.session.state, PracticeState.running);
+    expect(retained.accumulatedMilliseconds, 7000);
+    expect(await reader.unfinished(profileId: id(2)), isNull);
+    await owner.read((db) => db.execute('DROP TRIGGER injected_start'));
+    expect((await start(profile: 2, request: 11)).session.profileId, id(2));
+    expect(
+      (await reader.unfinished(profileId: id(1)))!.session.state,
+      PracticeState.paused,
+    );
+    expect(
+      (await reader.unfinished(profileId: id(1)))!.accumulatedMilliseconds,
+      7000,
     );
   });
 }

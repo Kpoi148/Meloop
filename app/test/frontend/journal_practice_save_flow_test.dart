@@ -158,6 +158,11 @@ void main() {
                 find.byKey(const Key('select-profile-$otherProfileId')),
               );
               await waitFor(find.byType(HomeExample));
+              expect(find.text('Tiếp tục · $profileName'), findsNothing);
+              await tap(find.byKey(const Key('choose-profile')));
+              await waitFor(find.byType(ProfilePickerScreen));
+              await tap(find.byKey(const Key('select-profile-$profileId')));
+              await waitFor(find.byType(HomeExample));
               await tap(find.text('Tiếp tục · $profileName'));
               await waitFor(find.byType(TimerExample));
             }

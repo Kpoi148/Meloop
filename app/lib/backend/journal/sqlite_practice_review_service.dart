@@ -24,7 +24,7 @@ class SqlitePracticeReviewService implements PracticeReviewService {
     final normalized = JournalText.sessionTitle(title);
     try {
       return await owner.transaction((db) async {
-        final draft = await readUnfinishedDraft(db);
+        final draft = await readUnfinishedDraft(db, sessionId: sessionId);
         if (draft == null || draft.session.id != sessionId) {
           throw const JournalFailure(JournalFailureCode.invalidInput);
         }
@@ -50,7 +50,8 @@ class SqlitePracticeReviewService implements PracticeReviewService {
 
   @override
   Future<PracticeDraft> read(String sessionId) async {
-    final draft = await SqliteJournalSessionReader(owner).unfinished();
+    final draft = await SqliteJournalSessionReader(owner)
+        .unfinished(sessionId: sessionId);
     if (draft == null ||
         draft.session.id != sessionId ||
         draft.session.state != PracticeState.review) {
@@ -80,7 +81,7 @@ class SqlitePracticeReviewService implements PracticeReviewService {
         final session = sessionFromRow(rows.single);
         // A retry after a successful commit must not create or overwrite a row.
         if (session.state == PracticeState.saved) return session;
-        final draft = await readUnfinishedDraft(db);
+        final draft = await readUnfinishedDraft(db, sessionId: sessionId);
         if (draft == null ||
             draft.session.id != sessionId ||
             session.state != PracticeState.review) {

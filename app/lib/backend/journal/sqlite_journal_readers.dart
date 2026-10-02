@@ -134,9 +134,15 @@ class SqliteJournalSessionReader implements JournalSessionReader {
   }
 
   @override
-  Future<PracticeDraft?> unfinished() => _readStored(owner, (db) async {
-    return readUnfinishedDraft(db);
-  });
+  Future<PracticeDraft?> unfinished({String? profileId, String? sessionId}) {
+    if (profileId != null) _requireId(profileId);
+    if (sessionId != null) _requireId(sessionId);
+    return _readStored(
+      owner,
+      (db) =>
+          readUnfinishedDraft(db, profileId: profileId, sessionId: sessionId),
+    );
+  }
 }
 
 class SqliteJournalPreferencesReader implements JournalPreferencesReader {
@@ -163,18 +169,36 @@ class SqliteJournalPreferencesReader implements JournalPreferencesReader {
   });
 }
 
-Future<PracticeDraft?> readUnfinishedDraft(DatabaseExecutor db) async {
+Future<PracticeDraft?> readUnfinishedDraft(
+  DatabaseExecutor db, {
+  String? profileId,
+  String? sessionId,
+}) async {
+  if (profileId != null) _requireId(profileId);
+  if (sessionId != null) _requireId(sessionId);
+  final clauses = ["s.state <> 'saved'"];
+  final args = <Object?>[];
+  if (profileId != null) {
+    clauses.add('s.profile_id = ?');
+    args.add(profileId);
+  }
+  if (sessionId != null) {
+    clauses.add('s.id = ?');
+    args.add(sessionId);
+  }
   final rows = await db.rawQuery('''
 SELECT s.*, d.accumulated_ms, d.checkpoint_at, d.review_input_json,
        d.updated_at AS draft_updated_at
 FROM practice_sessions s LEFT JOIN session_drafts d ON d.session_id = s.id
-WHERE s.state <> 'saved'
-''');
+WHERE ${clauses.join(' AND ')}
+ORDER BY (s.state = 'running') DESC, s.updated_at DESC, s.created_at DESC, s.id DESC
+''', args);
   if (rows.isEmpty) return null;
-  if (rows.length != 1 || rows.single['accumulated_ms'] == null) {
+  if (((profileId != null || sessionId != null) && rows.length != 1) ||
+      rows.first['accumulated_ms'] == null) {
     throw const JournalFailure(JournalFailureCode.corruptData);
   }
-  final row = rows.single;
+  final row = rows.first;
   return PracticeDraft(
     session: sessionFromRow(row),
     accumulatedMilliseconds: row['accumulated_ms'] as int,

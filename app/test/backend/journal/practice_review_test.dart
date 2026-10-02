@@ -174,4 +174,32 @@ void main() {
       hasLength(1),
     );
   });
+
+  test('review commands target their session while another profile has a running draft', () async {
+    mono.advance(12000);
+    await timer.finish();
+    await owner.transaction((db) => insertProfile(db, id(2), 'Guitar'));
+    final other = await SqlitePracticeStartService(
+      owner: owner,
+      clock: TestClock(),
+    ).start(requestId: id(11), profileId: id(2), title: 'Other draft');
+    await SqlitePracticeTimerStore(owner: owner, clock: TestClock()).checkpoint(
+      sessionId: other.session.id,
+      profileId: id(2),
+      accumulatedMilliseconds: 4500,
+      state: PracticeState.running,
+    );
+    expect(await review.rename(id(10), 'Renamed review'), 'Renamed review');
+    expect((await review.read(id(10))).accumulatedMilliseconds, 12000);
+    await review.save(id(10), values());
+    await review.save(id(10), values(title: 'Duplicate'));
+    await timer.complete(id(10));
+    final reader = SqliteJournalSessionReader(owner);
+    final retained = (await reader.unfinished(profileId: id(2)))!;
+    expect(retained.session.id, id(11));
+    expect(retained.session.title, 'Other draft');
+    expect(retained.accumulatedMilliseconds, 4500);
+    expect(await reader.saved(profileId: id(1)), hasLength(1));
+    expect(await reader.saved(profileId: id(2)), isEmpty);
+  });
 }
