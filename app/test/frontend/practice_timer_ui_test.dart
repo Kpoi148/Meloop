@@ -11,6 +11,7 @@ import 'package:meloop/app/journal_practice_lifecycle.dart';
 import 'package:meloop/backend/journal/practice_timer.dart';
 import 'package:meloop/frontend/application/app_settings_controller.dart';
 import 'package:meloop/frontend/application/practice_timer_service.dart';
+import 'package:meloop/frontend/application/practice_review_provider.dart';
 import 'package:meloop/frontend/application/startup_controller.dart';
 import 'package:meloop/frontend/components/meloop_ui.dart';
 import 'package:meloop/frontend/showcase/home_example.dart';
@@ -106,6 +107,9 @@ void main() {
                   InMemoryAppSettingsStore(languageCode: 'vi'),
                 ),
                 practiceTimerServiceProvider.overrideWithValue(timer),
+                practiceReviewLoadProvider.overrideWithValue(
+                  (_) async => store.draft,
+                ),
                 startupSnapshotProvider.overrideWithValue(
                   StartupSnapshot(
                     profiles: [
@@ -269,7 +273,8 @@ void main() {
           );
           expect(form.sessionId, id(10));
           expect(form.initialDurationSeconds, 15);
-          expect(timer.snapshot!.state, PracticeState.paused);
+          expect(timer.snapshot!.state, PracticeState.review);
+          expect(store.phase, PracticeState.review);
           expect(store.elapsed, 15300);
           mono.advance(30000);
           expect(timer.snapshot!.elapsedMilliseconds, 15300);

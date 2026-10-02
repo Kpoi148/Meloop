@@ -195,6 +195,42 @@ class PracticeTimer implements PracticeTimerService {
     _failed = false;
   });
   @override
+  Future<void> finish() {
+    if (_sessionId == null || _failed) {
+      return Future.error(
+        const JournalFailure(JournalFailureCode.invalidInput),
+      );
+    }
+    _runGeneration++;
+    _freeze(state: PracticeState.review);
+    return _enqueue(() async {
+      await screenAwake.setEnabled(false);
+      await _persist();
+    });
+  }
+
+  @override
+  Future<void> leaveReview() => _enqueue(() async {
+    if (_sessionId == null || _failed) return;
+    _state = PracticeState.paused;
+    await _persist();
+  });
+
+  @override
+  Future<void> complete(String sessionId) => _enqueue(() async {
+    if (_sessionId != sessionId || _state != PracticeState.review) {
+      throw const JournalFailure(JournalFailureCode.invalidInput);
+    }
+    _state = PracticeState.saved;
+    _anchor = null;
+    _emit();
+    _ticker?.cancel();
+    _ticker = null;
+    _sessionId = _profileId = null;
+    _base = _persisted = 0;
+    _failed = false;
+  });
+  @override
   void setForeground(bool foreground) {
     _foreground = foreground;
     if (!foreground) unawaited(pause().catchError((Object _) {}));

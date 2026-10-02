@@ -298,7 +298,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continuePractice => 'Continue practice session';
 
   @override
-  String get practiceTools => 'Practice tools';
+  String get practiceTools => 'Tools';
 
   @override
   String get recentSession => 'Latest session';
@@ -1079,4 +1079,52 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get timerCheckpointFailed =>
       'Practice paused after an error. The latest time has not been confirmed saved; please retry.';
+
+  @override
+  String get practiceActionFailed =>
+      'Could not update practice. Please try again.';
+
+  @override
+  String get practiceToolsHeading => 'Companions\nfor your practice.';
+
+  @override
+  String get practiceToolsSubtitle => 'Find your rhythm. Listen more closely.';
+
+  @override
+  String get metronomeTool => 'Metronome';
+
+  @override
+  String get pitchTool => 'Check pitch';
+
+  @override
+  String get practiceToolUnavailable =>
+      'This tool is not available yet. You can continue your practice session.';
+
+  @override
+  String get renamePractice => 'Rename practice session';
+
+  @override
+  String get metronomeToolHint => 'Keep time, your way.';
+
+  @override
+  String get pitchToolHint => 'Listen to every note.';
+
+  @override
+  String get recordTool => 'Record';
+
+  @override
+  String get recordToolHint => 'Keep a moment.';
+
+  @override
+  String get recordingsTool => 'Recordings';
+
+  @override
+  String get recordingsToolHint => 'Listen to your journey.';
+
+  @override
+  String get practiceToolsFree => 'Practice tools are always free.';
+
+  @override
+  String get practiceToolsTimingHint =>
+      'One audio tool runs at a time; the practice timer continues.';
 }

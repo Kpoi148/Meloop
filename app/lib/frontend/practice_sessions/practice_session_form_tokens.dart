@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/tokens/tempo_tokens.dart';
+import '../../shared/journal/journal_text.dart';
 
 abstract final class PracticeSessionFormTokens {
   static const introHeight = 128.0;
@@ -44,6 +45,6 @@ abstract final class PracticeSessionFormLimits {
   static const maximumMinutes = Duration.minutesPerDay;
   static const minimumSeconds = 1;
   static const maximumSeconds = maximumMinutes * Duration.secondsPerMinute;
-  static const minimumBpm = 20;
-  static const maximumBpm = 400;
+  static const minimumBpm = PracticeRules.minimumBpm;
+  static const maximumBpm = PracticeRules.maximumBpm;
 }

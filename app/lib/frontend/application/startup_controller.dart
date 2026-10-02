@@ -311,6 +311,11 @@ class MeloopShellController extends Notifier<MeloopShellState> {
     state = state.copyWith(draft: draft.copyWith(isRunning: false));
   }
 
+  void renameDraft(String sessionId, String title) {
+    if (state.draft?.sessionId != sessionId) return;
+    state = state.copyWith(draft: state.draft!.copyWith(title: title));
+  }
+
   void completeDraft() {
     state = state.copyWith(
       clearDraft: true,

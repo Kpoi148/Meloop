@@ -43,6 +43,7 @@ PracticeSession sessionFromRow(Map<String, Object?> row) => PracticeSession(
   next: row['next_note'] as String,
   mood: row['mood'] as int?,
   focus: row['focus'] as int?,
+  bpm: row['bpm'] as int?,
 );
 
 ReviewInput? reviewFromJson(Object? value) {

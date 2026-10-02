@@ -12,6 +12,7 @@ import 'practice_session_detail_page.dart';
 import 'practice_sessions_controller.dart';
 import 'practice_sessions_filter_sheet.dart';
 import 'practice_sessions_tokens.dart';
+import '../theme/tokens/practice_tokens.dart';
 
 class PracticeSessionsTab extends ConsumerStatefulWidget {
   const PracticeSessionsTab({
@@ -120,42 +121,23 @@ class _PracticeSessionsTabState extends ConsumerState<PracticeSessionsTab> {
         pageInset,
         TempoSpace.pageTop,
         pageInset,
-        TempoSpace.pageBottom,
+        PracticeTempo.fabClearance,
       ),
       scrollController: widget.scrollController,
-      bottomNavigation: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Align(
-            heightFactor: 1,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: TempoSize.contentMaxWidth,
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: pageInset,
-                  vertical: TempoSpace.md,
-                ),
-                child: MeloopButton(
-                  label: draft == null
-                      ? strings.createPractice
-                      : strings.continuePractice,
-                  icon: MeloopIcons.plus,
-                  iconGap: PracticeSessionsTokens.createIconGap,
-                  onPressed: draft == null
-                      ? _create
-                      : () {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                          widget.onContinue();
-                        },
-                ),
-              ),
-            ),
-          ),
-          widget.bottomNavigation,
-        ],
+      floatingActionButton: SizedBox.square(
+        dimension: PracticeTempo.fabSize,
+        child: FloatingActionButton(
+          key: const Key('practice-create'),
+          tooltip: draft == null
+              ? strings.createPractice
+              : strings.continuePractice,
+          backgroundColor: TempoColors.teal,
+          foregroundColor: TempoColors.white,
+          onPressed: _create,
+          child: const MeloopIcon(MeloopIcons.plus),
+        ),
       ),
+      bottomNavigation: widget.bottomNavigation,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

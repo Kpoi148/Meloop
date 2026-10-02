@@ -21,6 +21,9 @@ class MeloopButton extends StatefulWidget {
     this.fullWidth = true,
     this.onError,
     this.prominent = false,
+    this.borderRadius,
+    this.minimumHeight,
+    this.backgroundColor,
   });
 
   final String label;
@@ -32,6 +35,8 @@ class MeloopButton extends StatefulWidget {
   final String? loadingLabel;
   final bool fullWidth;
   final bool prominent;
+  final double? borderRadius, minimumHeight;
+  final Color? backgroundColor;
   final void Function(Object error, StackTrace stackTrace)? onError;
 
   @override
@@ -64,14 +69,16 @@ class _MeloopButtonState extends State<MeloopButton> {
       MeloopButtonStyle.soft => TempoColors.ink,
       _ => TempoColors.white,
     };
-    final background = switch (widget.style) {
-      MeloopButtonStyle.primary => TempoColors.teal,
-      MeloopButtonStyle.yellow => TempoColors.yellow,
-      MeloopButtonStyle.outline => Colors.transparent,
-      MeloopButtonStyle.soft => TempoColors.soft,
-      MeloopButtonStyle.orange => TempoColors.orange,
-      MeloopButtonStyle.danger => TempoColors.error,
-    };
+    final background =
+        widget.backgroundColor ??
+        switch (widget.style) {
+          MeloopButtonStyle.primary => TempoColors.teal,
+          MeloopButtonStyle.yellow => TempoColors.yellow,
+          MeloopButtonStyle.outline => Colors.transparent,
+          MeloopButtonStyle.soft => TempoColors.soft,
+          MeloopButtonStyle.orange => TempoColors.orange,
+          MeloopButtonStyle.danger => TempoColors.error,
+        };
     return Semantics(
       liveRegion: busy,
       child: SizedBox(
@@ -85,16 +92,19 @@ class _MeloopButtonState extends State<MeloopButton> {
             disabledBackgroundColor: background.withValues(alpha: .5),
             minimumSize: Size(
               TempoSize.touchTarget,
-              widget.prominent
-                  ? TempoSize.prominentButtonMinHeight
-                  : TempoSize.buttonMinHeight,
+              widget.minimumHeight ??
+                  (widget.prominent
+                      ? TempoSize.prominentButtonMinHeight
+                      : TempoSize.buttonMinHeight),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 13),
             textStyle: widget.prominent
                 ? TempoType.prominentButton
                 : TempoType.button,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(TempoRadius.button),
+              borderRadius: BorderRadius.circular(
+                widget.borderRadius ?? TempoRadius.button,
+              ),
               side: widget.style == MeloopButtonStyle.outline
                   ? const BorderSide(color: TempoColors.fieldBorder)
                   : BorderSide.none,

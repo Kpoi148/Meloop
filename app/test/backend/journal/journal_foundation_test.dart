@@ -407,6 +407,9 @@ void main() {
       await SqliteAppSettingsStore(owner: current).readLanguageCode(),
       'en',
     );
-    expect(await current.read((db) => db.getVersion()), 1);
+    expect(
+      await current.read((db) => db.getVersion()),
+      JournalDatabase.schemaVersion,
+    );
   });
 }

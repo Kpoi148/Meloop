@@ -11,3 +11,5 @@ flutter test integration_test/shared_ui_smoke_test.dart -d emulator-5554
 ```
 
 Thay device ID bằng thiết bị Android được liệt kê trong `flutter devices`. Audio, quyền, timer và lưu trữ sẽ có kiểm thử riêng khi các task đó triển khai.
+
+UC-04: `flutter test integration_test/uc04_journal_smoke_test.dart -d <android-device>` kiểm tra icon +, ảnh Sáo đồng bộ, tools giữ session ID, Pause/Resume, Review, khóa Save trùng, lưu SQLite, mở lại và Start tiếp theo. Test dùng file database UUID riêng, giữ nguyên database người dùng.

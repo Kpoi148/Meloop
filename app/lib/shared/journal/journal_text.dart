@@ -16,6 +16,11 @@ class PracticeRules {
   static const maximumDuration = Duration(hours: 24);
   static const checkpointInterval = Duration(seconds: 5);
   static const timerRefreshInterval = Duration(seconds: 1);
+  static const noteMaxCodePoints = 2000;
+  static const minimumRating = 1;
+  static const maximumRating = 5;
+  static const minimumBpm = 20;
+  static const maximumBpm = 400;
 }
 
 class JournalText {
