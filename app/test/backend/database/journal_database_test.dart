@@ -102,7 +102,7 @@ void main() {
         );
         expect(count.single['n'], 0);
       }
-      expect(await db.getVersion(), 1);
+      expect(await db.getVersion(), JournalDatabase.schemaVersion);
       expect(
         (await db.rawQuery('PRAGMA foreign_keys')).single.values.single,
         1,
@@ -438,7 +438,7 @@ void main() {
         path: path,
       );
       expect(await reopened.query('instrument_profiles'), hasLength(1));
-      expect(await reopened.getVersion(), 1);
+      expect(await reopened.getVersion(), JournalDatabase.schemaVersion);
       await reopened.close();
     } finally {
       await directory.delete(recursive: true);
@@ -477,7 +477,7 @@ void main() {
         factory: databaseFactoryFfi,
         path: path,
       );
-      expect(await recovered.getVersion(), 1);
+      expect(await recovered.getVersion(), JournalDatabase.schemaVersion);
       await recovered.close();
     } finally {
       await directory.delete(recursive: true);
@@ -490,9 +490,11 @@ void main() {
     );
     final path = '${directory.path}${Platform.pathSeparator}journal.db';
     try {
-      final original = await JournalDatabase.open(
-        factory: databaseFactoryFfi,
-        path: path,
+      final original = await databaseFactoryFfi.openDatabase(
+        path,
+        options: JournalDatabase.options(
+          runner: MigrationRunner(const [initialSchema]),
+        ),
       );
       await addProfile(original);
       await original.close();
@@ -513,9 +515,11 @@ void main() {
         ),
         throwsA(isA<DatabaseException>()),
       );
-      final recovered = await JournalDatabase.open(
-        factory: databaseFactoryFfi,
-        path: path,
+      final recovered = await databaseFactoryFfi.openDatabase(
+        path,
+        options: JournalDatabase.options(
+          runner: MigrationRunner(const [initialSchema]),
+        ),
       );
       try {
         expect(await recovered.getVersion(), 1);
@@ -548,7 +552,7 @@ void main() {
         final future = await databaseFactoryFfi.openDatabase(
           path,
           options: OpenDatabaseOptions(
-            version: 2,
+            version: JournalDatabase.schemaVersion + 1,
             onCreate: (database, version) async {
               await database.execute('CREATE TABLE sentinel (value TEXT)');
               await database.insert('sentinel', {'value': 'preserved'});
@@ -561,7 +565,7 @@ void main() {
           throwsA(isA<UnsupportedSchemaVersion>()),
         );
         final inspected = await databaseFactoryFfi.openDatabase(path);
-        expect(await inspected.getVersion(), 2);
+        expect(await inspected.getVersion(), JournalDatabase.schemaVersion + 1);
         expect(
           (await inspected.query('sentinel')).single['value'],
           'preserved',
@@ -579,5 +583,55 @@ void main() {
           MigrationRunner([const SchemaMigration(version: 2, statements: [])]),
       throwsArgumentError,
     );
+  });
+
+  test('v1 upgrade keeps existing sessions and adds nullable BPM without recreating journal', () async {
+    final directory = await Directory.systemTemp.createTemp(
+      'meloop-bpm-upgrade-',
+    );
+    final path = '${directory.path}/journal.db';
+    try {
+      final original = await databaseFactoryFfi.openDatabase(
+        path,
+        options: JournalDatabase.options(
+          runner: MigrationRunner(const [initialSchema]),
+        ),
+      );
+      await addProfile(original);
+      await original.insert('practice_sessions', sessionRow(state: 'saved'));
+      await original.close();
+      final upgraded = await JournalDatabase.open(
+        factory: databaseFactoryFfi,
+        path: path,
+      );
+      try {
+        expect(await upgraded.getVersion(), JournalDatabase.schemaVersion);
+        final saved = (await upgraded.query('saved_practice_sessions')).single;
+        expect(saved['id'], sessionId);
+        expect(saved['measured_duration_seconds'], 60);
+        expect(saved['bpm'], isNull);
+        await upgraded.update(
+          'practice_sessions',
+          {'bpm': 80},
+          where: 'id = ?',
+          whereArgs: [sessionId],
+        );
+        expect(
+          (await upgraded.query('saved_practice_sessions')).single['bpm'],
+          80,
+        );
+        expect(
+          (await upgraded.rawQuery('PRAGMA integrity_check'))
+              .single
+              .values
+              .single,
+          'ok',
+        );
+      } finally {
+        await upgraded.close();
+      }
+    } finally {
+      await directory.delete(recursive: true);
+    }
   });
 }

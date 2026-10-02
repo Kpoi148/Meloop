@@ -23,6 +23,7 @@ class SessionFormExample extends ConsumerStatefulWidget {
     this.initialValues,
     this.editing = false,
     this.onHome,
+    this.onSaved,
   });
   final SessionFormSave? onSave;
   final String initialTitle;
@@ -30,8 +31,9 @@ class SessionFormExample extends ConsumerStatefulWidget {
   final SessionFormValues? initialValues;
   final bool editing;
   final VoidCallback? onHome;
+  final VoidCallback? onSaved;
 
-  /// Journal identity for the review adapter; durable Save is integrated in B06.
+  /// Stable identity of the journal draft being reviewed.
   final String? sessionId;
   @override
   ConsumerState<SessionFormExample> createState() => _SessionFormExampleState();
@@ -145,7 +147,13 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
       ),
       onSave: widget.onSave,
     );
-    if (saved && mounted) Navigator.of(context).pop();
+    if (saved && mounted) {
+      if (widget.onSaved != null) {
+        widget.onSaved!();
+      } else {
+        Navigator.of(context).pop();
+      }
+    }
   }
 
   Future<void> _back() => _leave(() => Navigator.of(context).pop());

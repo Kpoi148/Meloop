@@ -14,3 +14,8 @@ B03: `createJournalProfileApp()` dùng `JournalProfileEntry` với loader `Sqlit
 
 B04: Setup không ghi khi mở/Back. Start async với UUID giữ qua retry; chỉ đưa draft/session ID thật vào shell sau commit. Ghi lỗi giữ input và action Start; pending khóa gửi lại/Back/chỉnh title. Back khi có title dùng dialog Keep editing/Discard hiện có. B05 đã nối draft mới với timer monotonic thật; Finish/Save thuộc B06. Profile browsing/bootstrap tiếp tục giữ draft vừa tạo.
 Cập nhật Finish cho FE: nút Kết thúc journal đã mở để vào SessionFormExample hiện có. Trước khi mở form, Pause ghi checkpoint; lỗi giữ màn timer/Retry, pending khóa thao tác trùng. Form nhận session ID và measured duration thật; dữ liệu draft bền vững vẫn Paused. Đây là mở điều hướng UI để FE điều chỉnh; chuyển Review bền vững, lưu input và Save session còn B06. Không fake Save; đóng/mở app quay về checkpoint Paused, không hứa phục hồi input form.
+
+
+## Tích hợp UC-04
+
+Review/Save đã nối SQLite journal thật qua `PracticeReviewService`. Finish ghi Review bằng timer service, Save cập nhật cùng session ID và trả bản lưu đầu tiên khi retry. Save thành công mở chi tiết, xóa draft và cho phép Start buổi tiếp theo. Phần mô tả B04/B05 phía trên là mốc lịch sử; chi tiết trạng thái hiện tại ở `docs/FE_PRACTICE_SESSION.md`. Các công cụ audio/metronome/tuner vẫn dùng port riêng; form chưa autosave nội dung trước Save.

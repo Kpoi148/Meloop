@@ -73,3 +73,8 @@ Trong lần thử thủ công trên Medium_Phone ngày 29/09, log ghi nhận ANR
 
 Tài liệu API: [Providers](https://riverpod.dev/docs/concepts2/providers), [Provider overrides](https://riverpod.dev/docs/concepts2/overrides), [Refs](https://riverpod.dev/docs/concepts2/refs).
 Cập nhật Finish cho FE: nút Kết thúc journal đã mở để vào SessionFormExample hiện có. Trước khi mở form, Pause ghi checkpoint; lỗi giữ màn timer/Retry, pending khóa thao tác trùng. Form nhận session ID và measured duration thật; dữ liệu draft bền vững vẫn Paused. Đây là mở điều hướng UI để FE điều chỉnh; chuyển Review bền vững, lưu input và Save session còn B06. Không fake Save; đóng/mở app quay về checkpoint Paused, không hứa phục hồi input form.
+
+
+## Tích hợp UC-04
+
+Review/Save đã nối SQLite journal thật qua `PracticeReviewService`. Finish ghi Review bằng timer service, Save cập nhật cùng session ID và trả bản lưu đầu tiên khi retry. Save thành công mở chi tiết, xóa draft và cho phép Start buổi tiếp theo. Phần mô tả B04/B05 phía trên là mốc lịch sử; chi tiết trạng thái hiện tại ở `docs/FE_PRACTICE_SESSION.md`. Các công cụ audio/metronome/tuner vẫn dùng port riêng; form chưa autosave nội dung trước Save.

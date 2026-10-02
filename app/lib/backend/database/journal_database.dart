@@ -2,12 +2,13 @@ import 'package:sqflite/sqflite.dart';
 
 import 'migration_runner.dart';
 import 'migrations/v001_initial_schema.dart';
+import 'migrations/v002_session_bpm.dart';
 
 class JournalDatabase {
   JournalDatabase._();
 
   static const filename = 'meloop.db';
-  static const schemaVersion = 1;
+  static const schemaVersion = 2;
 
   static Future<Database> open({DatabaseFactory? factory, String? path}) async {
     final selectedFactory = factory ?? databaseFactory;
@@ -17,7 +18,8 @@ class JournalDatabase {
 
   /// Exposed for migration fault-injection tests and alternate factories.
   static OpenDatabaseOptions options({MigrationRunner? runner}) {
-    final migrations = runner ?? MigrationRunner(const [initialSchema]);
+    final migrations =
+        runner ?? MigrationRunner(const [initialSchema, sessionBpmSchema]);
     return OpenDatabaseOptions(
       version: migrations.version,
       onConfigure: (database) async {

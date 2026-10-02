@@ -451,7 +451,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(calls, 2);
     expect(find.text('Chưa có buổi luyện'), findsOneWidget);
-    final create = find.widgetWithText(MeloopButton, 'Tạo buổi luyện');
+    final create = find.byKey(const Key('practice-create'));
     expect(create, findsOneWidget);
     await tester.ensureVisible(create);
     await tester.tap(create);
@@ -474,7 +474,7 @@ void main() {
       scroll.jumpTo(scroll.position.maxScrollExtent);
       await tester.pumpAndSettle();
       final position = scroll.offset;
-      await tester.tap(find.widgetWithText(MeloopButton, 'Tạo buổi luyện'));
+      await tester.tap(find.byKey(const Key('practice-create')));
       await tester.pumpAndSettle();
       expect(find.byType(SetupExample), findsOneWidget);
       await tester.binding.handlePopRoute();
@@ -500,12 +500,7 @@ void main() {
     expect(find.text('Buổi luyện chưa hoàn tất'), findsOneWidget);
     expect(find.text('12:34'), findsOneWidget);
     expect(find.text('Tạm dừng'), findsOneWidget);
-    final resume = find.descendant(
-      of: find.byWidget(
-        tester.widget<Scaffold>(find.byType(Scaffold)).bottomNavigationBar!,
-      ),
-      matching: find.widgetWithText(MeloopButton, 'Tiếp tục buổi luyện'),
-    );
+    final resume = find.byKey(const Key('practice-create'));
     await tester.ensureVisible(resume);
     await tester.tap(resume);
     await tester.pumpAndSettle();
@@ -532,13 +527,10 @@ void main() {
         addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
         await _mount(tester);
         await tester.pumpAndSettle();
-        final createFinder = find.widgetWithText(
-          MeloopButton,
-          'Tạo buổi luyện',
-        );
+        final createFinder = find.byKey(const Key('practice-create'));
         final initialCreate = tester.getRect(createFinder);
         final viewport = tester.getRect(find.byType(SingleChildScrollView));
-        expect(viewport.bottom, lessThan(initialCreate.top));
+        expect(initialCreate.bottom, lessThanOrEqualTo(viewport.bottom));
         expect(
           initialCreate.bottom,
           lessThan(tester.getRect(find.byType(MeloopBottomNavigation)).top),
@@ -555,8 +547,8 @@ void main() {
         final navigation = tester.getRect(find.byType(MeloopBottomNavigation));
         expect(last.bottom, lessThan(create.top));
         expect(create.bottom, lessThan(navigation.top));
-        expect(create.left, last.left);
-        expect(create.right, last.right);
+        expect(create.width, 60);
+        expect(create.left, greaterThan(viewport.center.dx));
         expect(create, initialCreate);
         expect(last.bottom, lessThanOrEqualTo(viewport.bottom));
         await _applyFilters(tester, period: '7 ngày', order: 'Cũ nhất');
@@ -662,9 +654,8 @@ void main() {
         .scrollController;
     scroll.jumpTo(scroll.position.maxScrollExtent);
     await tester.pumpAndSettle();
-    final create = find.widgetWithText(MeloopButton, 'Tạo buổi luyện');
-    expect(tester.getSize(create).width, 371);
-    expect(tester.getSize(create).height, closeTo(57, 1));
+    final create = find.byKey(const Key('practice-create'));
+    expect(tester.getSize(create), const Size(60, 60));
     await capture('uc06-create');
     scroll.jumpTo(0);
     await tester.pumpAndSettle();

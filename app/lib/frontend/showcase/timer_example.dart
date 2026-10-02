@@ -5,326 +5,504 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
 import '../../shared/journal/journal_models.dart';
-import '../../shared/journal/journal_text.dart';
 import '../../shared/journal/practice_timer_service.dart';
 import '../application/practice_timer_service.dart';
-import '../application/session_form_controller.dart';
+import '../application/practice_review_provider.dart';
 import '../application/startup_controller.dart';
 import '../components/meloop_ui.dart';
+import '../practice/practice_duration.dart';
+import '../practice/practice_instrument_art.dart';
+import '../practice/practice_tools_page.dart';
+import '../practice_sessions/practice_session.dart' as ui;
+import '../practice_sessions/practice_session_detail_page.dart';
+import '../theme/tokens/practice_tokens.dart';
 import 'preview_copy.dart';
 import 'session_form_example.dart';
 
+/// Projects the app-scoped snapshot; owns no clock or elapsed state.
 class TimerExample extends ConsumerStatefulWidget {
   const TimerExample({super.key, this.readOnly = false});
   final bool readOnly;
-
   @override
   ConsumerState<TimerExample> createState() => _TimerExampleState();
 }
 
 class _TimerExampleState extends ConsumerState<TimerExample> {
-  Timer? _ticker;
-  late int _seconds;
-  late bool _running;
-  String? _draftProfileId;
-  PracticeTimerService? _journal;
   bool _finishing = false;
-
-  Future<void> _journalAction(Future<void> Function() action) async {
+  String? _error;
+  late final PracticeTimerService? _journal = ref.read(
+    practiceTimerServiceProvider,
+  );
+  Future<void> _action(Future<void> Function() command) async {
     try {
-      await action();
+      await command();
     } catch (_) {
-      /* The service publishes retained values and Retry state. */
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    final draft = ref.read(meloopShellControllerProvider).draft;
-    if (draft?.sessionId != null) {
-      _journal = ref.read(practiceTimerServiceProvider);
-    }
-    _seconds = draft?.accumulatedSeconds ?? 0;
-    _running = !widget.readOnly && (draft?.isRunning ?? false);
-    _draftProfileId = draft?.profileId;
-    if (_journal == null) _syncTicker();
-  }
-
-  @override
-  void didUpdateWidget(covariant TimerExample oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    final draft = ref.read(meloopShellControllerProvider).draft;
-    if (draft != null && draft.profileId != _draftProfileId) {
-      _seconds = draft.accumulatedSeconds;
-      _running = draft.isRunning;
-      _draftProfileId = draft.profileId;
-      if (_journal == null) _syncTicker();
+      if (mounted) setState(() => _error = context.l10n.practiceActionFailed);
     }
   }
 
   @override
   void dispose() {
-    _ticker?.cancel();
-    final journal = _journal;
-    if (journal?.snapshot?.state == PracticeState.running) {
-      unawaited(_journalAction(journal!.pause));
+    if (_journal?.snapshot?.state == PracticeState.running) {
+      unawaited(_journal!.pause().catchError((Object _) {}));
     }
     super.dispose();
   }
 
-  void _syncTicker() {
-    _ticker?.cancel();
-    if (!_running) return;
-    _ticker = Timer.periodic(PracticeRules.timerRefreshInterval, (_) {
-      if (!mounted) return;
-      setState(
-        () => _seconds = (_seconds + 1).clamp(
-          0,
-          PracticeRules.maximumDuration.inSeconds,
-        ),
-      );
-    });
-  }
-
-  Future<void> _toggle() async {
-    final journal = _journal;
-    if (journal != null) {
-      await _journalAction(
-        journal.snapshot?.state == PracticeState.running
-            ? journal.pause
-            : journal.resume,
-      );
-      return;
-    }
-    setState(() => _running = !_running);
-    _syncTicker();
-    ref
-        .read(meloopShellControllerProvider.notifier)
-        .checkpointDraft(seconds: _seconds, isRunning: _running);
-  }
-
   Future<void> _back() async {
-    if (_journal != null) {
-      await _journalAction(_journal!.pause);
-      if (!mounted || _journal!.snapshot?.failed == true) return;
-      final timer = _journal!.snapshot!;
+    final service = _journal;
+    if (service != null) {
+      await _action(service.pause);
+      if (!mounted || service.snapshot?.failed == true) return;
       ref
           .read(meloopShellControllerProvider.notifier)
           .checkpointDraft(
             seconds:
-                timer.elapsedMilliseconds ~/ Duration.millisecondsPerSecond,
+                service.snapshot!.elapsedMilliseconds ~/
+                Duration.millisecondsPerSecond,
             isRunning: false,
           );
-      ref.read(meloopShellControllerProvider.notifier).showMain();
-      return;
     }
-    _running = false;
-    _syncTicker();
-    final controller = ref.read(meloopShellControllerProvider.notifier);
-    if (!widget.readOnly) {
-      controller.checkpointDraft(seconds: _seconds, isRunning: false);
-    }
-    controller.showMain();
+    if (mounted) ref.read(meloopShellControllerProvider.notifier).showMain();
   }
 
   Future<void> _finish() async {
-    if (_finishing) return;
-    setState(() => _finishing = true);
+    if (_finishing || _journal == null) return;
+    setState(() {
+      _finishing = true;
+      _error = null;
+    });
     try {
-      final journal = _journal;
-      if (journal != null) {
-        await _journalAction(journal.pause);
-        if (!mounted || journal.snapshot?.failed == true) return;
-        _seconds =
-            journal.snapshot!.elapsedMilliseconds ~/
-            Duration.millisecondsPerSecond;
-      }
-      _running = false;
-      _syncTicker();
+      final service = _journal;
+      await service.finish();
+      final id = service.snapshot!.sessionId;
+      final draft = await ref.read(practiceReviewLoadProvider)(id);
+      if (!mounted) return;
+      final profile = ref
+          .read(meloopShellControllerProvider)
+          .profiles
+          .firstWhere((p) => p.id == draft.session.profileId);
       final shell = ref.read(meloopShellControllerProvider.notifier);
-      shell.checkpointDraft(seconds: _seconds, isRunning: false);
-      shell.finishDraft();
+      shell.checkpointDraft(
+        seconds:
+            draft.accumulatedMilliseconds ~/ Duration.millisecondsPerSecond,
+        isRunning: false,
+      );
+      final container = ProviderScope.containerOf(context);
+      ui.PracticeSession? saved;
       await Navigator.of(context).push<void>(
         MaterialPageRoute(
-          builder: (_) => SessionFormExample(
-            onHome: () {
-              Navigator.of(context).pop();
-              shell.selectTab(0);
-            },
-            sessionId: ref.read(meloopShellControllerProvider).draft?.sessionId,
-            initialTitle:
-                ref.read(meloopShellControllerProvider).draft?.title ?? '',
-            initialDurationSeconds: _seconds.clamp(
-              1,
-              PracticeRules.maximumDuration.inSeconds,
+          builder: (routeContext) => UncontrolledProviderScope(
+            container: container,
+            child: SessionFormExample(
+              sessionId: id,
+              initialTitle: draft.session.title,
+              initialDurationSeconds:
+                  draft.accumulatedMilliseconds ~/
+                  Duration.millisecondsPerSecond,
+              initialValues: SessionFormValues(
+                title: draft.reviewInput?.title ?? draft.session.title,
+                date: DateTime.parse(
+                  draft.reviewInput?.practiceDate ??
+                      draft.session.practiceDate.value,
+                ),
+                durationSeconds:
+                    draft.accumulatedMilliseconds ~/
+                    Duration.millisecondsPerSecond,
+                practiced:
+                    draft.reviewInput?.practiced ?? draft.session.practiced,
+                difficulty:
+                    draft.reviewInput?.difficulty ?? draft.session.difficulty,
+                next: draft.reviewInput?.next ?? draft.session.next,
+                mood: draft.reviewInput?.mood ?? draft.session.mood,
+                focus: draft.reviewInput?.focus ?? draft.session.focus,
+                bpm: draft.session.bpm,
+              ),
+              onSave: (values) async {
+                saved = await container.read(practiceReviewSaveProvider)(
+                  id,
+                  values,
+                );
+                await service.complete(id);
+                container.invalidate(ui.practiceSessionsProvider);
+              },
+              onSaved: () {
+                shell.completeDraft();
+                shell.selectTab(1);
+                Navigator.of(routeContext).pushReplacement<void, void>(
+                  MaterialPageRoute(
+                    builder: (_) => UncontrolledProviderScope(
+                      container: container,
+                      child: PracticeSessionDetailPage(
+                        session: saved!,
+                        profile: profile,
+                        now: container.read(ui.practiceSessionsClockProvider)(),
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
-            onSave: (values) async {
-              await ref.read(sessionFormSaveProvider)(values);
-              shell.completeDraft();
-            },
           ),
         ),
       );
+      if (saved == null && service.snapshot?.sessionId == id) {
+        await service.leaveReview();
+      }
+    } catch (_) {
+      if (mounted) setState(() => _error = context.l10n.practiceActionFailed);
     } finally {
       if (mounted) setState(() => _finishing = false);
     }
   }
 
-  String _duration(int elapsedSeconds) {
-    final hours = elapsedSeconds ~/ 3600;
-    final minutes = elapsedSeconds % 3600 ~/ 60;
-    final seconds = elapsedSeconds % 60;
-    final core =
-        '${minutes.toString().padLeft(2, '0')}:'
-        '${seconds.toString().padLeft(2, '0')}';
-    return hours == 0 ? core : '${hours.toString().padLeft(2, '0')}:$core';
+  Future<void> _rename() async {
+    final draft = ref.read(meloopShellControllerProvider).draft!;
+    final update = ref.read(practiceTitleUpdateProvider);
+    if (update == null || draft.sessionId == null) return;
+    final title = TextEditingController(text: draft.title);
+    final form = GlobalKey<FormState>();
+    try {
+      await showMeloopSheet<void>(
+        context,
+        title: context.l10n.renamePractice,
+        child: Form(
+          key: form,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              MeloopField(
+                label: context.l10n.sessionTitle,
+                controller: title,
+                validator: (value) =>
+                    MeloopValidation.titleFor(value, context.l10n),
+              ),
+              const SizedBox(height: TempoSpace.md),
+              MeloopButton(
+                label: context.l10n.renamePractice,
+                onPressed: () async {
+                  if (!form.currentState!.validate()) return;
+                  await _action(() async {
+                    final normalized = await update(
+                      draft.sessionId!,
+                      title.text,
+                    );
+                    if (!mounted) return;
+                    ref
+                        .read(meloopShellControllerProvider.notifier)
+                        .renameDraft(draft.sessionId!, normalized);
+                    Navigator.of(context).pop();
+                  });
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    } finally {
+      title.dispose();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(meloopShellControllerProvider);
+    ref.watch(practiceTimerSnapshotProvider);
     final draft = state.draft;
-    if (_journal != null) ref.watch(practiceTimerSnapshotProvider);
     final timer = _journal?.snapshot;
-    final seconds = timer == null
-        ? _seconds
-        : timer.elapsedMilliseconds ~/ Duration.millisecondsPerSecond;
-    final running = timer == null
-        ? _running
-        : timer.state == PracticeState.running;
-    final review = timer == null
-        ? draft?.isReview == true
-        : timer.state == PracticeState.review;
     final profile = state.profiles
         .where((p) => p.id == draft?.profileId)
         .firstOrNull;
+    if (draft == null || profile == null) return const SizedBox.shrink();
     final strings = context.l10n;
-    if (draft == null || profile == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(meloopShellControllerProvider.notifier).showMain();
-      });
-      return const SizedBox.shrink();
-    }
+    final seconds = timer == null
+        ? draft.accumulatedSeconds
+        : timer.elapsedMilliseconds ~/ Duration.millisecondsPerSecond;
+    final running = timer?.state == PracticeState.running;
+    final review = timer == null
+        ? draft.isReview
+        : timer.state == PracticeState.review;
+    final blocked =
+        widget.readOnly ||
+        timer == null ||
+        timer.busy ||
+        timer.failed ||
+        _finishing;
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) _back();
+        if (!didPop) unawaited(_back());
       },
       child: MeloopPage(
-        topBar: MeloopTopBar(title: strings.timerTitle, onBack: _back),
+        padding: PracticeTempo.pagePadding,
+        topBar: MeloopTopBar(
+          title: strings.timerTitle,
+          onBack: _finishing ? null : _back,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: TempoSpace.page,
           children: [
-            MeloopCard(
-              color: TempoColors.soft,
-              child: Row(
-                children: [
-                  MeloopArt.instrument(profile.instrument, size: 72),
-                  const SizedBox(width: TempoSpace.md),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          profileDisplayName(strings, profile),
-                          style: TempoType.label,
-                        ),
-                        Text(
-                          strings.timerOptionalTitle,
-                          style: TempoType.caption,
-                        ),
-                        Text(
-                          draft.title.isEmpty
-                              ? strings.setPracticeName
-                              : draft.title,
-                          style: TempoType.title,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+            _ProfileHeader(
+              profile: profile,
+              title: draft.title,
+              onRename:
+                  blocked || ref.watch(practiceTitleUpdateProvider) == null
+                  ? null
+                  : _rename,
             ),
-            if (draft.wasRecovered)
+            if (draft.wasRecovered) ...[
+              const SizedBox(height: TempoSpace.md),
               MeloopNotice(
                 message:
                     '${strings.recoveredDraftTitle}\n${strings.recoveredDraftMessage}',
               ),
-            if (widget.readOnly && _journal == null)
+            ],
+            if (widget.readOnly && timer == null)
               MeloopNotice(message: strings.journalRecoveryPending),
-            if (_journal != null && timer?.failed == true) ...[
+            _TimerStage(
+              seconds: seconds,
+              running: running,
+              review: review,
+              instrument: profile.instrument,
+            ),
+            if (timer?.failed == true) ...[
               MeloopNotice(
                 message: strings.timerCheckpointFailed,
                 kind: MeloopNoticeKind.error,
               ),
               MeloopButton(
                 label: strings.retry,
-                loadingLabel: strings.retrying,
-                onPressed: timer!.busy
-                    ? null
-                    : () => _journalAction(_journal!.retry),
+                onPressed: timer!.busy ? null : () => _action(_journal!.retry),
               ),
-            ],
-            Stack(
-              alignment: Alignment.center,
+            ] else if (_error != null)
+              MeloopNotice(message: _error!, kind: MeloopNoticeKind.error),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: PracticeTempo.actionGap,
               children: [
-                const MeloopIllustration(
-                  asset: 'fidelity-timer.png',
-                  height: 330,
+                MeloopButton(
+                  label: running ? strings.pause : strings.resume,
+                  icon: running ? MeloopIcons.pause : MeloopIcons.play,
+                  prominent: true,
+                  borderRadius: TempoRadius.pill,
+                  minimumHeight: PracticeTempo.timerButtonHeight,
+                  onPressed: blocked || review
+                      ? null
+                      : () => _action(
+                          running ? _journal!.pause : _journal!.resume,
+                        ),
                 ),
-                Column(
-                  children: [
-                    Text(
-                      review
-                          ? strings.journalReviewState
-                          : running
-                          ? strings.timerRunning
-                          : strings.timerPaused,
-                      style: TempoType.label,
-                    ),
-                    Text(_duration(seconds), style: TempoType.metric),
-                    Text(strings.practiceTime, style: TempoType.caption),
-                  ],
+                MeloopButton(
+                  label: strings.practiceTools,
+                  icon: MeloopIcons.music,
+                  style: MeloopButtonStyle.soft,
+                  prominent: true,
+                  borderRadius: TempoRadius.pill,
+                  minimumHeight: PracticeTempo.toolsButtonHeight,
+                  backgroundColor: PracticeTempo.toolsActionBackground,
+                  onPressed: widget.readOnly || timer == null
+                      ? null
+                      : () => Navigator.of(context).push<void>(
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                PracticeToolsPage(sessionId: timer.sessionId),
+                          ),
+                        ),
+                ),
+                MeloopButton(
+                  label: strings.finish,
+                  style: MeloopButtonStyle.orange,
+                  prominent: true,
+                  borderRadius: TempoRadius.pill,
+                  minimumHeight: PracticeTempo.timerButtonHeight,
+                  onPressed: blocked ? null : _finish,
                 ),
               ],
-            ),
-            MeloopButton(
-              label: running ? strings.pause : strings.resume,
-              icon: running ? MeloopIcons.pause : MeloopIcons.play,
-              loadingLabel: strings.processing,
-              onPressed: _journal != null
-                  ? (widget.readOnly ||
-                            timer?.busy == true ||
-                            timer?.failed == true ||
-                            review
-                        ? null
-                        : _toggle)
-                  : widget.readOnly
-                  ? null
-                  : _toggle,
-            ),
-            MeloopButton(
-              label: strings.practiceTools,
-              icon: MeloopIcons.music,
-              style: MeloopButtonStyle.soft,
-              onPressed: widget.readOnly || _journal != null ? null : () {},
-            ),
-            MeloopButton(
-              label: strings.finish,
-              style: MeloopButtonStyle.orange,
-              onPressed:
-                  widget.readOnly ||
-                      _finishing ||
-                      timer?.busy == true ||
-                      timer?.failed == true
-                  ? null
-                  : _finish,
             ),
           ],
         ),
       ),
     );
   }
+}
+
+class _ProfileHeader extends StatelessWidget {
+  const _ProfileHeader({
+    required this.profile,
+    required this.title,
+    this.onRename,
+  });
+  final PreviewInstrumentProfile profile;
+  final String title;
+  final VoidCallback? onRename;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final compact = constraints.maxWidth < PracticeTempo.compactContentWidth;
+      final cover = PracticeProfileCover(
+        key: const Key('practice-profile-cover'),
+        instrument: profile.instrument,
+        size: compact
+            ? PracticeTempo.compactProfileCover
+            : PracticeTempo.profileCover,
+      );
+      final copy = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            profileDisplayName(context.l10n, profile),
+            style: PracticeTempo.profileName,
+          ),
+          const SizedBox(height: TempoSpace.sm),
+          Text(
+            context.l10n.timerOptionalTitle,
+            style: PracticeTempo.titleCaption,
+          ),
+          TextButton(
+            onPressed: onRename,
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              alignment: Alignment.centerLeft,
+              textStyle: PracticeTempo.sessionName,
+              disabledForegroundColor: TempoColors.ink,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    title.isEmpty ? context.l10n.setPracticeName : title,
+                  ),
+                ),
+                const SizedBox(width: PracticeTempo.titleIconGap),
+                const MeloopIcon(
+                  MeloopIcons.edit,
+                  size: PracticeTempo.titleIconSize,
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+      if (MediaQuery.textScalerOf(context).scale(16) > 20) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: TempoSpace.md,
+          children: [cover, copy],
+        );
+      }
+      return Row(
+        children: [
+          cover,
+          const SizedBox(width: PracticeTempo.profileGap),
+          Expanded(child: copy),
+        ],
+      );
+    },
+  );
+}
+
+class _TimerStage extends StatelessWidget {
+  const _TimerStage({
+    required this.seconds,
+    required this.running,
+    required this.review,
+    required this.instrument,
+  });
+  final int seconds;
+  final bool running, review;
+  final MeloopInstrument instrument;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final wide = constraints.maxWidth >= PracticeTempo.wideContentWidth;
+      final largeText = MediaQuery.textScalerOf(context).scale(16) > 20;
+      final duration = formatPracticeDuration(Duration(seconds: seconds));
+      final readout = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            review
+                ? context.l10n.journalReviewState
+                : running
+                ? context.l10n.timerRunning.toUpperCase()
+                : context.l10n.timerPaused,
+            style: PracticeTempo.runningLabel,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: TempoSpace.sm),
+          Text(
+            duration,
+            key: const Key('practice-elapsed'),
+            style: duration.length > 5 || largeText
+                ? PracticeTempo.longReadout
+                : wide
+                ? PracticeTempo.wideReadout
+                : constraints.maxWidth < PracticeTempo.compactContentWidth
+                ? PracticeTempo.compactReadout
+                : PracticeTempo.readout,
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            context.l10n.practiceTime,
+            style: TempoType.label,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      );
+      final height = wide
+          ? PracticeTempo.wideStageHeight
+          : PracticeTempo.stageHeight;
+      final artwork = PracticeTimerArtwork(
+        key: const Key('practice-timer-artwork'),
+        instrument: instrument,
+        height: height,
+      );
+      if (largeText) {
+        return Column(
+          children: [
+            artwork,
+            readout,
+            const SizedBox(height: TempoSpace.xl),
+          ],
+        );
+      }
+      return SizedBox(
+        height: height - PracticeTempo.stageOverlap,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned(
+              top: -PracticeTempo.stageOverlap,
+              left: 0,
+              right: 0,
+              child: artwork,
+            ),
+            Positioned(
+              top:
+                  (wide
+                      ? PracticeTempo.wideReadoutTop
+                      : PracticeTempo.readoutTop) -
+                  PracticeTempo.stageOverlap,
+              left:
+                  (wide
+                      ? PracticeTempo.wideReadoutLeft
+                      : constraints.maxWidth < PracticeTempo.compactContentWidth
+                      ? PracticeTempo.compactReadoutLeft
+                      : PracticeTempo.readoutLeft) -
+                  TempoSpace.page,
+              right:
+                  (wide
+                      ? PracticeTempo.wideReadoutRight
+                      : PracticeTempo.readoutRight) -
+                  TempoSpace.page,
+              child: readout,
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }

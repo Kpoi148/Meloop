@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import '../backend/journal/sqlite_instrument_profile_service.dart';
 import '../backend/journal/sqlite_journal_bootstrap.dart';
 import '../backend/journal/sqlite_practice_start_service.dart';
+import '../frontend/application/practice_review_provider.dart';
+import 'journal_practice_adapter.dart';
 import '../frontend/application/practice_start_service.dart';
 import '../frontend/application/practice_timer_service.dart';
 import '../frontend/application/instrument_profile_service.dart';
@@ -48,8 +50,7 @@ void runProfilePreviewApp() {
   runApp(createProfilePreviewApp());
 }
 
-/// Profiles, Start and timer use journal storage; Review/Save are integrated
-/// separately. Preview snapshots are never imported.
+/// Journal data and timer share one app scope; preview snapshots stay isolated.
 MeloopApp createJournalProfileApp({List<Override> overrides = const []}) =>
     MeloopApp(
       overrides: [
@@ -60,9 +61,26 @@ MeloopApp createJournalProfileApp({List<Override> overrides = const []}) =>
           (ref) => ref.watch(journalSettingsStoreProvider),
         ),
         practiceSessionsLoaderProvider.overrideWith(
-          (ref) => ref.watch(practiceSessionsPreviewLoaderProvider),
+          (ref) =>
+              (profile) async =>
+                  (await ref
+                          .read(journalSessionReaderProvider)
+                          .saved(profileId: profile.id))
+                      .map(presentPracticeSession)
+                      .toList(),
         ),
-        ..._sessionPreviewActions,
+        practiceReviewLoadProvider.overrideWith(
+          (ref) => ref.watch(journalReviewServiceProvider).read,
+        ),
+        practiceTitleUpdateProvider.overrideWith(
+          (ref) => ref.watch(journalReviewServiceProvider).rename,
+        ),
+        practiceReviewSaveProvider.overrideWith((ref) {
+          final review = ref.watch(journalReviewServiceProvider);
+          return (sessionId, values) async => presentPracticeSession(
+            await review.save(sessionId, journalReviewValues(values)),
+          );
+        }),
         ...overrides,
       ],
       home: const JournalPracticeLifecycle(child: _JournalProfiles()),
