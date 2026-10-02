@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../../l10n/l10n.dart';
 import '../components/meloop_ui.dart';
-import 'practice_session_edit_tokens.dart';
+import 'practice_session_form_tokens.dart';
 
-/// The existing UC-05 form's editing composition, matching Tempo's HTML form.
-class PracticeSessionEditFields extends StatelessWidget {
-  const PracticeSessionEditFields({
+/// The shared save/edit composition from Tempo's session form.
+class PracticeSessionFormFields extends StatelessWidget {
+  const PracticeSessionFormFields({
     super.key,
+    required this.heading,
     required this.title,
     required this.minutes,
     required this.practiced,
@@ -19,6 +20,7 @@ class PracticeSessionEditFields extends StatelessWidget {
     required this.onMood,
     required this.onFocus,
     required this.titleFocus,
+    this.minimumMinutes = PracticeSessionFormLimits.minimumNewMinutes,
     this.mood,
     this.focus,
     this.saving = false,
@@ -26,6 +28,8 @@ class PracticeSessionEditFields extends StatelessWidget {
     this.durationError,
   });
   final TextEditingController title, minutes, practiced, difficulty, next, bpm;
+  final String heading;
+  final int minimumMinutes;
   final FocusNode titleFocus;
   final DateTime date;
   final int? mood, focus;
@@ -41,14 +45,14 @@ class PracticeSessionEditFields extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: PracticeSessionEditTokens.introInset,
+          padding: PracticeSessionFormTokens.introInset,
           child: LayoutBuilder(
             builder: (context, constraints) {
               final showArt = _introArtFits(context, constraints.maxWidth);
               return ConstrainedBox(
                 constraints: BoxConstraints(
                   minHeight: showArt
-                      ? PracticeSessionEditTokens.introHeight
+                      ? PracticeSessionFormTokens.introHeight
                       : 0,
                 ),
                 child: Stack(
@@ -56,35 +60,43 @@ class PracticeSessionEditFields extends StatelessWidget {
                   children: [
                     if (showArt)
                       const Positioned(
-                        right: PracticeSessionEditTokens.artRight,
-                        top: PracticeSessionEditTokens.artTop,
+                        right: PracticeSessionFormTokens.artRight,
+                        top: PracticeSessionFormTokens.artTop,
                         child: Opacity(
-                          opacity: PracticeSessionEditTokens.artOpacity,
+                          opacity: PracticeSessionFormTokens.artOpacity,
                           child: MeloopArt.scene(
                             MeloopScene.journal,
-                            size: PracticeSessionEditTokens.artSize,
+                            size: PracticeSessionFormTokens.artSize,
                           ),
                         ),
                       ),
                     Padding(
                       padding: const EdgeInsets.only(
-                        top: PracticeSessionEditTokens.headingTop,
+                        top: PracticeSessionFormTokens.headingTop,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            strings.editSessionHeading,
-                            style: PracticeSessionEditTokens.heading,
-                          ),
-                          const SizedBox(
-                            height: PracticeSessionEditTokens.subtitleGap,
-                          ),
-                          Text(
-                            strings.sessionFormSubtitle,
-                            style: PracticeSessionEditTokens.subtitle,
-                          ),
-                        ],
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          right: showArt
+                              ? PracticeSessionFormTokens.artSize +
+                                    PracticeSessionFormTokens.artRight
+                              : 0,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              heading,
+                              style: PracticeSessionFormTokens.heading,
+                            ),
+                            const SizedBox(
+                              height: PracticeSessionFormTokens.subtitleGap,
+                            ),
+                            Text(
+                              strings.sessionFormSubtitle,
+                              style: PracticeSessionFormTokens.subtitle,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -99,8 +111,8 @@ class PracticeSessionEditFields extends StatelessWidget {
           title,
           focusNode: titleFocus,
           validator: (value) => MeloopValidation.titleFor(value, strings),
-          hint: strings.sessionTitleHint,
-          bottom: PracticeSessionEditTokens.dateRowGap,
+          hint: strings.sessionFormTitleHint,
+          bottom: PracticeSessionFormTokens.dateRowGap,
         ),
         MeloopResponsiveRow(
           children: [
@@ -121,8 +133,8 @@ class PracticeSessionEditFields extends StatelessWidget {
               validator: (value) => MeloopValidation.integer(
                 value,
                 label: strings.sessionDurationMinutes,
-                min: 0,
-                max: Duration.minutesPerDay,
+                min: minimumMinutes,
+                max: PracticeSessionFormLimits.maximumMinutes,
                 strings: strings,
               ),
             ),
@@ -133,7 +145,7 @@ class PracticeSessionEditFields extends StatelessWidget {
             durationError!,
             style: TempoType.caption.copyWith(color: TempoColors.error),
           ),
-        const SizedBox(height: PracticeSessionEditTokens.dateRowGap),
+        const SizedBox(height: PracticeSessionFormTokens.dateRowGap),
         MeloopRating(
           label: strings.mood,
           initialValue: mood,
@@ -141,7 +153,7 @@ class PracticeSessionEditFields extends StatelessWidget {
           enabled: !saving,
           compact: true,
         ),
-        const SizedBox(height: PracticeSessionEditTokens.fieldGap),
+        const SizedBox(height: PracticeSessionFormTokens.fieldGap),
         MeloopRating(
           label: strings.focusLevel,
           initialValue: focus,
@@ -150,7 +162,7 @@ class PracticeSessionEditFields extends StatelessWidget {
           mood: false,
           compact: true,
         ),
-        const Divider(height: PracticeSessionEditTokens.dividerGap),
+        const Divider(height: PracticeSessionFormTokens.dividerGap),
         _field(
           context,
           strings.practicedWhat,
@@ -186,8 +198,8 @@ class PracticeSessionEditFields extends StatelessWidget {
               : MeloopValidation.integer(
                   value,
                   label: strings.sessionPracticeBpm,
-                  min: PracticeSessionEditTokens.minimumBpm,
-                  max: PracticeSessionEditTokens.maximumBpm,
+                  min: PracticeSessionFormLimits.minimumBpm,
+                  max: PracticeSessionFormLimits.maximumBpm,
                   strings: strings,
                 ),
         ),
@@ -199,18 +211,14 @@ class PracticeSessionEditFields extends StatelessWidget {
 
   bool _introArtFits(BuildContext context, double width) {
     final painter = TextPainter(
-      text: TextSpan(
-        text: context.l10n.editSessionHeading,
-        style: PracticeSessionEditTokens.heading,
-      ),
+      text: TextSpan(text: heading, style: PracticeSessionFormTokens.heading),
       textDirection: Directionality.of(context),
       textScaler: MediaQuery.textScalerOf(context),
-      maxLines: 1,
     )..layout();
     final available =
         width -
-        PracticeSessionEditTokens.artSize -
-        PracticeSessionEditTokens.artRight;
+        PracticeSessionFormTokens.artSize -
+        PracticeSessionFormTokens.artRight;
     final fits = painter.width <= available;
     painter.dispose();
     return fits;
@@ -226,7 +234,7 @@ class PracticeSessionEditFields extends StatelessWidget {
     String? hint,
     FormFieldValidator<String>? validator,
     FocusNode? focusNode,
-    double bottom = PracticeSessionEditTokens.fieldGap,
+    double bottom = PracticeSessionFormTokens.fieldGap,
   }) => Padding(
     padding: EdgeInsets.only(bottom: bottom),
     child: Column(
@@ -234,16 +242,16 @@ class PracticeSessionEditFields extends StatelessWidget {
       children: [
         Text(
           required ? '$label${context.l10n.requiredSuffix}' : label,
-          style: PracticeSessionEditTokens.label,
+          style: PracticeSessionFormTokens.label,
         ),
-        const SizedBox(height: PracticeSessionEditTokens.labelGap),
+        const SizedBox(height: PracticeSessionFormTokens.labelGap),
         TextFormField(
           controller: controller,
           focusNode: focusNode,
           enabled: !saving,
           style: multiline
-              ? PracticeSessionEditTokens.note
-              : PracticeSessionEditTokens.input,
+              ? PracticeSessionFormTokens.note
+              : PracticeSessionFormTokens.input,
           minLines: multiline ? 4 : 1,
           maxLines: multiline ? null : 1,
           keyboardType: multiline

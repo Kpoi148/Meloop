@@ -248,6 +248,7 @@
 
   "saveSessionTitle": "Save practice session",
   "sessionFormHeading": "One practice session,\none step forward.",
+  "sessionFormTitleHint": "Practice session",
   "sessionFormSubtitle": "Keep what you want to remember.",
   "practiceDate": "Practice date",
   "hours": "Hours",
@@ -348,6 +349,5 @@
   "continueInstrumentPractice": "Continue · {instrument}",
   "@continueInstrumentPractice": {"placeholders": {"instrument": {"type": "String"}}},
   "practiceStartFailed": "Could not start practice. Your title is retained; please try again.",
-  "timerCheckpointFailed": "Practice paused after an error. The latest time has not been confirmed saved; please retry.",
-  "timerReviewPending": "You can finish to open the practice form. Saving is not available in this version yet."
+  "timerCheckpointFailed": "Practice paused after an error. The latest time has not been confirmed saved; please retry."
 }

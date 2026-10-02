@@ -1442,6 +1442,12 @@ abstract class AppLocalizations {
   /// **'Một buổi luyện,\nmột bước tiến.'**
   String get sessionFormHeading;
 
+  /// No description provided for @sessionFormTitleHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Buổi luyện'**
+  String get sessionFormTitleHint;
+
   /// No description provided for @sessionFormSubtitle.
   ///
   /// In vi, this message translates to:
@@ -2029,12 +2035,6 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Buổi luyện đã tạm dừng do lỗi. Thời gian mới chưa được xác nhận lưu; hãy thử lại.'**
   String get timerCheckpointFailed;
-
-  /// No description provided for @timerReviewPending.
-  ///
-  /// In vi, this message translates to:
-  /// **'Bạn có thể kết thúc để mở form buổi luyện. Tính năng lưu chưa có trong phiên bản này.'**
-  String get timerReviewPending;
 }
 
 class _AppLocalizationsDelegate

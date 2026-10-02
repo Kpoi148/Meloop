@@ -260,6 +260,7 @@
 
   "saveSessionTitle": "Lưu buổi luyện",
   "sessionFormHeading": "Một buổi luyện,\nmột bước tiến.",
+  "sessionFormTitleHint": "Buổi luyện",
   "sessionFormSubtitle": "Ghi lại điều bạn muốn nhớ.",
   "practiceDate": "Ngày luyện",
   "hours": "Giờ",
@@ -361,6 +362,5 @@
   "continueInstrumentPractice": "Tiếp tục · {instrument}",
   "@continueInstrumentPractice": {"placeholders": {"instrument": {"type": "String"}}},
   "practiceStartFailed": "Chưa thể bắt đầu buổi luyện. Tiêu đề vẫn được giữ; hãy thử lại.",
-  "timerCheckpointFailed": "Buổi luyện đã tạm dừng do lỗi. Thời gian mới chưa được xác nhận lưu; hãy thử lại.",
-  "timerReviewPending": "Bạn có thể kết thúc để mở form buổi luyện. Tính năng lưu chưa có trong phiên bản này."
+  "timerCheckpointFailed": "Buổi luyện đã tạm dừng do lỗi. Thời gian mới chưa được xác nhận lưu; hãy thử lại."
 }

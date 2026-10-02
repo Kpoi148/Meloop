@@ -757,6 +757,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get sessionFormHeading => 'Một buổi luyện,\nmột bước tiến.';
 
   @override
+  String get sessionFormTitleHint => 'Buổi luyện';
+
+  @override
   String get sessionFormSubtitle => 'Ghi lại điều bạn muốn nhớ.';
 
   @override
@@ -1070,8 +1073,4 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get timerCheckpointFailed =>
       'Buổi luyện đã tạm dừng do lỗi. Thời gian mới chưa được xác nhận lưu; hãy thử lại.';
-
-  @override
-  String get timerReviewPending =>
-      'Bạn có thể kết thúc để mở form buổi luyện. Tính năng lưu chưa có trong phiên bản này.';
 }

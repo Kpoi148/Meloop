@@ -148,6 +148,10 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
       await Navigator.of(context).push<void>(
         MaterialPageRoute(
           builder: (_) => SessionFormExample(
+            onHome: () {
+              Navigator.of(context).pop();
+              shell.selectTab(0);
+            },
             sessionId: ref.read(meloopShellControllerProvider).draft?.sessionId,
             initialTitle:
                 ref.read(meloopShellControllerProvider).draft?.title ?? '',
@@ -263,8 +267,6 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
                     : () => _journalAction(_journal!.retry),
               ),
             ],
-            if (_journal != null)
-              MeloopNotice(message: strings.timerReviewPending),
             Stack(
               alignment: Alignment.center,
               children: [
