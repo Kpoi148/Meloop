@@ -39,6 +39,7 @@ class PracticeSession {
     this.next = '',
     this.mood,
     this.focus,
+    this.bpm,
   });
   final String id;
   final String profileId;
@@ -55,6 +56,7 @@ class PracticeSession {
   final String next;
   final int? mood;
   final int? focus;
+  final int? bpm;
 }
 
 /// Review strings deliberately retain invalid/unfinished form input.

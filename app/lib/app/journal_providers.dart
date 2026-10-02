@@ -6,6 +6,8 @@ import '../backend/database/journal_database_owner.dart';
 import '../backend/database/journal_database.dart';
 import '../backend/journal/sqlite_journal_readers.dart';
 import '../backend/journal/sqlite_practice_timer_store.dart';
+import '../backend/journal/sqlite_practice_review_service.dart';
+import '../shared/journal/practice_review_service.dart';
 import '../backend/journal/practice_timer.dart';
 import '../backend/journal/practice_screen_awake.dart';
 import '../shared/journal/practice_timer_service.dart';
@@ -32,6 +34,12 @@ final journalClockProvider = Provider<JournalClock>(
 );
 final journalIdentifiersProvider = Provider<JournalIdentifiers>(
   (ref) => const UuidJournalIdentifiers(),
+);
+final journalReviewServiceProvider = Provider<PracticeReviewService>(
+  (ref) => SqlitePracticeReviewService(
+    owner: ref.watch(journalDatabaseOwnerProvider),
+    clock: ref.watch(journalClockProvider),
+  ),
 );
 final journalMonotonicClockProvider = Provider<MonotonicClock>(
   (ref) => StopwatchMonotonicClock(),

@@ -7,15 +7,23 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meloop/app/meloop_app.dart';
+import 'package:meloop/backend/journal/practice_timer.dart';
+import 'package:meloop/frontend/application/practice_timer_service.dart';
 import 'package:meloop/frontend/application/startup_controller.dart';
 import 'package:meloop/frontend/metronome/metronome_page.dart';
 import 'package:meloop/frontend/metronome/metronome_ui_state.dart';
 import 'package:meloop/frontend/components/meloop_ui.dart';
+import 'package:meloop/frontend/practice/practice_tools_page.dart';
 import 'package:meloop/frontend/showcase/home_example.dart';
 import 'package:meloop/frontend/showcase/meloop_ui_showcase.dart';
 import 'package:meloop/frontend/showcase/metronome_example.dart';
 import 'package:meloop/frontend/showcase/metronome_preview_controller.dart';
 import 'package:meloop/frontend/showcase/timer_example.dart';
+import 'package:meloop/shared/journal/journal_models.dart';
+
+import '../backend/journal/practice_timer_test.dart'
+    show TestMonotonicClock, TestAwake;
+import 'practice_timer_ui_test.dart' show UiTimerStore;
 
 void main() {
   setUpAll(() async {
@@ -40,7 +48,7 @@ void main() {
       const MeloopApp(home: MeloopUiShowcase(developmentTools: false)),
     );
     await tester.pumpAndSettle();
-    await tap(tester, find.text('Công cụ luyện tập'));
+    await tap(tester, find.text('Công cụ'));
   }
 
   testWidgets('tempo controls stay in sync and reject out-of-range changes', (
@@ -145,7 +153,7 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('back returns to its caller and preserves the practice draft', (
+  testWidgets('back returns home and retains metronome settings', (
     tester,
   ) async {
     await openFromHome(tester);
@@ -153,32 +161,96 @@ void main() {
     scope.read(metronomePreviewControllerProvider.notifier).setBpm(96);
     await tap(tester, find.byTooltip('Quay lại'));
     expect(find.byType(HomeExample), findsOneWidget);
-    await tap(tester, find.text('Công cụ luyện tập'));
+    await tap(tester, find.text('Công cụ'));
     expect(find.text('96'), findsOneWidget);
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
     expect(find.byType(HomeExample), findsOneWidget);
 
-    final shell = scope.read(meloopShellControllerProvider.notifier);
-    shell.startDraft('Luyện gam C');
-    await tester.pumpAndSettle();
-    expect(find.byType(TimerExample), findsOneWidget);
-    final draft = scope.read(meloopShellControllerProvider).draft!;
-    await tap(tester, find.widgetWithText(MeloopButton, 'Công cụ luyện tập'));
-    await tester.pump(const Duration(seconds: 2));
-    await tester.binding.handlePopRoute();
-    await tester.pumpAndSettle();
-    expect(find.byType(TimerExample), findsOneWidget);
-    final returned = scope.read(meloopShellControllerProvider).draft!;
-    expect(returned.profileId, draft.profileId);
-    expect(returned.title, draft.title);
-    expect(returned.isRunning, isTrue);
-    final readout = tester
-        .widget<Text>(find.textContaining(RegExp(r'^00:\d{2}$')))
-        .data!;
-    expect(int.parse(readout.split(':').last), greaterThanOrEqualTo(2));
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  testWidgets(
+    'tools return preserves the running UC-04 session and Home pauses it',
+    (tester) async {
+      final store = UiTimerStore();
+      final clock = TestMonotonicClock();
+      final timer = PracticeTimer(
+        store: store,
+        clock: clock,
+        screenAwake: TestAwake(),
+        schedulePulses: false,
+      );
+      final session = store.draft.session;
+      await timer.open(store.draft, newlyStarted: true);
+      try {
+        await tester.pumpWidget(
+          MeloopApp(
+            overrides: [
+              practiceTimerServiceProvider.overrideWithValue(timer),
+              startupSnapshotProvider.overrideWithValue(
+                StartupSnapshot(
+                  profiles: [
+                    PreviewInstrumentProfile(
+                      id: session.profileId,
+                      instrument: MeloopInstrument.guitar,
+                    ),
+                  ],
+                  selectedProfileId: session.profileId,
+                  draft: PreviewPracticeDraft(
+                    sessionId: session.id,
+                    profileId: session.profileId,
+                    title: session.title,
+                  ),
+                ),
+              ),
+            ],
+            home: const MeloopUiShowcase(developmentTools: false),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tap(tester, find.widgetWithText(MeloopButton, 'Công cụ'));
+        expect(find.byType(PracticeToolsPage), findsOneWidget);
+        await tap(tester, find.text('Máy đếm nhịp'));
+        expect(find.byType(MetronomeExample), findsOneWidget);
+        final scope = container(tester);
+        await tap(tester, find.text('Bắt đầu'));
+        clock.advance(2500);
+        await timer.pulse();
+        await tester.pump();
+        expect(timer.snapshot!.sessionId, session.id);
+        expect(timer.snapshot!.state, PracticeState.running);
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(find.byType(PracticeToolsPage), findsOneWidget);
+        expect(scope.read(metronomePreviewControllerProvider).playing, isFalse);
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+        expect(find.byType(TimerExample), findsOneWidget);
+        expect(find.text('00:02'), findsOneWidget);
+        expect(timer.snapshot!.state, PracticeState.running);
+        expect(
+          scope.read(meloopShellControllerProvider).draft!.sessionId,
+          session.id,
+        );
+        await tap(tester, find.widgetWithText(MeloopButton, 'Công cụ'));
+        await tap(tester, find.text('Máy đếm nhịp'));
+        await tap(tester, find.byTooltip('Trang chủ'));
+        expect(find.byType(HomeExample), findsOneWidget);
+        expect(timer.snapshot!.sessionId, session.id);
+        expect(timer.snapshot!.state, PracticeState.paused);
+        expect(timer.snapshot!.elapsedMilliseconds, 2500);
+        expect(
+          scope.read(meloopShellControllerProvider).draft!.sessionId,
+          session.id,
+        );
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await timer.close();
+      }
+    },
+  );
 
   testWidgets('recovered practice keeps its time without the recovery notice', (
     tester,

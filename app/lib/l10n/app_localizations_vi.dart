@@ -296,7 +296,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get continuePractice => 'Tiếp tục buổi luyện';
 
   @override
-  String get practiceTools => 'Công cụ luyện tập';
+  String get practiceTools => 'Công cụ';
 
   @override
   String get recentSession => 'Buổi gần nhất';
@@ -1114,4 +1114,52 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get timerCheckpointFailed =>
       'Buổi luyện đã tạm dừng do lỗi. Thời gian mới chưa được xác nhận lưu; hãy thử lại.';
+
+  @override
+  String get practiceActionFailed =>
+      'Chưa thể cập nhật buổi luyện. Vui lòng thử lại.';
+
+  @override
+  String get practiceToolsHeading => 'Những người bạn\ncủa buổi luyện.';
+
+  @override
+  String get practiceToolsSubtitle => 'Tìm đúng nhịp. Lắng nghe kỹ hơn.';
+
+  @override
+  String get metronomeTool => 'Máy đếm nhịp';
+
+  @override
+  String get pitchTool => 'Kiểm tra cao độ';
+
+  @override
+  String get practiceToolUnavailable =>
+      'Công cụ này chưa khả dụng. Bạn vẫn có thể tiếp tục buổi luyện.';
+
+  @override
+  String get renamePractice => 'Đổi tên buổi luyện';
+
+  @override
+  String get metronomeToolHint => 'Giữ nhịp, theo cách của bạn.';
+
+  @override
+  String get pitchToolHint => 'Lắng nghe từng nốt.';
+
+  @override
+  String get recordTool => 'Ghi âm';
+
+  @override
+  String get recordToolHint => 'Giữ lại một khoảnh khắc.';
+
+  @override
+  String get recordingsTool => 'Bản ghi âm';
+
+  @override
+  String get recordingsToolHint => 'Nghe lại hành trình.';
+
+  @override
+  String get practiceToolsFree => 'Các công cụ luôn miễn phí.';
+
+  @override
+  String get practiceToolsTimingHint =>
+      'Một công cụ âm thanh hoạt động mỗi lúc; bộ đếm giờ vẫn tiếp tục.';
 }

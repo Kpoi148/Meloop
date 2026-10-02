@@ -41,6 +41,11 @@ abstract interface class PracticeTimerService {
   Future<void> open(PracticeDraft draft, {bool newlyStarted = false});
   Future<void> pause();
   Future<void> resume();
+  Future<void> finish();
+  Future<void> leaveReview();
+
+  /// Release the completed draft after durable Save; permits a new session.
+  Future<void> complete(String sessionId);
   Future<void> retry();
   void setForeground(bool foreground);
   Future<void> close();

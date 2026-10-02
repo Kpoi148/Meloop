@@ -9,6 +9,7 @@ class MeloopPage extends StatelessWidget {
     required this.child,
     this.topBar,
     this.bottomNavigation,
+    this.floatingActionButton,
     this.padding,
     this.scrollController,
     this.topBarGap = TempoSpace.xl,
@@ -17,6 +18,7 @@ class MeloopPage extends StatelessWidget {
   final Widget child;
   final Widget? topBar;
   final Widget? bottomNavigation;
+  final Widget? floatingActionButton;
   final EdgeInsets? padding;
   final ScrollController? scrollController;
   final double topBarGap;
@@ -25,6 +27,9 @@ class MeloopPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
     resizeToAvoidBottomInset: true,
+    floatingActionButton: MediaQuery.viewInsetsOf(context).bottom > 0
+        ? null
+        : floatingActionButton,
     body: SafeArea(
       child: Align(
         alignment: Alignment.topCenter,
