@@ -24,6 +24,7 @@ class MeloopButton extends StatefulWidget {
     this.borderRadius,
     this.minimumHeight,
     this.backgroundColor,
+    this.borderColor,
   });
 
   final String label;
@@ -37,6 +38,7 @@ class MeloopButton extends StatefulWidget {
   final bool prominent;
   final double? borderRadius, minimumHeight;
   final Color? backgroundColor;
+  final Color? borderColor;
   final void Function(Object error, StackTrace stackTrace)? onError;
 
   @override
@@ -106,7 +108,9 @@ class _MeloopButtonState extends State<MeloopButton> {
                 widget.borderRadius ?? TempoRadius.button,
               ),
               side: widget.style == MeloopButtonStyle.outline
-                  ? const BorderSide(color: TempoColors.fieldBorder)
+                  ? BorderSide(
+                      color: widget.borderColor ?? TempoColors.fieldBorder,
+                    )
                   : BorderSide.none,
             ),
           ),

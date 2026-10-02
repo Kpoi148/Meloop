@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -18,6 +17,7 @@ import 'package:meloop/frontend/components/meloop_ui.dart';
 import 'package:meloop/frontend/practice/practice_instrument_art.dart';
 import 'package:meloop/frontend/practice/practice_tools_page.dart';
 import 'package:meloop/frontend/practice_sessions/practice_session_detail_page.dart';
+import 'package:meloop/frontend/practice_sessions/practice_session_card.dart';
 import 'package:meloop/frontend/practice_sessions/practice_sessions_tab.dart';
 import 'package:meloop/frontend/showcase/home_example.dart';
 import 'package:meloop/frontend/showcase/timer_example.dart';
@@ -140,9 +140,7 @@ void main() {
         expect(timer.snapshot!.state, PracticeState.running);
         await binding.convertFlutterSurfaceToImage();
         await tester.pump();
-        final screenshot = await binding.takeScreenshot('uc04-flute-timer');
-        await File('${await getDatabasesPath()}/uc04-timer-review.png')
-            .writeAsBytes(screenshot);
+        await binding.takeScreenshot('uc04-flute-timer');
         await tap(find.text('Kết thúc'));
         await waitFor(find.byType(SessionFormExample));
         expect(timer.snapshot!.state, PracticeState.review);
@@ -166,8 +164,21 @@ void main() {
         expect(await reader.unfinished(), isNull);
         expect(timer.snapshot, isNull);
         expect(find.text('Kết thúc'), findsNothing);
+        await binding.takeScreenshot('uc04-saved-detail');
+        await tap(find.byTooltip('Trang chủ'));
+        await waitFor(find.byType(HomeExample));
+        await tap(sessionsTab);
+        final savedCard = find.widgetWithText(
+          PracticeSessionCard,
+          'UC04 lưu đúng một buổi',
+        );
+        await waitFor(savedCard);
+        await binding.takeScreenshot('uc04-saved-history');
+        await tap(savedCard);
+        await waitFor(find.byType(PracticeSessionDetailPage));
         await tap(find.byTooltip('Quay lại'));
         await waitFor(find.byType(PracticeSessionsTab));
+        expect(savedCard, findsOneWidget);
         await tap(create);
         await tester.enterText(find.byType(TextFormField), 'Buổi tiếp theo');
         await tap(find.text('Bắt đầu luyện'));

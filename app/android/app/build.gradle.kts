@@ -1,8 +1,18 @@
+import java.util.Base64
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+// Flutter forwards dart-defines to Gradle; this keeps emulator QA in its own package.
+val testApplicationIdSuffix = providers.gradleProperty("meloopTestApplicationIdSuffix").orNull
+    ?: (project.findProperty("dart-defines") as? String)
+        ?.split(",")
+        ?.map { String(Base64.getDecoder().decode(it), Charsets.UTF_8) }
+        ?.firstOrNull { it.startsWith("MELOOP_TEST_APPLICATION_ID_SUFFIX=") }
+        ?.substringAfter("=")
 
 android {
     namespace = "com.meloop.meloop"
@@ -30,6 +40,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Optional isolated package for emulator tests; normal builds keep their ID.
+            applicationIdSuffix = testApplicationIdSuffix
+        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
