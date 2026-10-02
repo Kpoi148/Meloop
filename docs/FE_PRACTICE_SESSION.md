@@ -27,3 +27,7 @@ flutter drive --dart-define=MELOOP_TEST_APPLICATION_ID_SUFFIX=.qa --driver test_
 ```
 
 Build QA dùng `com.meloop.meloop.qa` và database kiểm thử riêng; driver giữ ảnh bộ đếm, chi tiết sau lưu và danh sách trong `build/ui-review/`. Build thông thường qua `lib/main.dart` giữ package `com.meloop.meloop`; cài cập nhật để giữ dữ liệu đang có.
+
+Nút Xóa buổi luyện trên chi tiết đã nối `PracticeSessionDeleteService` SQLite thật. Hủy/Android Back giữ buổi; xác nhận thành công làm mới danh sách và tổng số/thời gian ở Trang chủ, quay về tab Buổi luyện. Lỗi giữ hộp xác nhận và cho Thử lại; khóa thao tác khi đang ghi. Chỉ xóa buổi đã lưu của đúng owner; bản ghi âm vẫn giữ riêng theo `actions['delete-session']` của prototype. Buổi đã xóa không xuất hiện lại sau mở app. Đây là xóa nhật ký đã lưu, không phải thao tác hủy buổi chưa lưu của task 17.
+
+`test/frontend/journal_saved_session_delete_test.dart` và `integration_test/saved_session_delete_smoke_test.dart` dùng cùng hành trình với app injection/SQLite thật: hủy, Android Back, lỗi transaction, retry/bấm trùng, cập nhật history/Home, giữ audio và draft hồ sơ khác, cold entry. Android chạy package `.qa` và database UUID riêng bằng driver trên, thay target thành `integration_test/saved_session_delete_smoke_test.dart`.

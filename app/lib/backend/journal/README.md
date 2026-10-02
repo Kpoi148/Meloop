@@ -33,3 +33,5 @@ Cập nhật Finish cho FE: nút Kết thúc journal đã mở để vào Sessio
 ## Tích hợp UC-04
 
 Review/Save đã nối SQLite journal thật qua `PracticeReviewService`. Finish ghi Review bằng timer service, Save cập nhật cùng session ID và trả bản lưu đầu tiên khi retry. Save thành công mở chi tiết, xóa draft và cho phép Start buổi tiếp theo. Phần mô tả B04/B05 phía trên là mốc lịch sử; chi tiết trạng thái hiện tại ở `docs/FE_PRACTICE_SESSION.md`. Các công cụ audio/metronome/tuner vẫn dùng port riêng; form chưa autosave nội dung trước Save.
+
+`SqlitePracticeSessionDeleteService` nối nút Xóa buổi luyện trong app thật qua contract shared. Transaction kiểm tra UUID, owner và state Saved; không hủy draft. Buổi không có recording được xóa khỏi bảng; buổi có recording được đánh dấu `deleted_at` (v4) và loại khỏi history/detail/statistics, giữ nguyên metadata/liên kết audio, không tạo tác vụ dọn file. Retry sau commit là no-op; lỗi SQLite rollback và trả storage error an toàn. Save retry không mở lại buổi đã xóa. Count hồ sơ dùng cùng saved view. Xóa hồ sơ có recording vẫn chặn như trước.

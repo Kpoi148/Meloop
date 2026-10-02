@@ -477,10 +477,10 @@ void main() {
           path: path,
         );
         try {
-          expect(await upgraded.getVersion(), 3);
+          expect(await upgraded.getVersion(), JournalDatabase.schemaVersion);
           expect(
             await upgraded.query('practice_sessions', orderBy: 'id'),
-            sessions,
+            sessions.map((row) => {...row, 'deleted_at': null}).toList(),
           );
           expect(await upgraded.query('session_drafts'), drafts);
           expect(await upgraded.query('recordings'), recordings);

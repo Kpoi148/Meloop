@@ -75,7 +75,7 @@ class SqlitePracticeReviewService implements PracticeReviewService {
           where: 'id = ?',
           whereArgs: [sessionId],
         );
-        if (rows.isEmpty) {
+        if (rows.isEmpty || rows.single['deleted_at'] != null) {
           throw const JournalFailure(JournalFailureCode.invalidInput);
         }
         final session = sessionFromRow(rows.single);

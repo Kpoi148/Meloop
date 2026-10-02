@@ -240,8 +240,8 @@ selected_profile_id=excluded.selected_profile_id, updated_at=excluded.updated_at
 
 Future<ProfileDirectory> readProfileDirectory(DatabaseExecutor db) async {
   final rows = await db.rawQuery('''
-SELECT p.*, (SELECT COUNT(*) FROM practice_sessions s
- WHERE s.profile_id=p.id AND s.state='saved') AS saved_count,
+SELECT p.*, (SELECT COUNT(*) FROM saved_practice_sessions s
+ WHERE s.profile_id=p.id) AS saved_count,
  (SELECT COUNT(*) FROM recordings r JOIN practice_sessions s ON s.id=r.session_id
  WHERE s.profile_id=p.id) AS recording_count
 FROM instrument_profiles p ORDER BY p.created_at ASC, p.id ASC

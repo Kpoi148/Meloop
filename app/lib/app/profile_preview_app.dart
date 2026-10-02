@@ -81,6 +81,13 @@ MeloopApp createJournalProfileApp({List<Override> overrides = const []}) =>
             await review.save(sessionId, journalReviewValues(values)),
           );
         }),
+        practiceSessionDeleteProvider.overrideWith((ref) {
+          final service = ref.watch(journalSessionDeleteServiceProvider);
+          return (session) => service.delete(
+            profileId: session.profileId,
+            sessionId: session.id,
+          );
+        }),
         ...overrides,
       ],
       home: const JournalPracticeLifecycle(child: _JournalProfiles()),

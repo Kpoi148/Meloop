@@ -84,6 +84,7 @@ class _PracticeSessionDetailPageState
         onDelete: () => ref.read(practiceSessionDeleteProvider)(_session),
       );
       if (deleted && mounted) {
+        ref.invalidate(practiceSessionsProvider(widget.profile));
         MeloopNotifications.show(context, context.l10n.sessionDeleted);
         Navigator.of(context).pop();
       }
