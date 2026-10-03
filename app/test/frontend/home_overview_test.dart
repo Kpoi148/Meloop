@@ -24,23 +24,26 @@ void main() {
     instrument: MeloopInstrument.flute,
   );
   final saved = homeTestOverview.value.summary.latest!;
-  Widget app(PracticeSessionsLoader loader, {WeeklyPracticeGoalLoader? goal}) =>
-      MeloopApp(
-        overrides: [
-          startupSnapshotProvider.overrideWithValue(
-            StartupSnapshot(
-              profiles: const [homeTestProfile, flute],
-              selectedProfileId: homeTestProfile.id,
-              hasChosenProfile: true,
-            ),
-          ),
-          practiceSessionsClockProvider.overrideWithValue(() => today),
-          practiceSessionsLoaderProvider.overrideWithValue(loader),
-          if (goal != null)
-            weeklyPracticeGoalLoaderProvider.overrideWithValue(goal),
-        ],
-        home: const MeloopUiShowcase(developmentTools: false),
-      );
+  Widget app(
+    PracticeSessionsLoader loader, {
+    WeeklyPracticeGoalLoader? goal,
+    DateTime Function()? clock,
+  }) => MeloopApp(
+    overrides: [
+      startupSnapshotProvider.overrideWithValue(
+        StartupSnapshot(
+          profiles: const [homeTestProfile, flute],
+          selectedProfileId: homeTestProfile.id,
+          hasChosenProfile: true,
+        ),
+      ),
+      practiceSessionsClockProvider.overrideWithValue(clock ?? () => today),
+      practiceSessionsLoaderProvider.overrideWithValue(loader),
+      if (goal != null)
+        weeklyPracticeGoalLoaderProvider.overrideWithValue(goal),
+    ],
+    home: const MeloopUiShowcase(developmentTools: false),
+  );
   String metric(WidgetTester tester, String key) =>
       tester.widget<Text>(find.byKey(Key(key))).data!;
   Future<void> tap(WidgetTester tester, Finder finder) async {
@@ -200,6 +203,105 @@ void main() {
     expect(find.text(saved.title), findsNothing);
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  testWidgets('late results from the previous profile do not replace Home', (
+    tester,
+  ) async {
+    final oldSessions = Completer<List<PracticeSession>>();
+    final oldGoal = Completer<WeeklyPracticeGoal?>();
+    await tester.pumpWidget(
+      app(
+        (profile) => profile.id == homeTestProfile.id
+            ? oldSessions.future
+            : Future.value([]),
+        goal: (id) =>
+            id == homeTestProfile.id ? oldGoal.future : Future.value(null),
+      ),
+    );
+    await tester.pump();
+    final scope = ProviderScope.containerOf(
+      tester.element(find.byType(MeloopUiShowcase)),
+    );
+    scope.read(meloopShellControllerProvider.notifier).selectProfile(flute.id);
+    await tester.pumpAndSettle();
+    expect(metric(tester, 'overview-count'), '0');
+    oldSessions.complete([saved]);
+    oldGoal.complete(WeeklyPracticeGoal(enabled: true, targetDays: 4));
+    await tester.pumpAndSettle();
+    expect(metric(tester, 'overview-count'), '0');
+    expect(find.text(saved.title), findsNothing);
+    expect(find.text('Đang tắt'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('goal read failure hides totals and retry reloads both sources', (
+    tester,
+  ) async {
+    var sessionReads = 0;
+    var goalReads = 0;
+    await tester.pumpWidget(
+      app(
+        (_) async {
+          sessionReads++;
+          return [saved];
+        },
+        goal: (_) async {
+          if (++goalReads == 1) throw StateError('injected goal failure');
+          return WeeklyPracticeGoal(enabled: true, targetDays: 2);
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('overview-count')), findsNothing);
+    expect(find.text('Chưa có buổi luyện'), findsNothing);
+    await tap(tester, find.text('Thử lại'));
+    expect(metric(tester, 'overview-count'), '1');
+    expect(find.text('1/2 ngày'), findsOneWidget);
+    expect(sessionReads, 2);
+    expect(goalReads, 2);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets(
+    'midnight shifts the chart and resume reloads committed records',
+    (tester) async {
+      var now = DateTime(2026, 10, 3, 23, 59, 59);
+      var records = [saved];
+      var reads = 0;
+      await tester.pumpWidget(
+        app((_) async {
+          reads++;
+          return records;
+        }, clock: () => now),
+      );
+      await tester.pumpAndSettle();
+      expect(metric(tester, 'overview-streak'), '1');
+      now = DateTime(2026, 10, 4);
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(
+          ValueKey('practice-bar-${DateTime(2026, 10, 4).toIso8601String()}'),
+        ),
+        findsOneWidget,
+      );
+      expect(metric(tester, 'overview-streak'), '1');
+      expect(reads, 1);
+      records = [];
+      tester.binding.handleAppLifecycleStateChanged(
+        AppLifecycleState.paused,
+      );
+      tester.binding.handleAppLifecycleStateChanged(
+        AppLifecycleState.resumed,
+      );
+      await tester.pumpAndSettle();
+      expect(reads, 2);
+      expect(metric(tester, 'overview-count'), '0');
+      expect(metric(tester, 'overview-streak'), '0');
+      expect(find.text(saved.title), findsNothing);
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
 
   testWidgets('chart remains bounded for several full-day sessions', (
     tester,
