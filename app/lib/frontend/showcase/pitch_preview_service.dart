@@ -15,6 +15,7 @@ class PitchPreviewService implements PitchService {
   final bool settingsAvailable;
   final _changes = StreamController<PitchSnapshot>.broadcast(sync: true);
   PitchSnapshot _snapshot;
+  PitchSnapshot? _prepared;
   bool _closed = false;
 
   @override
@@ -33,7 +34,18 @@ class PitchPreviewService implements PitchService {
   }
 
   @override
-  Future<void> start() async => present(startPhase);
+  Future<void> start() async =>
+      present(_prepared?.phase ?? startPhase, reading: _prepared?.reading);
+
+  /// Select a review scenario for the next explicit Start, clearing old data.
+  void prepare(PitchPhase phase, {PitchReading? reading}) {
+    _prepared = PitchSnapshot(
+      configuration: _snapshot.configuration,
+      phase: phase,
+      sample: reading,
+    );
+    present(PitchPhase.idle);
+  }
 
   @override
   Future<void> stop() async => present(PitchPhase.idle);

@@ -1739,4 +1739,45 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pitchLimitations =>
       'The tool detects single notes, not chords, and may not work with every instrument.';
+
+  @override
+  String get pitchPreviewTitle => 'Pitch UI preview';
+
+  @override
+  String get pitchPreviewExplanation =>
+      'Review listening, detected notes, weak signals and denied permissions using simulated data. This preview does not use the microphone or access your journal.';
+
+  @override
+  String get pitchPreviewOpen => 'Open pitch screen';
+
+  @override
+  String get pitchPreviewBadge => 'UI preview · Simulated data · No microphone';
+
+  @override
+  String get pitchPreviewScenario => 'State to preview';
+
+  @override
+  String get pitchPreviewStartHint =>
+      'Choose a state, then turn on the microphone to preview it. Turning it off clears the note and needle.';
+
+  @override
+  String get pitchPreviewListening => 'Listening, waiting for audio';
+
+  @override
+  String get pitchPreviewInTune => 'Note detected, in tune';
+
+  @override
+  String get pitchPreviewLow => 'Note detected, slightly low';
+
+  @override
+  String get pitchPreviewHigh => 'Note detected, slightly high';
+
+  @override
+  String get pitchPreviewWeakSignal => 'Not enough signal';
+
+  @override
+  String get pitchPreviewDenied => 'Microphone permission denied';
+
+  @override
+  String get pitchPreviewBlocked => 'Microphone permission blocked';
 }

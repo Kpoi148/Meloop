@@ -568,5 +568,18 @@
   "pitchFailed": "Chưa thể nghe micro. Hãy thử lại. Dữ liệu buổi luyện vẫn được giữ.",
   "pitchStopFailed": "Chưa thể xác nhận micro đã dừng. Bấm Tắt micro để thử lại; kết quả đo đã được xóa.",
   "pitchPrivacy": "Micro chỉ bật khi bạn cho phép. Âm thanh được phân tích trên thiết bị, không được lưu hay gửi đi.",
-  "pitchLimitations": "Công cụ nhận từng nốt, không nhận hợp âm và có thể không phù hợp với mọi nhạc cụ."
+  "pitchLimitations": "Công cụ nhận từng nốt, không nhận hợp âm và có thể không phù hợp với mọi nhạc cụ.",
+  "pitchPreviewTitle": "Xem thử UI cao độ",
+  "pitchPreviewExplanation": "Xem các trạng thái đang nghe, nhận nốt, tín hiệu yếu và quyền bị từ chối bằng dữ liệu mô phỏng. Bản xem thử không bật micro và không truy cập nhật ký của bạn.",
+  "pitchPreviewOpen": "Mở màn cao độ",
+  "pitchPreviewBadge": "Xem thử UI · Dữ liệu mô phỏng · Không dùng micro",
+  "pitchPreviewScenario": "Trạng thái muốn xem",
+  "pitchPreviewStartHint": "Chọn trạng thái, sau đó bấm Bật micro để xem. Tắt micro sẽ xóa nốt và kim đo.",
+  "pitchPreviewListening": "Đang nghe, chờ âm thanh",
+  "pitchPreviewInTune": "Đã nhận nốt, đúng cao độ",
+  "pitchPreviewLow": "Đã nhận nốt, hơi thấp",
+  "pitchPreviewHigh": "Đã nhận nốt, hơi cao",
+  "pitchPreviewWeakSignal": "Chưa đủ tín hiệu",
+  "pitchPreviewDenied": "Quyền micro bị từ chối",
+  "pitchPreviewBlocked": "Quyền micro bị chặn"
 }

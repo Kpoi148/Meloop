@@ -3137,6 +3137,84 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Công cụ nhận từng nốt, không nhận hợp âm và có thể không phù hợp với mọi nhạc cụ.'**
   String get pitchLimitations;
+
+  /// No description provided for @pitchPreviewTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem thử UI cao độ'**
+  String get pitchPreviewTitle;
+
+  /// No description provided for @pitchPreviewExplanation.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem các trạng thái đang nghe, nhận nốt, tín hiệu yếu và quyền bị từ chối bằng dữ liệu mô phỏng. Bản xem thử không bật micro và không truy cập nhật ký của bạn.'**
+  String get pitchPreviewExplanation;
+
+  /// No description provided for @pitchPreviewOpen.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở màn cao độ'**
+  String get pitchPreviewOpen;
+
+  /// No description provided for @pitchPreviewBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem thử UI · Dữ liệu mô phỏng · Không dùng micro'**
+  String get pitchPreviewBadge;
+
+  /// No description provided for @pitchPreviewScenario.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trạng thái muốn xem'**
+  String get pitchPreviewScenario;
+
+  /// No description provided for @pitchPreviewStartHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn trạng thái, sau đó bấm Bật micro để xem. Tắt micro sẽ xóa nốt và kim đo.'**
+  String get pitchPreviewStartHint;
+
+  /// No description provided for @pitchPreviewListening.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang nghe, chờ âm thanh'**
+  String get pitchPreviewListening;
+
+  /// No description provided for @pitchPreviewInTune.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã nhận nốt, đúng cao độ'**
+  String get pitchPreviewInTune;
+
+  /// No description provided for @pitchPreviewLow.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã nhận nốt, hơi thấp'**
+  String get pitchPreviewLow;
+
+  /// No description provided for @pitchPreviewHigh.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã nhận nốt, hơi cao'**
+  String get pitchPreviewHigh;
+
+  /// No description provided for @pitchPreviewWeakSignal.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa đủ tín hiệu'**
+  String get pitchPreviewWeakSignal;
+
+  /// No description provided for @pitchPreviewDenied.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quyền micro bị từ chối'**
+  String get pitchPreviewDenied;
+
+  /// No description provided for @pitchPreviewBlocked.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quyền micro bị chặn'**
+  String get pitchPreviewBlocked;
 }
 
 class _AppLocalizationsDelegate

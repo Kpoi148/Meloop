@@ -1730,4 +1730,46 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get pitchLimitations =>
       'Công cụ nhận từng nốt, không nhận hợp âm và có thể không phù hợp với mọi nhạc cụ.';
+
+  @override
+  String get pitchPreviewTitle => 'Xem thử UI cao độ';
+
+  @override
+  String get pitchPreviewExplanation =>
+      'Xem các trạng thái đang nghe, nhận nốt, tín hiệu yếu và quyền bị từ chối bằng dữ liệu mô phỏng. Bản xem thử không bật micro và không truy cập nhật ký của bạn.';
+
+  @override
+  String get pitchPreviewOpen => 'Mở màn cao độ';
+
+  @override
+  String get pitchPreviewBadge =>
+      'Xem thử UI · Dữ liệu mô phỏng · Không dùng micro';
+
+  @override
+  String get pitchPreviewScenario => 'Trạng thái muốn xem';
+
+  @override
+  String get pitchPreviewStartHint =>
+      'Chọn trạng thái, sau đó bấm Bật micro để xem. Tắt micro sẽ xóa nốt và kim đo.';
+
+  @override
+  String get pitchPreviewListening => 'Đang nghe, chờ âm thanh';
+
+  @override
+  String get pitchPreviewInTune => 'Đã nhận nốt, đúng cao độ';
+
+  @override
+  String get pitchPreviewLow => 'Đã nhận nốt, hơi thấp';
+
+  @override
+  String get pitchPreviewHigh => 'Đã nhận nốt, hơi cao';
+
+  @override
+  String get pitchPreviewWeakSignal => 'Chưa đủ tín hiệu';
+
+  @override
+  String get pitchPreviewDenied => 'Quyền micro bị từ chối';
+
+  @override
+  String get pitchPreviewBlocked => 'Quyền micro bị chặn';
 }

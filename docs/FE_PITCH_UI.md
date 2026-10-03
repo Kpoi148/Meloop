@@ -18,6 +18,22 @@ Denied cho phép xin lại quyền; blocked hướng dẫn vào **Cài đặt An
 
 ## Kiểm chứng
 
+### Tự xem các trạng thái trên Android
+
+Entry `lib/main_pitch_preview.dart` mở bản xem thử riêng. Bấm **Mở màn cao độ**, chọn **Trạng thái muốn xem**, rồi bấm **Bật micro**. Có bảy lựa chọn: đang nghe, nhận nốt đúng/thấp/cao, chưa đủ tín hiệu, quyền bị từ chối và quyền bị chặn. Bộ chọn luôn ghi rõ dữ liệu mô phỏng và không dùng micro. Chọn trạng thái mới xóa kết quả cũ; Tắt micro, Back hoặc Home đều dùng vòng đời của `PitchRoute` thật. Mở lại bắt đầu từ chưa có tín hiệu.
+
+Bản xem thử không mở journal, không truy cập storage và không ghi dữ liệu người dùng. Cài bằng app ID suffix `.pitchpreview` để tách khỏi ứng dụng chính:
+
+```text
+flutter run --no-pub -t lib/main_pitch_preview.dart --dart-define=MELOOP_TEST_APPLICATION_ID_SUFFIX=.pitchpreview -d <device-id>
+```
+
+Entry chính `lib/main.dart` vẫn chỉ nhận adapter backend qua DI; dữ liệu mô phỏng không được cài vào journal app. Bản xem thử hỗ trợ nghiệm thu bố cục và thao tác FE. Dừng micro vật lý, quyền Android thật và nhận nốt từ âm thanh vẫn cần kiểm tra khi có backend.
+
+`pitch_preview_test.dart` kiểm tra bộ chọn thủ công cho cả bảy trạng thái, xóa kết quả và mở lại, bố cục 390 px/320 px với chữ 2×. `pitch_preview_smoke_test.dart` kiểm tra thao tác tương tự trên Android và tạo ảnh `uc09-preview-*.png`.
+
+Bản xem thử: analyze không có issue; 20 test của preview, controller và pitch UI đều qua. Android smoke test của bộ chọn thủ công qua trên Android 15 / API 35 với app ID `.pitchpreviewqa`; APK entry xem thử `.pitchpreview` build và cài thành công.
+
 Ngày 03/10/2026: `flutter analyze --no-pub` không có issue; 74 controller/widget/hồi quy test đều qua. Android smoke test qua trên emulator Android 15 / API 35, build APK debug thành công với app ID `.uc09qa`.
 
 Kiểm thử controller/widget bao phủ nghe/nhận nốt/tín hiệu yếu, cả ba hướng sai lệch, xóa kết quả và kim khi dừng, event muộn, Stop khi Start đang chờ quyền, lỗi Start/Stop/settings, route bị dispose, background/resume, denied/blocked và điều hướng từ Home/buổi luyện. Test buổi luyện dùng timer thật với store giả, kiểm tra giữ session ID và thời gian, Back vẫn Running, Home thành Paused. Kiểm thử hồi quy gồm metronome, ghi âm, timer, lưu journal thật và component dùng chung.

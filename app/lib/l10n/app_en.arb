@@ -552,5 +552,18 @@
   "pitchFailed": "Could not listen to the microphone. Try again. Your practice data is still here.",
   "pitchStopFailed": "Could not confirm that the microphone stopped. Turn it off again to retry; the reading has been cleared.",
   "pitchPrivacy": "The microphone is used only with your permission. Audio is analyzed on this device, without being saved or sent anywhere.",
-  "pitchLimitations": "The tool detects single notes, not chords, and may not work with every instrument."
+  "pitchLimitations": "The tool detects single notes, not chords, and may not work with every instrument.",
+  "pitchPreviewTitle": "Pitch UI preview",
+  "pitchPreviewExplanation": "Review listening, detected notes, weak signals and denied permissions using simulated data. This preview does not use the microphone or access your journal.",
+  "pitchPreviewOpen": "Open pitch screen",
+  "pitchPreviewBadge": "UI preview · Simulated data · No microphone",
+  "pitchPreviewScenario": "State to preview",
+  "pitchPreviewStartHint": "Choose a state, then turn on the microphone to preview it. Turning it off clears the note and needle.",
+  "pitchPreviewListening": "Listening, waiting for audio",
+  "pitchPreviewInTune": "Note detected, in tune",
+  "pitchPreviewLow": "Note detected, slightly low",
+  "pitchPreviewHigh": "Note detected, slightly high",
+  "pitchPreviewWeakSignal": "Not enough signal",
+  "pitchPreviewDenied": "Microphone permission denied",
+  "pitchPreviewBlocked": "Microphone permission blocked"
 }
