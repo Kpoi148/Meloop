@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../backend/database/journal_database_owner.dart';
 import '../backend/database/journal_database.dart';
+import '../backend/journal/sqlite_journal_backup_exporter.dart';
+import '../shared/journal/journal_backup.dart';
+import '../shared/journal/journal_models.dart';
 import '../backend/journal/sqlite_journal_readers.dart';
 import '../backend/journal/sqlite_practice_statistics_reader.dart';
 import '../shared/journal/practice_statistics.dart';
@@ -38,6 +41,15 @@ final journalDatabaseOwnerProvider = Provider<JournalDatabaseOwner>((ref) {
 final journalClockProvider = Provider<JournalClock>(
   (ref) => const DeviceJournalClock(),
 );
+// The caller supplies the active app language for a pristine database.
+final journalBackupExporterProvider =
+    Provider.family<JournalBackupExporter, JournalLanguage>(
+      (ref, language) => SqliteJournalBackupExporter(
+        owner: ref.watch(journalDatabaseOwnerProvider),
+        clock: ref.watch(journalClockProvider),
+        initialLanguage: language,
+      ),
+    );
 final journalIdentifiersProvider = Provider<JournalIdentifiers>(
   (ref) => const UuidJournalIdentifiers(),
 );
