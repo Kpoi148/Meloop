@@ -482,6 +482,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionDurationMinutes => 'Duration (minutes)';
 
   @override
+  String get sessionDuration => 'Duration';
+
+  @override
+  String get instrumentLabel => 'Instrument';
+
+  @override
+  String get leaveReviewTitle => 'Return to practice?';
+
+  @override
+  String get leaveReviewMessage =>
+      'Your input will be kept so you can continue editing when you reopen this form.';
+
+  @override
+  String get returnToPractice => 'Return to practice';
+
+  @override
+  String get reviewDraftFailed =>
+      'Could not preserve the latest draft. Your input is still in this form; retry before leaving.';
+
+  @override
   String get sessionPracticeBpm => 'Practice tempo (BPM)';
 
   @override

@@ -98,26 +98,25 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
             container: container,
             child: SessionFormExample(
               sessionId: id,
+              initialReviewInput: draft.reviewInput,
+              instrumentName: profileDisplayName(context.l10n, profile),
+              onPersistInput: (input) =>
+                  container.read(practiceReviewPersistProvider)(id, input),
               initialTitle: draft.session.title,
               initialDurationSeconds:
                   draft.accumulatedMilliseconds ~/
                   Duration.millisecondsPerSecond,
               initialValues: SessionFormValues(
-                title: draft.reviewInput?.title ?? draft.session.title,
-                date: DateTime.parse(
-                  draft.reviewInput?.practiceDate ??
-                      draft.session.practiceDate.value,
-                ),
+                title: draft.session.title,
+                date: DateTime.parse(draft.session.practiceDate.value),
                 durationSeconds:
                     draft.accumulatedMilliseconds ~/
                     Duration.millisecondsPerSecond,
-                practiced:
-                    draft.reviewInput?.practiced ?? draft.session.practiced,
-                difficulty:
-                    draft.reviewInput?.difficulty ?? draft.session.difficulty,
-                next: draft.reviewInput?.next ?? draft.session.next,
-                mood: draft.reviewInput?.mood ?? draft.session.mood,
-                focus: draft.reviewInput?.focus ?? draft.session.focus,
+                practiced: draft.session.practiced,
+                difficulty: draft.session.difficulty,
+                next: draft.session.next,
+                mood: draft.session.mood,
+                focus: draft.session.focus,
                 bpm: draft.session.bpm,
               ),
               onSave: (values) async {

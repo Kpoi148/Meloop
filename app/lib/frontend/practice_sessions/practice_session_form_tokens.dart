@@ -40,11 +40,11 @@ abstract final class PracticeSessionFormTokens {
 }
 
 abstract final class PracticeSessionFormLimits {
-  static const minimumNewMinutes = 1;
-  static const minimumEditMinutes = 0;
-  static const maximumMinutes = Duration.minutesPerDay;
-  static const minimumSeconds = 1;
-  static const maximumSeconds = maximumMinutes * Duration.secondsPerMinute;
+  static const minimumComponent = 0;
+  static final maximumHours = PracticeRules.maximumDuration.inHours;
+  static const maximumMinuteSecond = Duration.secondsPerMinute - 1;
+  static const minimumSeconds = PracticeRules.minimumDurationSeconds;
+  static final maximumSeconds = PracticeRules.maximumDuration.inSeconds;
   static const minimumBpm = PracticeRules.minimumBpm;
   static const maximumBpm = PracticeRules.maximumBpm;
 }

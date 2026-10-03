@@ -23,6 +23,7 @@ import 'package:meloop/frontend/showcase/session_form_example.dart';
 import 'package:meloop/frontend/showcase/timer_example.dart';
 import 'package:meloop/frontend/profiles/profile_screens.dart';
 import 'package:meloop/shared/profiles/instrument_profile_service.dart';
+import 'package:meloop/shared/journal/journal_models.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../backend/journal/practice_timer_test.dart'
@@ -59,6 +60,7 @@ void main() {
           late Directory temp;
           late JournalDatabaseOwner owner;
           late PracticeTimer timer;
+          final mono = TestMonotonicClock();
           temp = await Directory.systemTemp.createTemp('meloop-save-flow-');
           owner = JournalDatabaseOwner(
             open: () => JournalDatabase.open(
@@ -86,7 +88,7 @@ void main() {
           }
           timer = PracticeTimer(
             store: SqlitePracticeTimerStore(owner: owner),
-            clock: TestMonotonicClock(),
+            clock: mono,
             screenAwake: TestAwake(),
             schedulePulses: false,
           );
@@ -100,6 +102,10 @@ void main() {
           }
 
           Future<void> tap(Finder finder) async {
+            if (timer.snapshot?.busy == true) {
+              await timer.changes.firstWhere((snapshot) => !snapshot.busy);
+            }
+            await tester.pump();
             await tester.ensureVisible(finder);
             await tester.tap(finder);
             await tester.pump();
@@ -166,12 +172,19 @@ void main() {
               await tap(find.text('Tiếp tục · $profileName'));
               await waitFor(find.byType(TimerExample));
             }
+            if (timer.snapshot!.state == PracticeState.paused) {
+              await tap(find.text('Tiếp tục'));
+            }
+            if (timer.snapshot!.busy) {
+              await timer.changes.firstWhere((snapshot) => !snapshot.busy);
+            }
+            mono.advance(5000);
             await tap(find.text('Kết thúc'));
             await waitFor(find.byType(SessionFormExample));
             await tap(find.widgetWithText(MeloopButton, 'Lưu buổi luyện'));
             await waitFor(find.byType(PracticeSessionDetailPage));
             expect(find.text(title), findsOneWidget);
-            expect(find.text('$profileName · 1 phút'), findsOneWidget);
+            expect(find.text('$profileName · 5 giây'), findsOneWidget);
             expect(find.text('— / 5', findRichText: true), findsNWidgets(2));
             expect(find.text('Chưa có ghi chú.'), findsNWidgets(2));
             expect(timer.snapshot, isNull);
