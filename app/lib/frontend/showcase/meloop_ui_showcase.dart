@@ -328,6 +328,7 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
                   ref.watch(practiceSessionsProvider(profile)).value ??
                       const [],
                   ref.read(practiceSessionsClockProvider)(),
+                  profileId: profile.id,
                 ),
           showSampleData: widget.profile == null,
           profile: profile,
