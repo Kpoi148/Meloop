@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../backend/database/journal_database_owner.dart';
 import '../backend/database/journal_database.dart';
 import '../backend/journal/sqlite_journal_backup_exporter.dart';
+import '../backend/journal/stream_journal_backup_validator.dart';
+import '../shared/journal/backup_validation.dart';
 import '../shared/journal/journal_backup.dart';
 import '../shared/journal/journal_models.dart';
 import '../backend/journal/sqlite_journal_readers.dart';
@@ -52,6 +54,9 @@ final journalBackupExporterProvider =
     );
 final journalIdentifiersProvider = Provider<JournalIdentifiers>(
   (ref) => const UuidJournalIdentifiers(),
+);
+final journalBackupValidatorProvider = Provider<JournalBackupValidator>(
+  (ref) => StreamJournalBackupValidator(clock: ref.watch(journalClockProvider)),
 );
 final journalReviewServiceProvider = Provider<PracticeReviewService>(
   (ref) => SqlitePracticeReviewService(

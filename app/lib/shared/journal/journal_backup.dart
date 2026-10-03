@@ -10,6 +10,7 @@ class BackupRules {
   static const maximumBytes = 20 * 1024 * 1024;
   static const maximumProfiles = 1000;
   static const maximumSessions = 100000;
+  static const maximumJsonDepth = 16;
   static const defaultTargetDays = 4;
   static const defaultReminderMinutes = 19 * 60 + 30;
   static const defaultMetronomeBpm = 80;
