@@ -12,11 +12,13 @@ class PracticeToolsPage extends ConsumerWidget {
     super.key,
     this.sessionId,
     this.onOpenMetronome,
+    this.onOpenPitch,
     this.onOpenRecording,
     this.onOpenRecordings,
   });
   final String? sessionId;
   final Future<void> Function()? onOpenMetronome;
+  final Future<void> Function()? onOpenPitch;
   final Future<void> Function()? onOpenRecording;
   final Future<void> Function()? onOpenRecordings;
 
@@ -72,6 +74,11 @@ class PracticeToolsPage extends ConsumerWidget {
                           if (tools[index].$1 == MeloopTool.recorder &&
                               onOpenRecording != null) {
                             await onOpenRecording!();
+                            return;
+                          }
+                          if (tools[index].$1 == MeloopTool.tuner &&
+                              onOpenPitch != null) {
+                            await onOpenPitch!();
                             return;
                           }
                           if (tools[index].$1 == MeloopTool.recordings &&

@@ -11,6 +11,7 @@ import '../application/startup_controller.dart';
 import '../application/practice_timer_service.dart';
 import '../components/meloop_ui.dart';
 import '../practice/practice_tools_page.dart';
+import '../pitch/pitch_route.dart';
 import '../recording/recording_empty_page.dart';
 import '../support/privacy_policy_page.dart';
 import '../support/contact_support_page.dart';
@@ -120,6 +121,11 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase>
   void _tools() => Navigator.of(context).push<void>(
     MaterialPageRoute(
       builder: (toolsContext) => PracticeToolsPage(
+        onOpenPitch: () => Navigator.of(toolsContext).push<void>(
+          MaterialPageRoute(
+            builder: (_) => PitchRoute(onHome: () => _toolsHome(toolsContext)),
+          ),
+        ),
         onOpenMetronome: () => Navigator.of(toolsContext).push<void>(
           MaterialPageRoute(
             builder: (_) =>

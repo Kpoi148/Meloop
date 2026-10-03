@@ -2951,6 +2951,192 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Chưa thể sao chép. Hãy thử lại hoặc chọn văn bản để sao chép.'**
   String get supportCopyFailed;
+
+  /// No description provided for @pitchRange.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chromatic · {lowest} – {highest}'**
+  String pitchRange(String lowest, String highest);
+
+  /// No description provided for @pitchReference.
+  ///
+  /// In vi, this message translates to:
+  /// **'{note} = {frequency} Hz'**
+  String pitchReference(String note, String frequency);
+
+  /// No description provided for @pitchEmptyNote.
+  ///
+  /// In vi, this message translates to:
+  /// **'—'**
+  String get pitchEmptyNote;
+
+  /// No description provided for @pitchNoSignal.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có tín hiệu'**
+  String get pitchNoSignal;
+
+  /// No description provided for @pitchListening.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang lắng nghe…'**
+  String get pitchListening;
+
+  /// No description provided for @pitchRequestingPermission.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang chờ quyền micro…'**
+  String get pitchRequestingPermission;
+
+  /// No description provided for @pitchWeakSignal.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa đủ tín hiệu'**
+  String get pitchWeakSignal;
+
+  /// No description provided for @pitchWeakSignalHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tín hiệu yếu hoặc chưa ổn định. Chơi một nốt rõ và giữ đều, gần micro hơn một chút.'**
+  String get pitchWeakSignalHint;
+
+  /// No description provided for @pitchMeasurement.
+  ///
+  /// In vi, this message translates to:
+  /// **'{frequency} Hz · {cents} cent'**
+  String pitchMeasurement(String frequency, String cents);
+
+  /// No description provided for @pitchCentsNegative.
+  ///
+  /// In vi, this message translates to:
+  /// **'−{cents} cent'**
+  String pitchCentsNegative(int cents);
+
+  /// No description provided for @pitchCentsPositive.
+  ///
+  /// In vi, this message translates to:
+  /// **'+{cents} cent'**
+  String pitchCentsPositive(int cents);
+
+  /// No description provided for @pitchGaugeCenter.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đúng cao độ'**
+  String get pitchGaugeCenter;
+
+  /// No description provided for @pitchInstruction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chơi một nốt rõ và đều, trong không gian yên tĩnh.'**
+  String get pitchInstruction;
+
+  /// No description provided for @pitchLow.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hơi thấp · nâng cao độ một chút.'**
+  String get pitchLow;
+
+  /// No description provided for @pitchInTune.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đúng cao độ. Giữ nốt thật đều.'**
+  String get pitchInTune;
+
+  /// No description provided for @pitchHigh.
+  ///
+  /// In vi, this message translates to:
+  /// **'Hơi cao · hạ cao độ một chút.'**
+  String get pitchHigh;
+
+  /// No description provided for @pitchStart.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bật micro'**
+  String get pitchStart;
+
+  /// No description provided for @pitchStop.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tắt micro'**
+  String get pitchStop;
+
+  /// No description provided for @pitchStopping.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang tắt micro…'**
+  String get pitchStopping;
+
+  /// No description provided for @pitchPermissionDenied.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quyền micro chưa được cấp. Bạn có thể thử cấp quyền lại hoặc mở cài đặt. Việc luyện tập và lưu nhật ký vẫn tiếp tục.'**
+  String get pitchPermissionDenied;
+
+  /// No description provided for @pitchPermissionBlocked.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quyền micro đã bị chặn. Cho phép micro trong cài đặt ứng dụng rồi thử lại. Bạn vẫn có thể luyện tập và lưu nhật ký.'**
+  String get pitchPermissionBlocked;
+
+  /// No description provided for @pitchSettingsGuide.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trong Cài đặt Android, mở mục Ứng dụng, chọn Meloop, rồi Quyền và Micro. Cho phép khi dùng ứng dụng, quay lại rồi bấm Bật micro.'**
+  String get pitchSettingsGuide;
+
+  /// No description provided for @pitchOpenSettings.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở cài đặt'**
+  String get pitchOpenSettings;
+
+  /// No description provided for @pitchOpeningSettings.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang mở cài đặt…'**
+  String get pitchOpeningSettings;
+
+  /// No description provided for @pitchSettingsFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa mở được cài đặt tự động. Hãy mở Cài đặt Android theo hướng dẫn trên; bạn vẫn có thể quay lại buổi luyện.'**
+  String get pitchSettingsFailed;
+
+  /// No description provided for @pitchUnavailable.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kiểm tra cao độ chưa khả dụng trên thiết bị này. Bạn vẫn có thể quay lại luyện tập và lưu nhật ký.'**
+  String get pitchUnavailable;
+
+  /// No description provided for @pitchAudioBusy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Một công cụ âm thanh khác đang hoạt động. Dừng công cụ đó rồi thử lại; bộ đếm giờ vẫn tiếp tục.'**
+  String get pitchAudioBusy;
+
+  /// No description provided for @pitchFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể nghe micro. Hãy thử lại. Dữ liệu buổi luyện vẫn được giữ.'**
+  String get pitchFailed;
+
+  /// No description provided for @pitchStopFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể xác nhận micro đã dừng. Bấm Tắt micro để thử lại; kết quả đo đã được xóa.'**
+  String get pitchStopFailed;
+
+  /// No description provided for @pitchPrivacy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Micro chỉ bật khi bạn cho phép. Âm thanh được phân tích trên thiết bị, không được lưu hay gửi đi.'**
+  String get pitchPrivacy;
+
+  /// No description provided for @pitchLimitations.
+  ///
+  /// In vi, this message translates to:
+  /// **'Công cụ nhận từng nốt, không nhận hợp âm và có thể không phù hợp với mọi nhạc cụ.'**
+  String get pitchLimitations;
 }
 
 class _AppLocalizationsDelegate

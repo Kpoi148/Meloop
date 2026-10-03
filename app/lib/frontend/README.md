@@ -11,4 +11,6 @@ Lớp giao diện của ứng dụng: hiển thị state, nhận thao tác ngư�
 
 Widget không truy cập SQLite, file system hoặc SDK mua hàng trực tiếp.
 
+`pitch/` có UI kiểm tra cao độ UC-09 theo prototype Tempo, controller quản lý Start/Stop và route từ Home/buổi luyện. Dữ liệu nốt và quyền được cấp qua `PitchService` trong shared; service xem thử nằm riêng ở `showcase/`, không được nối vào journal app. Hướng dẫn tích hợp và giới hạn hiện tại: [`../../../docs/FE_PITCH_UI.md`](../../../docs/FE_PITCH_UI.md).
+
 `recording/` có màn ghi âm UC-10 và danh sách bản ghi UC-11–13. Danh sách dùng chung bố cục cho thư viện theo hồ sơ và bản ghi của buổi đã lưu; buổi đã lưu không có thao tác ghi mới. Nguồn dữ liệu và đồng hồ nghe lại để duyệt giao diện nằm trong `showcase/recordings_*.dart`, không ghi dữ liệu thiết bị. Hướng dẫn thay adapter và kiểm chứng: [`../../../docs/FE_RECORDINGS_UI.md`](../../../docs/FE_RECORDINGS_UI.md).

@@ -1615,4 +1615,119 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get supportCopyFailed =>
       'Chưa thể sao chép. Hãy thử lại hoặc chọn văn bản để sao chép.';
+
+  @override
+  String pitchRange(String lowest, String highest) {
+    return 'Chromatic · $lowest – $highest';
+  }
+
+  @override
+  String pitchReference(String note, String frequency) {
+    return '$note = $frequency Hz';
+  }
+
+  @override
+  String get pitchEmptyNote => '—';
+
+  @override
+  String get pitchNoSignal => 'Chưa có tín hiệu';
+
+  @override
+  String get pitchListening => 'Đang lắng nghe…';
+
+  @override
+  String get pitchRequestingPermission => 'Đang chờ quyền micro…';
+
+  @override
+  String get pitchWeakSignal => 'Chưa đủ tín hiệu';
+
+  @override
+  String get pitchWeakSignalHint =>
+      'Tín hiệu yếu hoặc chưa ổn định. Chơi một nốt rõ và giữ đều, gần micro hơn một chút.';
+
+  @override
+  String pitchMeasurement(String frequency, String cents) {
+    return '$frequency Hz · $cents cent';
+  }
+
+  @override
+  String pitchCentsNegative(int cents) {
+    return '−$cents cent';
+  }
+
+  @override
+  String pitchCentsPositive(int cents) {
+    return '+$cents cent';
+  }
+
+  @override
+  String get pitchGaugeCenter => 'Đúng cao độ';
+
+  @override
+  String get pitchInstruction =>
+      'Chơi một nốt rõ và đều, trong không gian yên tĩnh.';
+
+  @override
+  String get pitchLow => 'Hơi thấp · nâng cao độ một chút.';
+
+  @override
+  String get pitchInTune => 'Đúng cao độ. Giữ nốt thật đều.';
+
+  @override
+  String get pitchHigh => 'Hơi cao · hạ cao độ một chút.';
+
+  @override
+  String get pitchStart => 'Bật micro';
+
+  @override
+  String get pitchStop => 'Tắt micro';
+
+  @override
+  String get pitchStopping => 'Đang tắt micro…';
+
+  @override
+  String get pitchPermissionDenied =>
+      'Quyền micro chưa được cấp. Bạn có thể thử cấp quyền lại hoặc mở cài đặt. Việc luyện tập và lưu nhật ký vẫn tiếp tục.';
+
+  @override
+  String get pitchPermissionBlocked =>
+      'Quyền micro đã bị chặn. Cho phép micro trong cài đặt ứng dụng rồi thử lại. Bạn vẫn có thể luyện tập và lưu nhật ký.';
+
+  @override
+  String get pitchSettingsGuide =>
+      'Trong Cài đặt Android, mở mục Ứng dụng, chọn Meloop, rồi Quyền và Micro. Cho phép khi dùng ứng dụng, quay lại rồi bấm Bật micro.';
+
+  @override
+  String get pitchOpenSettings => 'Mở cài đặt';
+
+  @override
+  String get pitchOpeningSettings => 'Đang mở cài đặt…';
+
+  @override
+  String get pitchSettingsFailed =>
+      'Chưa mở được cài đặt tự động. Hãy mở Cài đặt Android theo hướng dẫn trên; bạn vẫn có thể quay lại buổi luyện.';
+
+  @override
+  String get pitchUnavailable =>
+      'Kiểm tra cao độ chưa khả dụng trên thiết bị này. Bạn vẫn có thể quay lại luyện tập và lưu nhật ký.';
+
+  @override
+  String get pitchAudioBusy =>
+      'Một công cụ âm thanh khác đang hoạt động. Dừng công cụ đó rồi thử lại; bộ đếm giờ vẫn tiếp tục.';
+
+  @override
+  String get pitchFailed =>
+      'Chưa thể nghe micro. Hãy thử lại. Dữ liệu buổi luyện vẫn được giữ.';
+
+  @override
+  String get pitchStopFailed =>
+      'Chưa thể xác nhận micro đã dừng. Bấm Tắt micro để thử lại; kết quả đo đã được xóa.';
+
+  @override
+  String get pitchPrivacy =>
+      'Micro chỉ bật khi bạn cho phép. Âm thanh được phân tích trên thiết bị, không được lưu hay gửi đi.';
+
+  @override
+  String get pitchLimitations =>
+      'Công cụ nhận từng nốt, không nhận hợp âm và có thể không phù hợp với mọi nhạc cụ.';
 }

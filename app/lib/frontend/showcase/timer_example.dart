@@ -14,6 +14,7 @@ import '../components/meloop_ui.dart';
 import '../practice/practice_duration.dart';
 import '../practice/practice_instrument_art.dart';
 import '../practice/practice_tools_page.dart';
+import '../pitch/pitch_route.dart';
 import '../practice_sessions/practice_session.dart' as ui;
 import '../practice_sessions/practice_session_detail_page.dart';
 import '../practice_sessions/practice_sessions_controller.dart';
@@ -182,6 +183,16 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
     MaterialPageRoute(
       builder: (toolsContext) => PracticeToolsPage(
         sessionId: sessionId,
+        onOpenPitch: () => Navigator.of(toolsContext).push<void>(
+          MaterialPageRoute(
+            builder: (_) => PitchRoute(
+              onHome: () {
+                Navigator.of(toolsContext).pop();
+                unawaited(_back());
+              },
+            ),
+          ),
+        ),
         onOpenRecordings: () {
           final profile = ref
               .read(meloopShellControllerProvider)
