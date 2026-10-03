@@ -1182,4 +1182,167 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get practiceToolsTimingHint =>
       'Một công cụ âm thanh hoạt động mỗi lúc; bộ đếm giờ vẫn tiếp tục.';
+
+  @override
+  String get privacyTitle => 'Quyền riêng tư';
+
+  @override
+  String get privacyHeading => 'Âm nhạc là của bạn.\nNhật ký cũng vậy.';
+
+  @override
+  String get privacySubtitle => 'Bạn kiểm soát những gì mình ghi lại.';
+
+  @override
+  String get privacyLocalTitle => 'Nhật ký và âm thanh';
+
+  @override
+  String get privacyLocalBody =>
+      'Nhật ký luyện tập được lưu cục bộ trên thiết bị Android của bạn. Luồng hỗ trợ không đọc hay tự đính kèm nhật ký, cơ sở dữ liệu hoặc bản ghi âm vào email.';
+
+  @override
+  String get privacyPermissionsTitle => 'Micro và lịch nhắc';
+
+  @override
+  String get privacyPermissionsBody =>
+      'Màn riêng tư và hỗ trợ không yêu cầu quyền micro hay thông báo. Bạn có thể xem và thay đổi quyền của Meloop trong Cài đặt ứng dụng của Android.';
+
+  @override
+  String get privacyPurchasesTitle => 'Mua hàng và Meloop Pro';
+
+  @override
+  String get privacyPurchasesBody =>
+      'Màn Pro hiện là chế độ xem thử, không thu tiền và chưa kết nối Google Play. Thông tin giao dịch của bản phát hành cần được công bố trong chính sách chính thức.';
+
+  @override
+  String get privacyDiagnosticsTitle => 'Chẩn đoán và lỗi';
+
+  @override
+  String get privacyDiagnosticsBody =>
+      'Thông tin kỹ thuật trong email hỗ trợ mặc định tắt. Chỉ khi bạn chọn, bản nháp mới kèm phiên bản ứng dụng, phiên bản Android và mẫu thiết bị để bạn xem trước. Không kèm nội dung nhật ký, âm thanh hay thông tin giao dịch.';
+
+  @override
+  String get privacyChoicesTitle => 'Bạn có quyền lựa chọn';
+
+  @override
+  String get privacyChoicesBody =>
+      'Bạn có thể sửa nội dung, bỏ thông tin kỹ thuật hoặc hủy bản nháp hỗ trợ. Nếu muốn chia sẻ bản ghi âm, bạn tự chọn và đính kèm bằng ứng dụng email. Meloop không tự gửi thư hoặc dữ liệu.';
+
+  @override
+  String get privacySummaryFootnote =>
+      'Thông tin trên mô tả phiên bản ứng dụng hiện tại. Chính sách chính thức cần được xác nhận trước khi phát hành.';
+
+  @override
+  String get privacyNotPublished =>
+      'Chính sách riêng tư chính thức chưa được công bố. Thông tin trên vẫn có thể đọc khi không có mạng.';
+
+  @override
+  String get privacyOpenPublished => 'Mở chính sách chính thức';
+
+  @override
+  String get privacyOpenFailed =>
+      'Chưa thể mở liên kết. Bạn có thể thử lại hoặc sao chép liên kết để mở bằng trình duyệt.';
+
+  @override
+  String get privacyCopyLink => 'Sao chép liên kết';
+
+  @override
+  String get supportHeading => 'Mình đang lắng nghe.';
+
+  @override
+  String get supportSubtitle => 'Một góp ý nhỏ có thể giúp Meloop tốt hơn.';
+
+  @override
+  String get supportNotPublished =>
+      'Địa chỉ hỗ trợ chưa được công bố. Bạn có thể soạn, xem trước và sao chép nội dung để gửi sau.';
+
+  @override
+  String get supportAddress => 'Địa chỉ hỗ trợ';
+
+  @override
+  String get supportSubject => 'Tiêu đề';
+
+  @override
+  String get supportSubjectHint => 'Bạn muốn chia sẻ điều gì?';
+
+  @override
+  String get supportDescription => 'Nội dung';
+
+  @override
+  String get supportDescriptionHint =>
+      'Mô tả điều bạn gặp phải hoặc góp ý của bạn…';
+
+  @override
+  String supportDescriptionLimit(int limit) {
+    return 'Tối đa $limit ký tự; có thể để trống.';
+  }
+
+  @override
+  String supportSubjectInvalid(int limit) {
+    return 'Nhập tiêu đề từ 1 đến $limit ký tự, không xuống dòng hoặc chứa ký tự điều khiển.';
+  }
+
+  @override
+  String supportDescriptionInvalid(int limit) {
+    return 'Nội dung tối đa $limit ký tự và không chứa ký tự điều khiển không hợp lệ.';
+  }
+
+  @override
+  String get supportIncludeDiagnostics => 'Kèm thông tin kỹ thuật';
+
+  @override
+  String get supportDiagnosticsExplanation =>
+      'Chỉ phiên bản ứng dụng, phiên bản Android và mẫu thiết bị. Bạn sẽ được xem trước khi mở email.';
+
+  @override
+  String supportDiagnosticsBlock(
+    String appVersion,
+    String androidVersion,
+    String deviceModel,
+  ) {
+    return 'Thông tin kỹ thuật\nPhiên bản ứng dụng: $appVersion\nPhiên bản Android: $androidVersion\nMẫu thiết bị: $deviceModel';
+  }
+
+  @override
+  String get supportPrivacyNote =>
+      'Không tự động đính kèm nhật ký hay âm thanh. Meloop chỉ mở bản nháp để bạn sửa và gửi trong ứng dụng email.';
+
+  @override
+  String get supportPreview => 'Xem trước nội dung';
+
+  @override
+  String get supportPreviewFailed =>
+      'Chưa thể lấy thông tin kỹ thuật. Nội dung vẫn được giữ. Hãy thử lại hoặc bỏ chọn thông tin kỹ thuật.';
+
+  @override
+  String get supportDraftHeading => 'Một lời nhắn của bạn.';
+
+  @override
+  String get supportReviewNote =>
+      'Kiểm tra nội dung bên dưới. Bạn có thể quay lại sửa hoặc tiếp tục sửa trong ứng dụng email trước khi gửi.';
+
+  @override
+  String get supportEmptyBody => 'Chưa có nội dung.';
+
+  @override
+  String get supportCompose => 'Soạn email';
+
+  @override
+  String get supportEmailUnavailable =>
+      'Không mở được ứng dụng email. Hãy sao chép địa chỉ và nội dung để liên hệ bằng cách khác.';
+
+  @override
+  String get supportCopyAddress => 'Sao chép địa chỉ';
+
+  @override
+  String get supportCopyDetails => 'Sao chép nội dung';
+
+  @override
+  String get supportEditDraft => 'Sửa nội dung';
+
+  @override
+  String get supportCopied => 'Đã sao chép.';
+
+  @override
+  String get supportCopyFailed =>
+      'Chưa thể sao chép. Hãy thử lại hoặc chọn văn bản để sao chép.';
 }

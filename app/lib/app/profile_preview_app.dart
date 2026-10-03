@@ -21,6 +21,7 @@ import '../frontend/showcase/practice_session_examples.dart';
 import '../frontend/showcase/profile_preview_service.dart';
 import '../frontend/showcase/profile_preview_storage.dart';
 import 'meloop_app.dart';
+import 'contact_dependencies.dart';
 import 'journal_providers.dart';
 import 'journal_practice_lifecycle.dart';
 import 'profile_preview_storage.dart';
@@ -30,6 +31,7 @@ MeloopApp createProfilePreviewApp({
   AppSettingsStore? settingsStore,
 }) => MeloopApp(
   overrides: [
+    ...contactDependencies(),
     appSettingsStoreProvider.overrideWith(
       (ref) => settingsStore ?? ref.watch(journalSettingsStoreProvider),
     ),
@@ -54,6 +56,7 @@ void runProfilePreviewApp() {
 MeloopApp createJournalProfileApp({List<Override> overrides = const []}) =>
     MeloopApp(
       overrides: [
+        ...contactDependencies(),
         practiceTimerServiceProvider.overrideWith(
           (ref) => ref.watch(journalPracticeTimerProvider),
         ),
