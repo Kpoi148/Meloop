@@ -6,6 +6,8 @@ import '../backend/database/journal_database_owner.dart';
 import '../backend/database/journal_database.dart';
 import '../backend/journal/sqlite_journal_backup_exporter.dart';
 import '../backend/journal/stream_journal_backup_validator.dart';
+import '../backend/journal/sqlite_journal_backup_restorer.dart';
+import '../shared/journal/backup_restore.dart';
 import '../shared/journal/backup_validation.dart';
 import '../shared/journal/journal_backup.dart';
 import '../shared/journal/journal_models.dart';
@@ -57,6 +59,16 @@ final journalIdentifiersProvider = Provider<JournalIdentifiers>(
 );
 final journalBackupValidatorProvider = Provider<JournalBackupValidator>(
   (ref) => StreamJournalBackupValidator(clock: ref.watch(journalClockProvider)),
+);
+// Device adapters are deferred; a null adapter leaves durable work pending.
+final backupRestoreDeviceEffectsProvider =
+    Provider<BackupRestoreDeviceEffects?>((ref) => null);
+final journalBackupRestorerProvider = Provider<JournalBackupRestorer>(
+  (ref) => SqliteJournalBackupRestorer(
+    owner: ref.watch(journalDatabaseOwnerProvider),
+    clock: ref.watch(journalClockProvider),
+    deviceEffects: ref.watch(backupRestoreDeviceEffectsProvider),
+  ),
 );
 final journalReviewServiceProvider = Provider<PracticeReviewService>(
   (ref) => SqlitePracticeReviewService(
