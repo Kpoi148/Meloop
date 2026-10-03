@@ -8,6 +8,7 @@ import '../../shared/journal/journal_models.dart';
 import '../../shared/journal/journal_runtime.dart';
 import '../../shared/journal/journal_text.dart';
 import '../../shared/journal/practice_review_service.dart';
+import '../../shared/journal/practice_date.dart';
 import '../database/journal_database_owner.dart';
 import 'journal_row_mapper.dart';
 import 'sqlite_journal_readers.dart';
@@ -28,6 +29,9 @@ class SqlitePracticeReviewService implements PracticeReviewService {
         !validPracticeRating(input.focus)) {
       throw const JournalFailure(JournalFailureCode.invalidInput);
     }
+    // Date is displayed by the picker on restore; unlike text/duration fields,
+    // a malformed calendar value cannot be represented in the form.
+    PracticeDate.parse(input.practiceDate);
     final json = jsonEncode({
       'title': input.title,
       'practiceDate': input.practiceDate,

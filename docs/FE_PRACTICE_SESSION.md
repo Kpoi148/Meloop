@@ -4,6 +4,8 @@ Sửa buổi đã lưu (B10.1): entry journal nối port `practiceSessionUpdateP
 
 Entry `main.dart` dùng SQLite journal thật. Phần giao diện UC-04 từ nhánh prototype được tích hợp với `PracticeStartService` và `PracticeTimerService` hiện tại; không dùng adapter lưu trong bộ nhớ cho entry Android.
 
+B06.1 gia cố Review autosave: controller ghi nối tiếp snapshot mới nhất, kể cả input đến khi thông báo hoàn tất một lần ghi; flush chờ toàn bộ hàng đợi trước Back/Save. Khi Review chuyển inactive/hidden/paused, form flush nháp qua port hiện có; lỗi giữ snapshot và dùng Retry hiện có. Không thay bố cục hoặc thêm thông báo mới. SQLite giữ text/duration/BPM thô để phục hồi cả input chưa hợp lệ; ngày sai cấu trúc lịch bị từ chối trước khi ghi để tránh nháp không thể mở. Phục hồi nháp không tạo buổi Saved hoặc cộng thống kê; không đảm bảo nội dung chưa kịp commit khi process bị kết thúc đột ngột.
+
 - Tab Buổi luyện có icon + nổi ở góc dưới phải, nằm trên thanh điều hướng. Có bản nháp của hồ sơ đang chọn thì mở lại buổi đó; hồ sơ khác có thể tạo buổi riêng.
 - Setup nhập tên rồi Start; giữ UUID qua retry và chờ transaction trước khi mở timer. Không tạo bài tập, kế hoạch hoặc màn ghi buổi quá khứ.
 - Timer chỉ hiển thị snapshot đúng session/profile của service. Pause/Resume/Back/background/checkpoint dùng cùng engine app scope. Đổi hồ sơ ghi checkpoint và tạm dừng buổi cũ trước khi nạp buổi mới. Widget không giữ Timer, Stopwatch hoặc bộ đếm khác. Harness không cấp service chỉ hiển thị dữ liệu đọc.
