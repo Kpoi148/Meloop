@@ -67,7 +67,6 @@ class _PracticeSessionDetailPageState
                 values,
               );
               if (mounted) setState(() => _session = updated);
-              ref.invalidate(practiceSessionsProvider(widget.profile));
             },
           ),
         ),

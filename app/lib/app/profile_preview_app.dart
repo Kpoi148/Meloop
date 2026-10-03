@@ -77,14 +77,18 @@ MeloopApp createJournalProfileApp({List<Override> overrides = const []}) =>
         ),
         practiceSessionUpdateProvider.overrideWith((ref) {
           final service = ref.watch(journalSessionUpdateServiceProvider);
-          return (session, values) async => presentPracticeSession(
-            await service.update(
-              profileId: session.profileId,
-              sessionId: session.id,
-              values: journalReviewValues(values),
-            ),
-            original: session,
-          );
+          return (session, values) async {
+            final updated = presentPracticeSession(
+              await service.update(
+                profileId: session.profileId,
+                sessionId: session.id,
+                values: journalReviewValues(values),
+              ),
+              original: session,
+            );
+            if (ref.mounted) ref.invalidate(practiceSessionsProvider);
+            return updated;
+          };
         }),
         practiceTitleUpdateProvider.overrideWith(
           (ref) => ref.watch(journalReviewServiceProvider).rename,

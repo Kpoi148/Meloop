@@ -1,5 +1,7 @@
 # UC-04 — Tạo buổi luyện và đếm giờ
 
+Sửa buổi đã lưu (B10.1): entry journal nối port `practiceSessionUpdateProvider` vào SQLite qua shared contract. Dùng form FE mới từ PR #24. Nút Lưu thay đổi chờ commit; lỗi giữ input để thử lại, thành công cập nhật detail và invalidate history/Home. Không đổi hồ sơ, thời gian đo hoặc recording khi sửa; không reset bộ lọc sau edit. Save và Edit dùng chung validation từ PR #24, gồm ngày không vượt hôm nay. Review lưu và khôi phục input thô qua sidecar.
+
 Entry `main.dart` dùng SQLite journal thật. Phần giao diện UC-04 từ nhánh prototype được tích hợp với `PracticeStartService` và `PracticeTimerService` hiện tại; không dùng adapter lưu trong bộ nhớ cho entry Android.
 
 - Tab Buổi luyện có icon + nổi ở góc dưới phải, nằm trên thanh điều hướng. Có bản nháp của hồ sơ đang chọn thì mở lại buổi đó; hồ sơ khác có thể tạo buổi riêng.

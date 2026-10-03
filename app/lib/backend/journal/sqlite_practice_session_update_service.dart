@@ -51,8 +51,9 @@ class SqlitePracticeSessionUpdateService
               previous.updatedAt.millisecondsSinceEpoch,
             ),
           },
-          where: 'id = ? AND profile_id = ?',
-          whereArgs: [sessionId, profileId],
+          where:
+              'id = ? AND profile_id = ? AND state = ? AND deleted_at IS NULL',
+          whereArgs: [sessionId, profileId, PracticeState.saved.name],
         );
         return sessionFromRow(
           (await db.query(
