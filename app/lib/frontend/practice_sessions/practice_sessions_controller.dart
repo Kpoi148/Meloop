@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../shared/journal/journal_text.dart';
 import 'practice_session.dart';
 
 enum PracticePeriod {
@@ -52,7 +53,7 @@ class PracticeSessionsViewState {
     final from = days == null
         ? null
         : DateTime(today.year, today.month, today.day - days + 1);
-    final queryText = query.trim().toLowerCase();
+    final queryText = JournalText.searchKey(query.trim());
     final result = sessions.where((session) {
       if (session.profileId != profileId) return false;
       final day = DateTime(
@@ -60,7 +61,7 @@ class PracticeSessionsViewState {
         session.date.month,
         session.date.day,
       );
-      if (from != null && (day.isBefore(from) || day.isAfter(today))) {
+      if (day.isAfter(today) || (from != null && day.isBefore(from))) {
         return false;
       }
       return [
@@ -68,7 +69,7 @@ class PracticeSessionsViewState {
         session.practiced,
         session.difficulty,
         session.nextPractice,
-      ].join(' ').toLowerCase().contains(queryText);
+      ].any((field) => JournalText.searchKey(field).contains(queryText));
     }).toList();
     result.sort((a, b) {
       final dateOrder = a.date.compareTo(b.date);
