@@ -13,7 +13,7 @@ import 'practice_session_actions.dart';
 import 'practice_session_copy.dart';
 import 'practice_session_delete_dialog.dart';
 import 'practice_session_detail_tokens.dart';
-import 'practice_session_recordings_sheet.dart';
+import 'practice_session_recordings_page.dart';
 import 'practice_session_top_bar.dart';
 
 /// UC-06/07 presentation. Actions are supplied by the app, with no storage here.
@@ -24,11 +24,13 @@ class PracticeSessionDetailPage extends ConsumerStatefulWidget {
     required this.profile,
     required this.now,
     this.onHome,
+    this.onOpenRecording,
   });
   final PracticeSession session;
   final PreviewInstrumentProfile profile;
   final DateTime now;
   final VoidCallback? onHome;
+  final Future<void> Function(BuildContext)? onOpenRecording;
   @override
   ConsumerState<PracticeSessionDetailPage> createState() =>
       _PracticeSessionDetailPageState();
@@ -213,6 +215,8 @@ class _PracticeSessionDetailPageState
                     : () => showPracticeSessionRecordings(
                         context,
                         session: _session,
+                        onHome: widget.onHome,
+                        onOpenRecording: widget.onOpenRecording,
                         onChanged: (session) =>
                             setState(() => _session = session),
                       ),

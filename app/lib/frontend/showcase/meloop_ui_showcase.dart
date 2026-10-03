@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
+import '../../shared/journal/journal_models.dart' show PracticeState;
 import '../application/app_settings_controller.dart';
 import '../application/instrument_profile_service.dart';
 import '../application/startup_controller.dart';
 import '../application/practice_timer_service.dart';
 import '../components/meloop_ui.dart';
+import '../practice/practice_tools_page.dart';
+import '../recording/recording_empty_page.dart';
 import '../practice_sessions/practice_sessions_tab.dart';
 import '../practice_sessions/practice_session.dart';
 import '../practice_sessions/practice_session_summary.dart';
@@ -19,6 +22,8 @@ import 'instrument_profiles_example.dart';
 import 'instrument_picker_example.dart';
 import 'language_selector.dart';
 import 'metronome_example.dart';
+import 'preview_copy.dart';
+import 'recording_example.dart';
 import 'profile_form_example.dart';
 import 'preview_data_reset_button.dart';
 import 'pro_preview_page.dart';
@@ -78,14 +83,70 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
   void _catalog() => Navigator.of(context)
       .push(MaterialPageRoute<void>(builder: (_) => const ComponentCatalog()));
 
-  void _metronome() => Navigator.of(context).push<void>(
+  void _tools() => Navigator.of(context).push<void>(
     MaterialPageRoute(
-      builder: (_) => MetronomeExample(
-        onHome: () =>
-            ref.read(meloopShellControllerProvider.notifier).selectTab(0),
+      builder: (toolsContext) => PracticeToolsPage(
+        onOpenMetronome: () => Navigator.of(toolsContext).push<void>(
+          MaterialPageRoute(
+            builder: (_) =>
+                MetronomeExample(onHome: () => _toolsHome(toolsContext)),
+          ),
+        ),
+        onOpenRecording: () => _recording(toolsContext),
       ),
     ),
   );
+
+  void _toolsHome(BuildContext toolsContext) {
+    Navigator.of(toolsContext).pop();
+    ref.read(meloopShellControllerProvider.notifier).selectTab(0);
+  }
+
+  Future<void> _recording(BuildContext sourceContext) async {
+    final shell = ref.read(meloopShellControllerProvider);
+    final profile = shell.selectedProfile;
+    if (profile == null) return;
+    final draft = shell.selectedDraft;
+    final sessionId = draft?.sessionId;
+    final snapshot = ref.read(practiceTimerServiceProvider)?.snapshot;
+    await Navigator.of(sourceContext).push<void>(
+      MaterialPageRoute(
+        builder: (recordingContext) {
+          if (sessionId != null &&
+              !draft!.isReview &&
+              snapshot?.state != PracticeState.review &&
+              snapshot?.state != PracticeState.saved) {
+            return RecordingExample(
+              sessionId: sessionId,
+              title: draft.title,
+              profileName: profileDisplayName(context.l10n, profile),
+              onHome: () {
+                Navigator.of(sourceContext).popUntil((route) => route.isFirst);
+                ref.read(meloopShellControllerProvider.notifier).selectTab(0);
+              },
+            );
+          }
+          return RecordingEmptyPage(
+            onBack: () => Navigator.of(recordingContext).pop(),
+            onHome: () {
+              Navigator.of(recordingContext).pop();
+              Navigator.of(sourceContext).popUntil((route) => route.isFirst);
+              ref.read(meloopShellControllerProvider.notifier).selectTab(0);
+            },
+            onCreatePractice: () async {
+              await _setup(profile);
+              if (!mounted || !recordingContext.mounted) return;
+              if (ref.read(meloopShellControllerProvider).selectedDraft !=
+                  null) {
+                Navigator.of(recordingContext)
+                    .popUntil((route) => route.isFirst);
+              }
+            },
+          );
+        },
+      ),
+    );
+  }
 
   void _resetData() {
     ref.invalidate(showcaseControllerProvider);
@@ -190,6 +251,7 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
             : shellController.showMain,
       ),
       StartupDestination.recoveredTimer => TimerExample(
+        onOpenRecording: _recording,
         readOnly:
             widget.journalRecoveryReadOnly ||
             (shell.draft?.sessionId != null &&
@@ -233,6 +295,7 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
         ),
         bottomNavigation: navigation,
         onCreate: () => _setup(profile),
+        onOpenRecording: _recording,
         onContinue: shellController.showTimer,
         onHome: () => shellController.selectTab(0),
         onInstrument: () => _openProfilePage(
@@ -256,7 +319,7 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
           draft: shell.selectedDraft,
           onCreate: () => _setup(profile),
           onHistory: () => shellController.selectTab(1),
-          onCatalog: _metronome,
+          onTools: _tools,
           onInstrument: () => _openProfilePage(
             widget.onChooseProfile ?? shellController.showProfilePicker,
           ),
