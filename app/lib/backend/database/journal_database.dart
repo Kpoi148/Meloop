@@ -19,7 +19,10 @@ class JournalDatabase {
   }
 
   /// Exposed for migration fault-injection tests and alternate factories.
-  static OpenDatabaseOptions options({MigrationRunner? runner}) {
+  static OpenDatabaseOptions options({
+    MigrationRunner? runner,
+    bool singleInstance = true,
+  }) {
     final migrations =
         runner ??
         MigrationRunner(const [
@@ -29,6 +32,7 @@ class JournalDatabase {
           savedSessionDeletionSchema,
         ]);
     return OpenDatabaseOptions(
+      singleInstance: singleInstance,
       version: migrations.version,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
