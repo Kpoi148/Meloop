@@ -46,7 +46,7 @@ void main() {
               child: HomeExample(
                 onCreate: () {},
                 onHistory: () {},
-                onCatalog: () {},
+                onTools: () {},
               ),
             ),
             const WelcomeExample(),

@@ -6,15 +6,17 @@ import '../application/practice_review_provider.dart';
 import '../components/meloop_ui.dart';
 import '../theme/tokens/practice_tokens.dart';
 
-/// Opening this route leaves the service's active timer and session ID intact.
+/// Accessible from Home or practice without changing the active timer.
 class PracticeToolsPage extends ConsumerWidget {
   const PracticeToolsPage({
     super.key,
-    required this.sessionId,
+    this.sessionId,
     this.onOpenMetronome,
+    this.onOpenRecording,
   });
-  final String sessionId;
+  final String? sessionId;
   final Future<void> Function()? onOpenMetronome;
+  final Future<void> Function()? onOpenRecording;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -65,14 +67,20 @@ class PracticeToolsPage extends ConsumerWidget {
                             await onOpenMetronome!();
                             return;
                           }
+                          if (tools[index].$1 == MeloopTool.recorder &&
+                              onOpenRecording != null) {
+                            await onOpenRecording!();
+                            return;
+                          }
+                          final id = sessionId;
                           final open = ref.read(practiceToolOpenProvider);
-                          if (open == null) {
+                          if (open == null || id == null) {
                             MeloopNotifications.show(
                               context,
                               strings.practiceToolUnavailable,
                             );
                           } else {
-                            await open(context, sessionId, tools[index].$1);
+                            await open(context, id, tools[index].$1);
                           }
                         },
                       ),

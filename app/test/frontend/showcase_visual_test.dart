@@ -38,11 +38,7 @@ void main() {
             selectedIndex: 0,
             onSelected: (_) {},
           ),
-          child: HomeExample(
-            onCreate: () {},
-            onHistory: () {},
-            onCatalog: () {},
-          ),
+          child: HomeExample(onCreate: () {}, onHistory: () {}, onTools: () {}),
         ),
         'welcome': const WelcomeExample(),
         'setup': SetupExample(onSave: (_) async {}),

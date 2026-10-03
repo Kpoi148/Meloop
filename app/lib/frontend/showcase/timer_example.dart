@@ -20,12 +20,14 @@ import '../practice_sessions/practice_sessions_controller.dart';
 import '../theme/tokens/practice_tokens.dart';
 import 'metronome_example.dart';
 import 'preview_copy.dart';
+import 'recording_example.dart';
 import 'session_form_example.dart';
 
 /// Projects the app-scoped snapshot; owns no clock or elapsed state.
 class TimerExample extends ConsumerStatefulWidget {
-  const TimerExample({super.key, this.readOnly = false});
+  const TimerExample({super.key, this.readOnly = false, this.onOpenRecording});
   final bool readOnly;
+  final Future<void> Function(BuildContext)? onOpenRecording;
   @override
   ConsumerState<TimerExample> createState() => _TimerExampleState();
 }
@@ -145,6 +147,7 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
                     builder: (detailContext) => UncontrolledProviderScope(
                       container: container,
                       child: PracticeSessionDetailPage(
+                        onOpenRecording: widget.onOpenRecording,
                         session: completion.saved!,
                         profile: profile,
                         now: now(),
@@ -188,6 +191,29 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
             ),
           ),
         ),
+        onOpenRecording: () {
+          final state = ref.read(meloopShellControllerProvider);
+          final draft = state.selectedDraft;
+          final profile = state.selectedProfile;
+          if (draft?.sessionId != sessionId ||
+              profile == null ||
+              _journal?.snapshot?.state == PracticeState.review) {
+            return Future<void>.value();
+          }
+          return Navigator.of(toolsContext).push<void>(
+            MaterialPageRoute(
+              builder: (_) => RecordingExample(
+                sessionId: sessionId,
+                title: draft!.title,
+                profileName: profileDisplayName(context.l10n, profile),
+                onHome: () {
+                  Navigator.of(toolsContext).pop();
+                  unawaited(_back());
+                },
+              ),
+            ),
+          );
+        },
       ),
     ),
   );

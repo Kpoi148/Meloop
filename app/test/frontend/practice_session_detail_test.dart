@@ -14,9 +14,12 @@ import 'package:meloop/frontend/practice_sessions/practice_session.dart';
 import 'package:meloop/frontend/practice_sessions/practice_session_actions.dart';
 import 'package:meloop/frontend/practice_sessions/practice_session_card.dart';
 import 'package:meloop/frontend/practice_sessions/practice_session_detail_page.dart';
+import 'package:meloop/frontend/practice_sessions/practice_session_recordings_page.dart';
+import 'package:meloop/frontend/recording/recording_empty_page.dart';
 import 'package:meloop/frontend/practice_sessions/practice_session_summary.dart';
 import 'package:meloop/frontend/practice_sessions/practice_sessions_tab.dart';
 import 'package:meloop/frontend/showcase/meloop_ui_showcase.dart';
+import 'package:meloop/frontend/showcase/home_example.dart';
 import 'package:meloop/frontend/showcase/practice_session_examples.dart';
 import 'package:meloop/frontend/showcase/session_form_example.dart';
 import 'package:meloop/shared/settings/app_settings_store.dart';
@@ -303,6 +306,54 @@ void main() {
       expect(calls, 2);
       expect(pending.toSet(), {'guitar-detail:session-0'});
       expect(find.byType(PracticeSessionDetailPage), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'saved session opens its recordings page and current-practice entry',
+    (tester) async {
+      final container = await _mount(tester);
+      await _open(tester, 'Ôn lại những đoạn khó');
+      final savedId = tester
+          .widget<PracticeSessionDetailPage>(
+            find.byType(PracticeSessionDetailPage),
+          )
+          .session
+          .id;
+      await _tap(tester, 'Bản ghi của buổi này');
+      expect(find.byType(PracticeSessionRecordingsPage), findsOneWidget);
+      expect(find.text('Bản ghi của buổi luyện'), findsOneWidget);
+      expect(find.text('Lắng nghe\nhành trình của bạn.'), findsOneWidget);
+      expect(find.text('Chưa có bản ghi âm.'), findsOneWidget);
+      expect(find.byType(BottomSheet), findsNothing);
+      await _tap(tester, 'Ghi âm buổi luyện');
+      expect(find.byType(RecordingEmptyPage), findsOneWidget);
+      expect(
+        container.read(meloopShellControllerProvider).selectedDraft,
+        isNull,
+      );
+      expect(container.read(practiceSessionPreviewChangesProvider), isEmpty);
+      await tester.tap(find.byTooltip('Quay lại'));
+      await tester.pumpAndSettle();
+      expect(find.byType(PracticeSessionRecordingsPage), findsOneWidget);
+      await tester.tap(find.byTooltip('Quay lại'));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<PracticeSessionDetailPage>(
+              find.byType(PracticeSessionDetailPage),
+            )
+            .session
+            .id,
+        savedId,
+      );
+      await _tap(tester, 'Bản ghi của buổi này');
+      await tester.tap(find.byTooltip('Trang chủ'));
+      await tester.pumpAndSettle();
+      expect(find.byType(HomeExample), findsOneWidget);
+      expect(find.byType(PracticeSessionRecordingsPage), findsNothing);
+      expect(container.read(practiceSessionPreviewChangesProvider), isEmpty);
       expect(tester.takeException(), isNull);
     },
   );
