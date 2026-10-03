@@ -772,7 +772,125 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get progressHeading => 'A little progress,\nevery day.';
+  String get progressHeading => 'Each session,\na step forward.';
+
+  @override
+  String get progressEyebrow => 'THE THINGS YOU BUILD';
+
+  @override
+  String get progressMusicMinutes => 'minutes for music';
+
+  @override
+  String get progressSavedSessions => 'saved practice sessions';
+
+  @override
+  String get progressStreak => 'Streak';
+
+  @override
+  String progressDays(int count) {
+    return '$count days';
+  }
+
+  @override
+  String get progressQualifyingDayHint =>
+      'A saved session of at least 1 minute counts as a practice day.';
+
+  @override
+  String get progressFocus => 'Focus level';
+
+  @override
+  String progressRatingsPeriod(String period) {
+    return '$period · Your own ratings after practice';
+  }
+
+  @override
+  String progressRatingCaption(int count) {
+    return 'Average · $count rated sessions';
+  }
+
+  @override
+  String get progressAdjustGoal => 'Adjust your goal';
+
+  @override
+  String get progressHistory => 'Practice history';
+
+  @override
+  String get progressFilter => 'Filter';
+
+  @override
+  String get progressProBadge => 'PRO';
+
+  @override
+  String get progressDateRange => 'Date range';
+
+  @override
+  String get progressApplyRange => 'View progress';
+
+  @override
+  String get progressFilterTitle => 'Filter progress';
+
+  @override
+  String get progressFilterThisMonth => 'This month';
+
+  @override
+  String get progressFilterCustom => 'Custom';
+
+  @override
+  String get progressFilterFrom => 'From';
+
+  @override
+  String get progressFilterTo => 'To';
+
+  @override
+  String get progressFilterPickStart =>
+      'Choose the start date on the calendar.';
+
+  @override
+  String get progressFilterPickEnd => 'Choose the end date on the calendar.';
+
+  @override
+  String progressFilterSelectedDays(int count) {
+    return '$count days in your selected range';
+  }
+
+  @override
+  String get progressFilterProTitle => 'See more of\nyour journey.';
+
+  @override
+  String get progressFilterProMessage =>
+      'Advanced filters are part of Meloop Pro. Explore 30 days, a month or your own date range.';
+
+  @override
+  String get progressFilterExplorePro => 'Explore Meloop Pro';
+
+  @override
+  String progressPeriod(String from, String to) {
+    return '$from – $to';
+  }
+
+  @override
+  String get progressMissingValue => '—';
+
+  @override
+  String get progressRatingDenominator => '/5';
+
+  @override
+  String get progressSunday => 'Sun';
+
+  @override
+  String progressWeekday(int number) {
+    return 'D$number';
+  }
+
+  @override
+  String progressRatedDay(String date, String label, String value) {
+    return '$date: $label $value out of 5';
+  }
+
+  @override
+  String progressUnratedDay(String date, String label) {
+    return '$date: $label, no rating';
+  }
 
   @override
   String get noProgressTitle => 'No progress data yet.';

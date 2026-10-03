@@ -60,7 +60,7 @@ Future<void> runHomeOverviewJourney(
     await waitFor(find.byKey(const Key('overview-count')));
     expect(metric('overview-minutes'), '$minutes');
     expect(metric('overview-count'), '$count');
-    expect(metric('overview-streak'), '$streak');
+    expect(metric('overview-streak'), '$streak ngày');
     expect(find.text(goal), findsOneWidget);
   }
 
@@ -121,7 +121,8 @@ Future<void> runHomeOverviewJourney(
     expect(find.textContaining('Tiếp tục'), findsNothing);
     if (screenshot != null) await screenshot('task24-home-guitar');
     await progress(1, 1, 1, '1/4 ngày');
-    expect(find.text('4,0/5 · 1 lượt đánh giá'), findsOneWidget);
+    expect(find.text('4,0/5', findRichText: true), findsOneWidget);
+    expect(find.text('Trung bình · 1 buổi có đánh giá'), findsNWidgets(2));
     if (screenshot != null) await screenshot('task24-progress-guitar');
     await tap(tab('Trang chủ'));
     await waitHome();
