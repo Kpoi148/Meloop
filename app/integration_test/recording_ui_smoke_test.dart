@@ -102,11 +102,8 @@ void main() {
     expect(find.text('Bản ghi của buổi luyện'), findsOneWidget);
     expect(find.text('Chưa có bản ghi âm.'), findsOneWidget);
     await capture(tester, 'session-recordings');
-    await tap(find.text('Ghi âm buổi luyện'));
-    expect(find.byType(RecordingEmptyPage), findsOneWidget);
+    expect(find.text('Ghi âm buổi luyện'), findsNothing);
     expect(scope.read(meloopShellControllerProvider).selectedDraft, isNull);
-    await tap(find.byTooltip('Quay lại'));
-    expect(find.byType(PracticeSessionRecordingsPage), findsOneWidget);
     await tap(find.byTooltip('Quay lại'));
     expect(
       tester

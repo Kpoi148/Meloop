@@ -15,7 +15,6 @@ import 'package:meloop/frontend/practice_sessions/practice_session_actions.dart'
 import 'package:meloop/frontend/practice_sessions/practice_session_card.dart';
 import 'package:meloop/frontend/practice_sessions/practice_session_detail_page.dart';
 import 'package:meloop/frontend/practice_sessions/practice_session_recordings_page.dart';
-import 'package:meloop/frontend/recording/recording_empty_page.dart';
 import 'package:meloop/frontend/practice_sessions/practice_session_summary.dart';
 import 'package:meloop/frontend/practice_sessions/practice_sessions_tab.dart';
 import 'package:meloop/frontend/showcase/meloop_ui_showcase.dart';
@@ -311,7 +310,7 @@ void main() {
   );
 
   testWidgets(
-    'saved session opens its recordings page and current-practice entry',
+    'saved session recordings have no capture action and return to their journal',
     (tester) async {
       final container = await _mount(tester);
       await _open(tester, 'Ôn lại những đoạn khó');
@@ -327,16 +326,12 @@ void main() {
       expect(find.text('Lắng nghe\nhành trình của bạn.'), findsOneWidget);
       expect(find.text('Chưa có bản ghi âm.'), findsOneWidget);
       expect(find.byType(BottomSheet), findsNothing);
-      await _tap(tester, 'Ghi âm buổi luyện');
-      expect(find.byType(RecordingEmptyPage), findsOneWidget);
+      expect(find.text('Ghi âm buổi luyện'), findsNothing);
       expect(
         container.read(meloopShellControllerProvider).selectedDraft,
         isNull,
       );
       expect(container.read(practiceSessionPreviewChangesProvider), isEmpty);
-      await tester.tap(find.byTooltip('Quay lại'));
-      await tester.pumpAndSettle();
-      expect(find.byType(PracticeSessionRecordingsPage), findsOneWidget);
       await tester.tap(find.byTooltip('Quay lại'));
       await tester.pumpAndSettle();
       expect(
@@ -378,21 +373,15 @@ void main() {
                   .first,
             )
             .onPressed,
-        isNull,
+        isNotNull,
       );
       expect(
         tester
-            .widget<IconButton>(
-              find
-                  .byWidgetPredicate(
-                    (widget) =>
-                        widget is IconButton &&
-                        widget.tooltip == 'Xuất bản ghi',
-                  )
-                  .first,
+            .widget<TextButton>(
+              find.widgetWithText(TextButton, 'Xuất bản ghi').first,
             )
             .onPressed,
-        isNull,
+        isNotNull,
       );
       await tester.tap(find.byTooltip('Xóa bản ghi').first);
       await tester.pumpAndSettle();

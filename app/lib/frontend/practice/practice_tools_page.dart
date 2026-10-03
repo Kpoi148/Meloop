@@ -13,10 +13,12 @@ class PracticeToolsPage extends ConsumerWidget {
     this.sessionId,
     this.onOpenMetronome,
     this.onOpenRecording,
+    this.onOpenRecordings,
   });
   final String? sessionId;
   final Future<void> Function()? onOpenMetronome;
   final Future<void> Function()? onOpenRecording;
+  final Future<void> Function()? onOpenRecordings;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -70,6 +72,11 @@ class PracticeToolsPage extends ConsumerWidget {
                           if (tools[index].$1 == MeloopTool.recorder &&
                               onOpenRecording != null) {
                             await onOpenRecording!();
+                            return;
+                          }
+                          if (tools[index].$1 == MeloopTool.recordings &&
+                              onOpenRecordings != null) {
+                            await onOpenRecordings!();
                             return;
                           }
                           final id = sessionId;

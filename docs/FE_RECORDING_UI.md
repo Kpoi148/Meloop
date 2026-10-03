@@ -6,7 +6,7 @@ Mở từ **Buổi luyện → Công cụ luyện tập → Ghi âm** hoặc **T
 
 Trạng thái ghi thuộc session ID hiện tại. Quay lại dừng ghi và giữ phần nghe lại để mở lại cùng buổi. Pause/Finish/background dừng ghi; Resume không tự ghi tiếp. Lỗi ghi không gọi Resume của bộ đếm. Buổi Paused/Review/Saved không bắt đầu bản mới. Đạt 5 phút chuyển sang nghe lại, giữ/bỏ; đủ 10 tệp chặn bản mới và hiển thị lý do. Lỗi giữ giữ nguyên bản đang nghe lại để thử lại. Từ chối/không có micro, thiếu dung lượng và xung đột công cụ có thông báo; không chặn form lưu nhật ký.
 
-**Chi tiết buổi luyện → Bản ghi của buổi này** mở màn `PracticeSessionRecordingsPage` theo `views.recordings`: tranh cuộn băng, tiêu đề và lời dẫn, khung trống nét đứt, nút ghi âm và chú thích. Danh sách và thao tác nghe/xuất/xóa vẫn dùng dữ liệu và callback có sẵn. Nút **Ghi âm buổi luyện** mở cùng lối ghi âm của Trang chủ, dùng buổi đang luyện hoặc màn chưa có buổi; không truyền ID buổi đã lưu sang ghi âm. Quay lại trở về chi tiết; Trang chủ đóng các màn đang mở và chọn tab Trang chủ.
+**Chi tiết buổi luyện → Bản ghi của buổi này** mở màn `PracticeSessionRecordingsPage` theo `views.recordings`: tranh cuộn băng, tiêu đề và lời dẫn, danh sách hoặc khung trống nét đứt và chú thích. Theo UC-11–13, buổi đã kết thúc không có nút **Ghi âm buổi luyện**. Quay lại trở về chi tiết; Trang chủ đóng các màn đang mở và chọn tab Trang chủ. Giao diện danh sách, nghe lại, xuất và xóa được mô tả trong [`FE_RECORDINGS_UI.md`](FE_RECORDINGS_UI.md).
 
 Quota, trạng thái micro, thời lượng và lỗi được truyền vào UI. Không có chữ giải thích dữ liệu thử trên màn hình. Lối Xem Meloop Pro mở sheet thông tin ngay tại đây, có nút tiếp tục luyện tập; không mở màn mua hàng hay chức năng ngoài UC-10.
 

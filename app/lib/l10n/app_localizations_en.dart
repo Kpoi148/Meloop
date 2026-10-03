@@ -584,6 +584,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportRecording => 'Export recording';
 
   @override
+  String get recordingLinked => 'Linked to journal';
+
+  @override
+  String get recordingUnlinked => 'Not linked to journal';
+
+  @override
+  String get recordingMissingFile => 'File no longer on this device';
+
+  @override
+  String get recordingMissingMessage =>
+      'The audio file could not be found. You can remove this recording from the list.';
+
+  @override
+  String recordingMetadata(String duration, String status) {
+    return '$duration · $status';
+  }
+
+  @override
+  String get recordingMelodyTitle => 'Melody idea';
+
+  @override
+  String get recordingDeleted => 'Recording deleted.';
+
+  @override
+  String get recordingDeleteAction => 'Delete';
+
+  @override
+  String get recordingShare => 'Share recording';
+
+  @override
+  String get recordingShareDescription =>
+      'Choose an app to send the audio file.';
+
+  @override
+  String get recordingSaveFile => 'Save to files';
+
+  @override
+  String get recordingSaveFileDescription =>
+      'Choose where to save on your device.';
+
+  @override
+  String get recordingExported => 'Recording exported.';
+
+  @override
+  String get recordingExportFailed =>
+      'Could not export this recording. Please try again.';
+
+  @override
   String get recordingActionFailed =>
       'Could not open the recording. Please try again.';
 

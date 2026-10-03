@@ -21,6 +21,7 @@ import '../theme/tokens/practice_tokens.dart';
 import 'metronome_example.dart';
 import 'preview_copy.dart';
 import 'recording_example.dart';
+import 'recordings_example.dart';
 import 'session_form_example.dart';
 
 /// Projects the app-scoped snapshot; owns no clock or elapsed state.
@@ -181,6 +182,26 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
     MaterialPageRoute(
       builder: (toolsContext) => PracticeToolsPage(
         sessionId: sessionId,
+        onOpenRecordings: () {
+          final profile = ref
+              .read(meloopShellControllerProvider)
+              .selectedProfile;
+          if (profile == null) return Future<void>.value();
+          return Navigator.of(toolsContext).push<void>(
+            MaterialPageRoute(
+              builder: (_) => RecordingsExample(
+                profile: profile,
+                onHome: () {
+                  Navigator.of(toolsContext).popUntil((route) => route.isFirst);
+                  ref.read(meloopShellControllerProvider.notifier).selectTab(0);
+                },
+                onRecordPractice: widget.onOpenRecording == null
+                    ? null
+                    : () => widget.onOpenRecording!(toolsContext),
+              ),
+            ),
+          );
+        },
         onOpenMetronome: () => Navigator.of(toolsContext).push<void>(
           MaterialPageRoute(
             builder: (_) => MetronomeExample(
