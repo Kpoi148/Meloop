@@ -962,6 +962,42 @@ abstract class AppLocalizations {
   /// **'Thời lượng (phút)'**
   String get sessionDurationMinutes;
 
+  /// No description provided for @sessionDuration.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thời lượng'**
+  String get sessionDuration;
+
+  /// No description provided for @instrumentLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhạc cụ'**
+  String get instrumentLabel;
+
+  /// No description provided for @leaveReviewTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quay lại buổi luyện?'**
+  String get leaveReviewTitle;
+
+  /// No description provided for @leaveReviewMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nội dung bạn đã nhập sẽ được giữ để sửa tiếp khi mở lại form.'**
+  String get leaveReviewMessage;
+
+  /// No description provided for @returnToPractice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quay lại buổi luyện'**
+  String get returnToPractice;
+
+  /// No description provided for @reviewDraftFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể giữ bản nháp mới nhất. Nội dung vẫn ở form này; hãy thử lại trước khi rời đi.'**
+  String get reviewDraftFailed;
+
   /// No description provided for @sessionPracticeBpm.
   ///
   /// In vi, this message translates to:
@@ -1561,6 +1597,12 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Chưa thể lưu buổi luyện. Nội dung của bạn vẫn ở đây. Vui lòng thử lại.'**
   String get saveSessionFailed;
+
+  /// No description provided for @savedSessionCompletionFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Buổi luyện đã được lưu. Chưa thể hoàn tất bước tiếp theo. Vui lòng thử lại.'**
+  String get savedSessionCompletionFailed;
 
   /// No description provided for @catalogTitle.
   ///
@@ -2473,6 +2515,280 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Buổi luyện đang tạm dừng. Tiếp tục buổi luyện trước khi ghi âm.'**
   String get recordingPracticePaused;
+
+  /// No description provided for @privacyTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quyền riêng tư'**
+  String get privacyTitle;
+
+  /// No description provided for @privacyHeading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Âm nhạc là của bạn.\nNhật ký cũng vậy.'**
+  String get privacyHeading;
+
+  /// No description provided for @privacySubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn kiểm soát những gì mình ghi lại.'**
+  String get privacySubtitle;
+
+  /// No description provided for @privacyLocalTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhật ký và âm thanh'**
+  String get privacyLocalTitle;
+
+  /// No description provided for @privacyLocalBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhật ký luyện tập được lưu cục bộ trên thiết bị Android của bạn. Luồng hỗ trợ không đọc hay tự đính kèm nhật ký, cơ sở dữ liệu hoặc bản ghi âm vào email.'**
+  String get privacyLocalBody;
+
+  /// No description provided for @privacyPermissionsTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Micro và lịch nhắc'**
+  String get privacyPermissionsTitle;
+
+  /// No description provided for @privacyPermissionsBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Màn riêng tư và hỗ trợ không yêu cầu quyền micro hay thông báo. Bạn có thể xem và thay đổi quyền của Meloop trong Cài đặt ứng dụng của Android.'**
+  String get privacyPermissionsBody;
+
+  /// No description provided for @privacyPurchasesTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mua hàng và Meloop Pro'**
+  String get privacyPurchasesTitle;
+
+  /// No description provided for @privacyPurchasesBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Màn Pro hiện là chế độ xem thử, không thu tiền và chưa kết nối Google Play. Thông tin giao dịch của bản phát hành cần được công bố trong chính sách chính thức.'**
+  String get privacyPurchasesBody;
+
+  /// No description provided for @privacyDiagnosticsTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chẩn đoán và lỗi'**
+  String get privacyDiagnosticsTitle;
+
+  /// No description provided for @privacyDiagnosticsBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thông tin kỹ thuật trong email hỗ trợ mặc định tắt. Chỉ khi bạn chọn, bản nháp mới kèm phiên bản ứng dụng, phiên bản Android và mẫu thiết bị để bạn xem trước. Không kèm nội dung nhật ký, âm thanh hay thông tin giao dịch.'**
+  String get privacyDiagnosticsBody;
+
+  /// No description provided for @privacyChoicesTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có quyền lựa chọn'**
+  String get privacyChoicesTitle;
+
+  /// No description provided for @privacyChoicesBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn có thể sửa nội dung, bỏ thông tin kỹ thuật hoặc hủy bản nháp hỗ trợ. Nếu muốn chia sẻ bản ghi âm, bạn tự chọn và đính kèm bằng ứng dụng email. Meloop không tự gửi thư hoặc dữ liệu.'**
+  String get privacyChoicesBody;
+
+  /// No description provided for @privacySummaryFootnote.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thông tin trên mô tả phiên bản ứng dụng hiện tại. Chính sách chính thức cần được xác nhận trước khi phát hành.'**
+  String get privacySummaryFootnote;
+
+  /// No description provided for @privacyNotPublished.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chính sách riêng tư chính thức chưa được công bố. Thông tin trên vẫn có thể đọc khi không có mạng.'**
+  String get privacyNotPublished;
+
+  /// No description provided for @privacyOpenPublished.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở chính sách chính thức'**
+  String get privacyOpenPublished;
+
+  /// No description provided for @privacyOpenFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể mở liên kết. Bạn có thể thử lại hoặc sao chép liên kết để mở bằng trình duyệt.'**
+  String get privacyOpenFailed;
+
+  /// No description provided for @privacyCopyLink.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sao chép liên kết'**
+  String get privacyCopyLink;
+
+  /// No description provided for @supportHeading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mình đang lắng nghe.'**
+  String get supportHeading;
+
+  /// No description provided for @supportSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Một góp ý nhỏ có thể giúp Meloop tốt hơn.'**
+  String get supportSubtitle;
+
+  /// No description provided for @supportNotPublished.
+  ///
+  /// In vi, this message translates to:
+  /// **'Địa chỉ hỗ trợ chưa được công bố. Bạn có thể soạn, xem trước và sao chép nội dung để gửi sau.'**
+  String get supportNotPublished;
+
+  /// No description provided for @supportAddress.
+  ///
+  /// In vi, this message translates to:
+  /// **'Địa chỉ hỗ trợ'**
+  String get supportAddress;
+
+  /// No description provided for @supportSubject.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiêu đề'**
+  String get supportSubject;
+
+  /// No description provided for @supportSubjectHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn muốn chia sẻ điều gì?'**
+  String get supportSubjectHint;
+
+  /// No description provided for @supportDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nội dung'**
+  String get supportDescription;
+
+  /// No description provided for @supportDescriptionHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mô tả điều bạn gặp phải hoặc góp ý của bạn…'**
+  String get supportDescriptionHint;
+
+  /// No description provided for @supportDescriptionLimit.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tối đa {limit} ký tự; có thể để trống.'**
+  String supportDescriptionLimit(int limit);
+
+  /// No description provided for @supportSubjectInvalid.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhập tiêu đề từ 1 đến {limit} ký tự, không xuống dòng hoặc chứa ký tự điều khiển.'**
+  String supportSubjectInvalid(int limit);
+
+  /// No description provided for @supportDescriptionInvalid.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nội dung tối đa {limit} ký tự và không chứa ký tự điều khiển không hợp lệ.'**
+  String supportDescriptionInvalid(int limit);
+
+  /// No description provided for @supportIncludeDiagnostics.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kèm thông tin kỹ thuật'**
+  String get supportIncludeDiagnostics;
+
+  /// No description provided for @supportDiagnosticsExplanation.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chỉ phiên bản ứng dụng, phiên bản Android và mẫu thiết bị. Bạn sẽ được xem trước khi mở email.'**
+  String get supportDiagnosticsExplanation;
+
+  /// No description provided for @supportDiagnosticsBlock.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thông tin kỹ thuật\nPhiên bản ứng dụng: {appVersion}\nPhiên bản Android: {androidVersion}\nMẫu thiết bị: {deviceModel}'**
+  String supportDiagnosticsBlock(
+    String appVersion,
+    String androidVersion,
+    String deviceModel,
+  );
+
+  /// No description provided for @supportPrivacyNote.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không tự động đính kèm nhật ký hay âm thanh. Meloop chỉ mở bản nháp để bạn sửa và gửi trong ứng dụng email.'**
+  String get supportPrivacyNote;
+
+  /// No description provided for @supportPreview.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem trước nội dung'**
+  String get supportPreview;
+
+  /// No description provided for @supportPreviewFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể lấy thông tin kỹ thuật. Nội dung vẫn được giữ. Hãy thử lại hoặc bỏ chọn thông tin kỹ thuật.'**
+  String get supportPreviewFailed;
+
+  /// No description provided for @supportDraftHeading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Một lời nhắn của bạn.'**
+  String get supportDraftHeading;
+
+  /// No description provided for @supportReviewNote.
+  ///
+  /// In vi, this message translates to:
+  /// **'Kiểm tra nội dung bên dưới. Bạn có thể quay lại sửa hoặc tiếp tục sửa trong ứng dụng email trước khi gửi.'**
+  String get supportReviewNote;
+
+  /// No description provided for @supportEmptyBody.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có nội dung.'**
+  String get supportEmptyBody;
+
+  /// No description provided for @supportCompose.
+  ///
+  /// In vi, this message translates to:
+  /// **'Soạn email'**
+  String get supportCompose;
+
+  /// No description provided for @supportEmailUnavailable.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không mở được ứng dụng email. Hãy sao chép địa chỉ và nội dung để liên hệ bằng cách khác.'**
+  String get supportEmailUnavailable;
+
+  /// No description provided for @supportCopyAddress.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sao chép địa chỉ'**
+  String get supportCopyAddress;
+
+  /// No description provided for @supportCopyDetails.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sao chép nội dung'**
+  String get supportCopyDetails;
+
+  /// No description provided for @supportEditDraft.
+  ///
+  /// In vi, this message translates to:
+  /// **'Sửa nội dung'**
+  String get supportEditDraft;
+
+  /// No description provided for @supportCopied.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã sao chép.'**
+  String get supportCopied;
+
+  /// No description provided for @supportCopyFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể sao chép. Hãy thử lại hoặc chọn văn bản để sao chép.'**
+  String get supportCopyFailed;
 }
 
 class _AppLocalizationsDelegate

@@ -49,6 +49,7 @@ class _PracticeSessionDetailPageState
         MaterialPageRoute(
           builder: (_) => SessionFormExample(
             editing: true,
+            instrumentName: profileDisplayName(context.l10n, widget.profile),
             onHome: widget.onHome,
             sessionId: _session.id,
             initialValues: SessionFormValues(

@@ -72,6 +72,7 @@ class ReviewInput {
     required this.next,
     required this.mood,
     required this.focus,
+    this.bpmInput,
   });
   final String title;
   final String practiceDate;
@@ -83,6 +84,9 @@ class ReviewInput {
   final String next;
   final int? mood;
   final int? focus;
+
+  /// Absent in legacy sidecars; an empty string explicitly clears BPM.
+  final String? bpmInput;
 }
 
 class PracticeDraft {

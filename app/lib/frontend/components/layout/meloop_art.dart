@@ -6,7 +6,7 @@ enum MeloopInstrument { guitar, piano, ukulele, violin, flute, drums, other }
 
 enum MeloopTool { metro, tuner, recorder, recordings }
 
-enum MeloopScene { guitar, journal, progress, data, privacy, pro }
+enum MeloopScene { guitar, journal, progress, data, privacy, pro, envelope }
 
 /// Crops the original Tempo sprite in layout; assets are copied unchanged.
 class MeloopArt extends StatelessWidget {
@@ -37,7 +37,14 @@ class MeloopArt extends StatelessWidget {
        columns = 3,
        asset = 'illustrations.png';
   final MeloopScene? scene;
-  int get index => instrument?.index ?? tool?.index ?? scene!.index;
+  int get index =>
+      instrument?.index ??
+      tool?.index ??
+      switch (scene!) {
+        MeloopScene.privacy => 2,
+        MeloopScene.envelope => 3,
+        final scene => scene.index,
+      };
   final int columns;
   final String asset;
   final double size;

@@ -8,6 +8,7 @@ import android.view.WindowManager
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        ContactSupportChannel(this).register(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "meloop/practice_screen_awake")
             .setMethodCallHandler { call, result ->
                 if (call.method != "setEnabled") {

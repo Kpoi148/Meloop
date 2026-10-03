@@ -482,6 +482,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sessionDurationMinutes => 'Duration (minutes)';
 
   @override
+  String get sessionDuration => 'Duration';
+
+  @override
+  String get instrumentLabel => 'Instrument';
+
+  @override
+  String get leaveReviewTitle => 'Return to practice?';
+
+  @override
+  String get leaveReviewMessage =>
+      'Your input will be kept so you can continue editing when you reopen this form.';
+
+  @override
+  String get returnToPractice => 'Return to practice';
+
+  @override
+  String get reviewDraftFailed =>
+      'Could not preserve the latest draft. Your input is still in this form; retry before leaving.';
+
+  @override
   String get sessionPracticeBpm => 'Practice tempo (BPM)';
 
   @override
@@ -820,6 +840,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get saveSessionFailed =>
       'Could not save the practice session. Your content is still here. Please try again.';
+
+  @override
+  String get savedSessionCompletionFailed =>
+      'The practice session is saved. Could not finish the next step. Please try again.';
 
   @override
   String get catalogTitle => 'Shared components';
@@ -1339,4 +1363,168 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get recordingPracticePaused =>
       'Practice is paused. Resume your practice session before recording.';
+
+  @override
+  String get privacyTitle => 'Privacy';
+
+  @override
+  String get privacyHeading => 'Your music.\nYour journal.';
+
+  @override
+  String get privacySubtitle => 'You control what you record.';
+
+  @override
+  String get privacyLocalTitle => 'Journal and audio';
+
+  @override
+  String get privacyLocalBody =>
+      'Your practice journal is stored locally on your Android device. The support flow does not read or automatically attach journal entries, databases or recordings to email.';
+
+  @override
+  String get privacyPermissionsTitle => 'Microphone and reminders';
+
+  @override
+  String get privacyPermissionsBody =>
+      'The privacy and support screens do not request microphone or notification access. You can review and change Meloop permissions in Android app settings.';
+
+  @override
+  String get privacyPurchasesTitle => 'Purchases and Meloop Pro';
+
+  @override
+  String get privacyPurchasesBody =>
+      'The Pro screen currently offers a preview, with no charges or Google Play connection. Purchase information for the release must be disclosed in the official policy.';
+
+  @override
+  String get privacyDiagnosticsTitle => 'Diagnostics and errors';
+
+  @override
+  String get privacyDiagnosticsBody =>
+      'Technical details in support email are off by default. Only if you choose, the draft includes the app version, Android version and device model for your review. Journal content, audio and purchase information are excluded.';
+
+  @override
+  String get privacyChoicesTitle => 'You have a choice';
+
+  @override
+  String get privacyChoicesBody =>
+      'You can edit your message, leave out technical details or cancel your support draft. To share a recording, select and attach it yourself in your email app. Meloop never sends messages or data automatically.';
+
+  @override
+  String get privacySummaryFootnote =>
+      'This information describes the current app version. The official policy must be confirmed before release.';
+
+  @override
+  String get privacyNotPublished =>
+      'The official privacy policy has not been published yet. The information above remains readable offline.';
+
+  @override
+  String get privacyOpenPublished => 'Open the official policy';
+
+  @override
+  String get privacyOpenFailed =>
+      'Could not open the link. Try again or copy the link to open it in a browser.';
+
+  @override
+  String get privacyCopyLink => 'Copy link';
+
+  @override
+  String get supportHeading => 'We’re listening.';
+
+  @override
+  String get supportSubtitle =>
+      'A small suggestion can help Meloop get better.';
+
+  @override
+  String get supportNotPublished =>
+      'The support address has not been published yet. You can compose, preview and copy your message to send later.';
+
+  @override
+  String get supportAddress => 'Support address';
+
+  @override
+  String get supportSubject => 'Subject';
+
+  @override
+  String get supportSubjectHint => 'What would you like to share?';
+
+  @override
+  String get supportDescription => 'Message';
+
+  @override
+  String get supportDescriptionHint =>
+      'Describe the issue or share your feedback…';
+
+  @override
+  String supportDescriptionLimit(int limit) {
+    return 'Up to $limit characters; you can leave this blank.';
+  }
+
+  @override
+  String supportSubjectInvalid(int limit) {
+    return 'Enter a subject of 1–$limit characters without line breaks or control characters.';
+  }
+
+  @override
+  String supportDescriptionInvalid(int limit) {
+    return 'Use up to $limit characters without invalid control characters.';
+  }
+
+  @override
+  String get supportIncludeDiagnostics => 'Include technical details';
+
+  @override
+  String get supportDiagnosticsExplanation =>
+      'App version, Android version and device model only. You will review them before opening email.';
+
+  @override
+  String supportDiagnosticsBlock(
+    String appVersion,
+    String androidVersion,
+    String deviceModel,
+  ) {
+    return 'Technical details\nApp version: $appVersion\nAndroid version: $androidVersion\nDevice model: $deviceModel';
+  }
+
+  @override
+  String get supportPrivacyNote =>
+      'Journal entries and audio are never attached automatically. Meloop only opens a draft for you to edit and send in your email app.';
+
+  @override
+  String get supportPreview => 'Preview message';
+
+  @override
+  String get supportPreviewFailed =>
+      'Could not get technical details. Your message is still here. Try again or deselect technical details.';
+
+  @override
+  String get supportDraftHeading => 'A message from you.';
+
+  @override
+  String get supportReviewNote =>
+      'Review the content below. Go back to edit or keep editing in your email app before sending.';
+
+  @override
+  String get supportEmptyBody => 'No message entered.';
+
+  @override
+  String get supportCompose => 'Compose email';
+
+  @override
+  String get supportEmailUnavailable =>
+      'Could not open an email app. Copy the address and message to contact support another way.';
+
+  @override
+  String get supportCopyAddress => 'Copy address';
+
+  @override
+  String get supportCopyDetails => 'Copy message';
+
+  @override
+  String get supportEditDraft => 'Edit message';
+
+  @override
+  String get supportCopied => 'Copied.';
+
+  @override
+  String get supportCopyFailed =>
+      'Could not copy. Try again or select the text to copy it.';
 }

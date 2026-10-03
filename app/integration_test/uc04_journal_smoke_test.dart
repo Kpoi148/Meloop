@@ -221,6 +221,9 @@ class PendingReviewService implements PracticeReviewService {
   @override
   Future<String> rename(String id, String title) => delegate.rename(id, title);
   @override
+  Future<void> persistInput(String id, ReviewInput input) =>
+      delegate.persistInput(id, input);
+  @override
   Future<PracticeSession> save(String id, PracticeReviewValues values) async {
     await beforeSave();
     return delegate.save(id, values);

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../l10n/l10n.dart';
 import '../components/meloop_ui.dart';
+import '../support/privacy_policy_page.dart';
 
 /// Tempo's Pro page. The injected callback enables only the local UI preview.
 class ProPreviewPage extends StatefulWidget {
@@ -194,6 +195,12 @@ class _ProPreviewPageState extends State<ProPreviewPage> {
             strings.proRestoreFootnote,
             textAlign: TextAlign.center,
             style: TempoType.caption.copyWith(color: TempoColors.muted),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).push<void>(
+              MaterialPageRoute(builder: (_) => const PrivacyPolicyPage()),
+            ),
+            child: Text(strings.settingsPrivacy),
           ),
         ],
       ),

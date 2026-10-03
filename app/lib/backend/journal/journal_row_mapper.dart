@@ -60,10 +60,13 @@ ReviewInput? reviewFromJson(Object? value) {
     'next',
   };
   if (decoded is! Map<String, dynamic> ||
-      decoded.length != textKeys.length + 2 ||
+      decoded.keys.any(
+        (key) => !{...textKeys, 'mood', 'focus', 'bpmInput'}.contains(key),
+      ) ||
       !textKeys.every((key) => decoded[key] is String) ||
       !decoded.containsKey('mood') ||
-      !decoded.containsKey('focus')) {
+      !decoded.containsKey('focus') ||
+      (decoded.containsKey('bpmInput') && decoded['bpmInput'] is! String)) {
     throw const FormatException('Invalid stored review structure');
   }
   int? rating(String key) {
@@ -85,5 +88,6 @@ ReviewInput? reviewFromJson(Object? value) {
     next: decoded['next'] as String,
     mood: rating('mood'),
     focus: rating('focus'),
+    bpmInput: decoded['bpmInput'] as String?,
   );
 }

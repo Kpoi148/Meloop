@@ -8,6 +8,8 @@ import '../backend/journal/sqlite_journal_readers.dart';
 import '../backend/journal/sqlite_practice_timer_store.dart';
 import '../backend/journal/sqlite_practice_review_service.dart';
 import '../backend/journal/sqlite_practice_session_delete_service.dart';
+import '../backend/journal/sqlite_practice_session_update_service.dart';
+import '../shared/journal/practice_session_update_service.dart';
 import '../shared/journal/practice_review_service.dart';
 import '../shared/journal/practice_session_delete_service.dart';
 import '../backend/journal/practice_timer.dart';
@@ -43,6 +45,13 @@ final journalReviewServiceProvider = Provider<PracticeReviewService>(
     clock: ref.watch(journalClockProvider),
   ),
 );
+final journalSessionUpdateServiceProvider =
+    Provider<PracticeSessionUpdateService>(
+      (ref) => SqlitePracticeSessionUpdateService(
+        owner: ref.watch(journalDatabaseOwnerProvider),
+        clock: ref.watch(journalClockProvider),
+      ),
+    );
 final journalSessionDeleteServiceProvider =
     Provider<PracticeSessionDeleteService>(
       (ref) => SqlitePracticeSessionDeleteService(
