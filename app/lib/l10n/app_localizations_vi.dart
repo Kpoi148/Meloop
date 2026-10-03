@@ -581,6 +581,53 @@ class AppLocalizationsVi extends AppLocalizations {
   String get exportRecording => 'Xuất bản ghi';
 
   @override
+  String get recordingLinked => 'Đã gắn với nhật ký';
+
+  @override
+  String get recordingUnlinked => 'Chưa gắn nhật ký';
+
+  @override
+  String get recordingMissingFile => 'Tệp không còn trên thiết bị';
+
+  @override
+  String get recordingMissingMessage =>
+      'Không tìm thấy tệp âm thanh. Bạn có thể xóa bản ghi này khỏi danh sách.';
+
+  @override
+  String recordingMetadata(String duration, String status) {
+    return '$duration · $status';
+  }
+
+  @override
+  String get recordingMelodyTitle => 'Ý tưởng giai điệu';
+
+  @override
+  String get recordingDeleted => 'Đã xóa bản ghi âm.';
+
+  @override
+  String get recordingDeleteAction => 'Xóa';
+
+  @override
+  String get recordingShare => 'Chia sẻ bản ghi';
+
+  @override
+  String get recordingShareDescription => 'Chọn ứng dụng để gửi tệp âm thanh.';
+
+  @override
+  String get recordingSaveFile => 'Lưu vào tệp';
+
+  @override
+  String get recordingSaveFileDescription =>
+      'Chọn nơi lưu trên thiết bị của bạn.';
+
+  @override
+  String get recordingExported => 'Đã xuất bản ghi âm.';
+
+  @override
+  String get recordingExportFailed =>
+      'Chưa thể xuất bản ghi âm. Vui lòng thử lại.';
+
+  @override
   String get recordingActionFailed =>
       'Chưa thể mở bản ghi âm. Vui lòng thử lại.';
 

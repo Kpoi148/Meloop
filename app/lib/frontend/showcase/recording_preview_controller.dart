@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../shared/journal/journal_models.dart';
 import '../application/practice_timer_service.dart';
+import '../application/startup_controller.dart';
 import '../recording/recording_ui_state.dart';
+import 'recordings_preview_library.dart';
 
 /// Temporary inputs for UC-10 visual review. No microphone, files or SQLite.
 class RecordingPreviewInputs {
@@ -30,7 +32,18 @@ class RecordingPreviewInputs {
 }
 
 final recordingPreviewInputsProvider = Provider<RecordingPreviewInputs>(
-  (ref) => const RecordingPreviewInputs(),
+  (ref) => RecordingPreviewInputs(
+    quota: RecordingPreviewInputs.freeQuota.withSavedFiles(
+      (RecordingsPreviewLibrary.initialFileCount *
+                  ref.watch(meloopShellControllerProvider).profiles.length -
+              ref.watch(recordingsPreviewRemovedProvider).length)
+          .clamp(
+            0,
+            RecordingsPreviewLibrary.initialFileCount *
+                ref.watch(meloopShellControllerProvider).profiles.length,
+          ),
+    ),
+  ),
 );
 final recordingPreviewClockProvider = Provider<Duration Function()>((ref) {
   final clock = Stopwatch()..start();

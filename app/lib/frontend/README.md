@@ -10,3 +10,5 @@ Lớp giao diện của ứng dụng: hiển thị state, nhận thao tác ngư�
 - `practice_sessions/`: giao diện UC-06, tìm kiếm và bộ lọc theo hồ sơ, danh sách nhóm theo ngày và chi tiết chỉ xem. Nguồn danh sách được cấp qua `practiceSessionsLoaderProvider`; nội dung tạm để duyệt giao diện nằm trong `showcase/practice_session_examples.dart` và không ghi storage.
 
 Widget không truy cập SQLite, file system hoặc SDK mua hàng trực tiếp.
+
+`recording/` có màn ghi âm UC-10 và danh sách bản ghi UC-11–13. Danh sách dùng chung bố cục cho thư viện theo hồ sơ và bản ghi của buổi đã lưu; buổi đã lưu không có thao tác ghi mới. Nguồn dữ liệu và đồng hồ nghe lại để duyệt giao diện nằm trong `showcase/recordings_*.dart`, không ghi dữ liệu thiết bị. Hướng dẫn thay adapter và kiểm chứng: [`../../../docs/FE_RECORDINGS_UI.md`](../../../docs/FE_RECORDINGS_UI.md).

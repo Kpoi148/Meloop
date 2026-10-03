@@ -15,16 +15,21 @@ class MeloopArt extends StatelessWidget {
     super.key,
     this.size = 118,
     this.backgroundColor,
+    this.filterQuality = FilterQuality.medium,
   }) : tool = null,
        scene = null,
        columns = 4,
        asset = 'instruments-v2.png';
-  const MeloopArt.tool(MeloopTool this.tool, {super.key, this.size = 118})
-    : instrument = null,
-      backgroundColor = null,
-      scene = null,
-      columns = 2,
-      asset = 'tools-v2.png';
+  const MeloopArt.tool(
+    MeloopTool this.tool, {
+    super.key,
+    this.size = 118,
+    this.filterQuality = FilterQuality.medium,
+  }) : instrument = null,
+       backgroundColor = null,
+       scene = null,
+       columns = 2,
+       asset = 'tools-v2.png';
   final MeloopInstrument? instrument;
   final MeloopTool? tool;
   const MeloopArt.scene(
@@ -32,6 +37,7 @@ class MeloopArt extends StatelessWidget {
     super.key,
     this.size = 118,
     this.backgroundColor,
+    this.filterQuality = FilterQuality.medium,
   }) : instrument = null,
        tool = null,
        columns = 3,
@@ -48,6 +54,7 @@ class MeloopArt extends StatelessWidget {
   final int columns;
   final String asset;
   final double size;
+  final FilterQuality filterQuality;
 
   /// Matches Tempo's darken blend when the sprite sits on a colored surface.
   final Color? backgroundColor;
@@ -69,7 +76,7 @@ class MeloopArt extends StatelessWidget {
             width: size * columns,
             height: size * 2,
             fit: BoxFit.fill,
-            filterQuality: FilterQuality.medium,
+            filterQuality: filterQuality,
             color: backgroundColor,
             colorBlendMode: backgroundColor == null ? null : BlendMode.darken,
           ),

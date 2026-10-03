@@ -1136,6 +1136,90 @@ abstract class AppLocalizations {
   /// **'Xuất bản ghi'**
   String get exportRecording;
 
+  /// No description provided for @recordingLinked.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã gắn với nhật ký'**
+  String get recordingLinked;
+
+  /// No description provided for @recordingUnlinked.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa gắn nhật ký'**
+  String get recordingUnlinked;
+
+  /// No description provided for @recordingMissingFile.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tệp không còn trên thiết bị'**
+  String get recordingMissingFile;
+
+  /// No description provided for @recordingMissingMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không tìm thấy tệp âm thanh. Bạn có thể xóa bản ghi này khỏi danh sách.'**
+  String get recordingMissingMessage;
+
+  /// No description provided for @recordingMetadata.
+  ///
+  /// In vi, this message translates to:
+  /// **'{duration} · {status}'**
+  String recordingMetadata(String duration, String status);
+
+  /// No description provided for @recordingMelodyTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ý tưởng giai điệu'**
+  String get recordingMelodyTitle;
+
+  /// No description provided for @recordingDeleted.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã xóa bản ghi âm.'**
+  String get recordingDeleted;
+
+  /// No description provided for @recordingDeleteAction.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa'**
+  String get recordingDeleteAction;
+
+  /// No description provided for @recordingShare.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chia sẻ bản ghi'**
+  String get recordingShare;
+
+  /// No description provided for @recordingShareDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn ứng dụng để gửi tệp âm thanh.'**
+  String get recordingShareDescription;
+
+  /// No description provided for @recordingSaveFile.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lưu vào tệp'**
+  String get recordingSaveFile;
+
+  /// No description provided for @recordingSaveFileDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn nơi lưu trên thiết bị của bạn.'**
+  String get recordingSaveFileDescription;
+
+  /// No description provided for @recordingExported.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã xuất bản ghi âm.'**
+  String get recordingExported;
+
+  /// No description provided for @recordingExportFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể xuất bản ghi âm. Vui lòng thử lại.'**
+  String get recordingExportFailed;
+
   /// No description provided for @recordingActionFailed.
   ///
   /// In vi, this message translates to:

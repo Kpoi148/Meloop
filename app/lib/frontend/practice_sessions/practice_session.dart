@@ -53,11 +53,26 @@ class PracticeSessionRecording {
     this.canPlay = true,
     this.canExport = true,
     this.canDelete = true,
+    this.fileAvailable = true,
+    this.linkedToJournal = true,
   });
 
   final String id, title;
   final Duration duration;
   final bool canPlay, canExport, canDelete;
+  final bool fileAvailable, linkedToJournal;
+
+  PracticeSessionRecording withFileAvailable(bool available) =>
+      PracticeSessionRecording(
+        id: id,
+        title: title,
+        duration: duration,
+        canPlay: canPlay,
+        canExport: canExport,
+        canDelete: canDelete,
+        fileAvailable: available,
+        linkedToJournal: linkedToJournal,
+      );
 }
 
 typedef PracticeSessionsLoader = Future<List<PracticeSession>> Function(

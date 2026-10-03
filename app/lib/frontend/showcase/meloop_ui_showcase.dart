@@ -27,6 +27,7 @@ import 'language_selector.dart';
 import 'metronome_example.dart';
 import 'preview_copy.dart';
 import 'recording_example.dart';
+import 'recordings_example.dart';
 import 'profile_form_example.dart';
 import 'preview_data_reset_button.dart';
 import 'pro_preview_page.dart';
@@ -126,6 +127,7 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase>
           ),
         ),
         onOpenRecording: () => _recording(toolsContext),
+        onOpenRecordings: () => _recordings(toolsContext),
       ),
     ),
   );
@@ -133,6 +135,23 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase>
   void _toolsHome(BuildContext toolsContext) {
     Navigator.of(toolsContext).pop();
     ref.read(meloopShellControllerProvider.notifier).selectTab(0);
+  }
+
+  Future<void> _recordings(BuildContext sourceContext) async {
+    final profile = ref.read(meloopShellControllerProvider).selectedProfile;
+    if (profile == null) return;
+    await Navigator.of(sourceContext).push<void>(
+      MaterialPageRoute(
+        builder: (recordingsContext) => RecordingsExample(
+          profile: profile,
+          onHome: () {
+            Navigator.of(sourceContext).popUntil((route) => route.isFirst);
+            ref.read(meloopShellControllerProvider.notifier).selectTab(0);
+          },
+          onRecordPractice: () => _recording(recordingsContext),
+        ),
+      ),
+    );
   }
 
   Future<void> _recording(BuildContext sourceContext) async {

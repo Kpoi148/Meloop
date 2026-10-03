@@ -403,7 +403,8 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('Ghi âm buổi luyện'));
+      expect(find.text('Ghi âm buổi luyện'), findsNothing);
+      await tester.ensureVisible(find.text('Chưa có bản ghi âm.'));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       tester
