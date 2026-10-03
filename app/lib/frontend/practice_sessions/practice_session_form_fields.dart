@@ -28,6 +28,7 @@ class PracticeSessionFormFields extends StatelessWidget {
     this.mood,
     this.focus,
     this.saving = false,
+    this.inputsLocked = false,
     this.error,
     this.durationError,
   });
@@ -48,6 +49,8 @@ class PracticeSessionFormFields extends StatelessWidget {
   final ValueChanged<DateTime> onDate;
   final ValueChanged<int?> onMood, onFocus;
   final bool saving;
+  final bool inputsLocked;
+  bool get _disabled => saving || inputsLocked;
   final String? error, durationError;
 
   @override
@@ -138,7 +141,7 @@ class PracticeSessionFormFields extends StatelessWidget {
         MeloopDateField(
           label: strings.practiceDate,
           value: date,
-          enabled: !saving,
+          enabled: !_disabled,
           onChanged: onDate,
           compact: true,
         ),
@@ -183,7 +186,7 @@ class PracticeSessionFormFields extends StatelessWidget {
           label: strings.mood,
           initialValue: mood,
           onChanged: onMood,
-          enabled: !saving,
+          enabled: !_disabled,
           compact: true,
         ),
         const SizedBox(height: PracticeSessionFormTokens.fieldGap),
@@ -191,7 +194,7 @@ class PracticeSessionFormFields extends StatelessWidget {
           label: strings.focusLevel,
           initialValue: focus,
           onChanged: onFocus,
-          enabled: !saving,
+          enabled: !_disabled,
           mood: false,
           compact: true,
         ),
@@ -318,7 +321,7 @@ class PracticeSessionFormFields extends StatelessWidget {
           key: inputKey,
           controller: controller,
           focusNode: focusNode,
-          enabled: !saving,
+          enabled: !_disabled,
           style: multiline
               ? PracticeSessionFormTokens.note
               : PracticeSessionFormTokens.input,

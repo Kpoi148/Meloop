@@ -30,6 +30,7 @@ class SessionFormExample extends ConsumerStatefulWidget {
     this.initialReviewInput,
     this.onPersistInput,
     this.instrumentName,
+    this.isSaveCommitted,
   });
   final SessionFormSave? onSave;
   final String initialTitle;
@@ -41,6 +42,7 @@ class SessionFormExample extends ConsumerStatefulWidget {
   final ReviewInput? initialReviewInput;
   final SessionFormPersistInput? onPersistInput;
   final String? instrumentName;
+  final bool Function()? isSaveCommitted;
 
   /// Stable identity of the journal draft being reviewed.
   final String? sessionId;
@@ -136,7 +138,7 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state != AppLifecycleState.resumed && !_saving) {
+    if (state != AppLifecycleState.resumed && !_saving && !_committed) {
       unawaited(_flushBackgroundDraft());
     }
   }
@@ -149,21 +151,26 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample>
     }
   }
 
-  void _inputChanged() => _draftController?.update(
-    ReviewInput(
-      title: _title.text,
-      practiceDate: PracticeDate.fromLocal(_date).value,
-      durationHoursInput: _hours.text,
-      durationMinutesInput: _minutes.text,
-      durationSecondsInput: _seconds.text,
-      practiced: _practiced.text,
-      difficulty: _difficulty.text,
-      next: _next.text,
-      mood: _mood,
-      focus: _focus,
-      bpmInput: _bpm.text,
-    ),
-  );
+  void _inputChanged() {
+    if (_committed) return;
+    _draftController?.update(
+      ReviewInput(
+        title: _title.text,
+        practiceDate: PracticeDate.fromLocal(_date).value,
+        durationHoursInput: _hours.text,
+        durationMinutesInput: _minutes.text,
+        durationSecondsInput: _seconds.text,
+        practiced: _practiced.text,
+        difficulty: _difficulty.text,
+        next: _next.text,
+        mood: _mood,
+        focus: _focus,
+        bpmInput: _bpm.text,
+      ),
+    );
+  }
+
+  bool get _committed => widget.isSaveCommitted?.call() ?? false;
 
   bool get _saving =>
       _submitting ||
@@ -197,7 +204,7 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample>
     super.dispose();
   }
 
-  Future<void> _save() async {
+  Future<void> _save({VoidCallback? onCompleted}) async {
     if (_saving) return;
     final controller = ref.read(
       sessionFormControllerProvider(_saveId).notifier,
@@ -228,7 +235,7 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample>
     FocusManager.instance.primaryFocus?.unfocus();
     setState(() => _submitting = true);
     try {
-      if (_draftController != null) {
+      if (_draftController != null && !_committed) {
         try {
           await _draftController!.flush();
         } catch (_) {
@@ -237,7 +244,7 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample>
         }
       }
       if (!mounted) return;
-      final saved = await controller.save(
+      await controller.save(
         SessionFormValues(
           title: _title.text.trim(),
           date: _date,
@@ -250,14 +257,17 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample>
           bpm: int.tryParse(_bpm.text.trim()),
         ),
         onSave: widget.onSave,
+        onCompleted: () {
+          if (!mounted) return;
+          if (onCompleted != null) {
+            onCompleted();
+          } else if (widget.onSaved != null) {
+            widget.onSaved!();
+          } else {
+            Navigator.of(context).pop();
+          }
+        },
       );
-      if (saved && mounted) {
-        if (widget.onSaved != null) {
-          widget.onSaved!();
-        } else {
-          Navigator.of(context).pop();
-        }
-      }
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -280,6 +290,10 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample>
 
   Future<void> _leave(VoidCallback leave) async {
     if (_saving || _confirmingBack) return;
+    if (_committed) {
+      await _save(onCompleted: leave);
+      return;
+    }
     _confirmingBack = true;
     try {
       if (!_dirty ||
@@ -316,7 +330,9 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample>
     final saveState = ref.watch(sessionFormControllerProvider(_saveId));
     final saving = _saving;
     final saveError = saveState.hasError
-        ? strings.saveSessionFailed
+        ? _committed
+              ? strings.savedSessionCompletionFailed
+              : strings.saveSessionFailed
         : _draftController?.error != null
         ? strings.reviewDraftFailed
         : null;
@@ -373,6 +389,7 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample>
             titleFocus: _titleFocus,
             instrumentName: widget.instrumentName,
             saving: saving,
+            inputsLocked: _committed,
             onDate: (value) {
               setState(() => _date = value);
               _inputChanged();

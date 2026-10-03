@@ -6,6 +6,7 @@ export '../../shared/profiles/instrument_profile_service.dart';
 final instrumentProfileServiceProvider = Provider<InstrumentProfileService>(
   (ref) =>
       throw StateError('Instrument profile service has not been configured.'),
+  dependencies: const [],
 );
 
 extension InstrumentTypeLabel on InstrumentType {

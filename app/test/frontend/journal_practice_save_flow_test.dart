@@ -1,10 +1,15 @@
 import 'dart:io';
+import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meloop/frontend/application/startup_controller.dart';
+import 'package:meloop/frontend/application/practice_review_provider.dart';
+import 'package:meloop/app/journal_practice_adapter.dart';
 import 'package:meloop/app/meloop_app.dart';
 import 'package:meloop/app/journal_providers.dart';
 import 'package:meloop/app/profile_preview_app.dart';
@@ -31,9 +36,13 @@ import '../backend/journal/practice_timer_test.dart'
 
 void main() {
   sqfliteFfiInit();
-  for (final browseDifferentProfile in [false, true]) {
+  for (final (browseDifferentProfile, disposeDuringSave) in [
+    (false, false),
+    (true, false),
+    (false, true),
+  ]) {
     testWidgets(
-      'real journal Save refreshes history, Home and cold entry (other profile: $browseDifferentProfile)',
+      'real journal Save refreshes history/Home (other profile: $browseDifferentProfile, disposed: $disposeDuringSave)',
       (tester) async {
         await tester.runAsync(() async {
           tester.view.devicePixelRatio = 1;
@@ -61,6 +70,8 @@ void main() {
           late JournalDatabaseOwner owner;
           late PracticeTimer timer;
           final mono = TestMonotonicClock();
+          final committed = Completer<void>();
+          final releaseSave = Completer<void>();
           temp = await Directory.systemTemp.createTemp('meloop-save-flow-');
           owner = JournalDatabaseOwner(
             open: () => JournalDatabase.open(
@@ -133,7 +144,30 @@ void main() {
             await tester.pumpWidget(
               MeloopApp(
                 overrides: app.overrides,
-                home: app.home,
+                home: disposeDuringSave
+                    ? ProviderScope(
+                        overrides: [
+                          if (disposeDuringSave)
+                            practiceReviewSaveProvider.overrideWith((ref) {
+                              final review = ref.read(
+                                journalReviewServiceProvider,
+                              );
+                              return (id, values) async {
+                                final saved = presentPracticeSession(
+                                  await review.save(
+                                    id,
+                                    journalReviewValues(values),
+                                  ),
+                                );
+                                committed.complete();
+                                await releaseSave.future;
+                                return saved;
+                              };
+                            }),
+                        ],
+                        child: app.home,
+                      )
+                    : app.home,
                 builder: (_, child) =>
                     RepaintBoundary(key: boundary, child: child!),
               ),
@@ -189,12 +223,53 @@ void main() {
             await tap(find.text('Kết thúc'));
             await waitFor(find.byType(SessionFormExample));
             await tap(find.widgetWithText(MeloopButton, 'Lưu buổi luyện'));
+            if (disposeDuringSave) {
+              await committed.future;
+              final context = tester.element(find.byType(SessionFormExample));
+              Navigator.of(context).removeRoute(ModalRoute.of(context)!);
+              await tester.pump();
+              expect(find.byType(SessionFormExample), findsNothing);
+              releaseSave.complete();
+              await waitFor(find.byType(HomeExample));
+              final shell = ProviderScope.containerOf(
+                tester.element(find.byType(HomeExample)),
+              ).read(meloopShellControllerProvider);
+              expect(shell.profiles.single.savedSessionCount, 1);
+              expect(shell.draft, isNull);
+              expect(timer.snapshot, isNull);
+              expect(
+                await SqliteJournalSessionReader(owner)
+                    .saved(profileId: profileId),
+                hasLength(1),
+              );
+              expect(find.byType(PracticeSessionDetailPage), findsNothing);
+              expect(tester.takeException(), isNull);
+              return;
+            }
             await waitFor(find.byType(PracticeSessionDetailPage));
             expect(find.text(title), findsOneWidget);
             expect(find.text('$profileName · 5 giây'), findsOneWidget);
             expect(find.text('— / 5', findRichText: true), findsNWidgets(2));
             expect(find.text('Chưa có ghi chú.'), findsNWidgets(2));
             expect(timer.snapshot, isNull);
+            final shell = ProviderScope.containerOf(
+              tester.element(find.byType(PracticeSessionDetailPage)),
+            ).read(meloopShellControllerProvider);
+            expect(
+              shell.profiles
+                  .firstWhere((p) => p.id == profileId)
+                  .savedSessionCount,
+              1,
+            );
+            expect(shell.draft, isNull);
+            if (browseDifferentProfile) {
+              expect(
+                shell.profiles
+                    .firstWhere((p) => p.id == otherProfileId)
+                    .savedSessionCount,
+                0,
+              );
+            }
             for (final asset in [
               'illustrations.png',
               'instruments-v2.png',
