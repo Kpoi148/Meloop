@@ -276,6 +276,29 @@ void main() {
     expect(notes.single.id, 'note');
   });
 
+  testWidgets(
+    'opening details during keyboard dismissal keeps navigation valid',
+    (tester) async {
+      await _mount(tester);
+      addTearDown(tester.view.resetViewInsets);
+      final card = find.widgetWithText(PracticeSessionCard, 'Luyện gam C');
+      await tester.ensureVisible(card);
+      tester.view.viewInsets = const FakeViewPadding(bottom: 280);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 30));
+      tester.view.viewInsets = FakeViewPadding.zero;
+      await tester.pump();
+      await tester.tap(card);
+      await tester.pumpAndSettle();
+      expect(find.byType(PracticeSessionDetailPage), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.byTooltip('Quay lại'));
+      await tester.pumpAndSettle();
+      expect(find.byType(PracticeSessionsTab), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('period filters and details retain search and scroll position', (
     tester,
   ) async {

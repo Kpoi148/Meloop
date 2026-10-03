@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meloop/frontend/application/session_form_controller.dart';
 import 'package:meloop/frontend/application/session_form_values.dart';
+import 'package:meloop/frontend/application/review_save_completion.dart';
+import 'package:meloop/frontend/practice_sessions/practice_session.dart';
 
 SessionFormValues values() => SessionFormValues(
   title: 'Luyện gam C',
@@ -15,6 +17,102 @@ SessionFormValues values() => SessionFormValues(
 );
 
 void main() {
+  test(
+    'post-commit and navigation failures retry without saving twice',
+    () async {
+      var saves = 0, completions = 0, navigations = 0;
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+      final provider = sessionFormControllerProvider(Object());
+      final subscription = container.listen(provider, (_, _) {});
+      addTearDown(subscription.close);
+      final controller = container.read(provider.notifier);
+      final completion = ReviewSaveCompletion(
+        save: (input) async {
+          saves++;
+          return PracticeSession(
+            id: 'saved-session',
+            profileId: 'profile',
+            date: input.date,
+            title: input.title,
+            duration: Duration(seconds: input.durationSeconds),
+          );
+        },
+        complete: () async {
+          if (++completions == 1) throw StateError('Completion failed');
+        },
+      );
+      void navigate() {
+        if (++navigations == 1) throw StateError('Navigation failed');
+      }
+
+      expect(
+        await controller.save(
+          values(),
+          onSave: completion.submit,
+          onCompleted: navigate,
+        ),
+        isFalse,
+      );
+      expect(completion.saved, isNotNull);
+      expect(navigations, 0);
+      expect(
+        await controller.save(
+          values(),
+          onSave: completion.submit,
+          onCompleted: navigate,
+        ),
+        isFalse,
+      );
+      expect(container.read(provider).hasError, isTrue);
+      expect(
+        await controller.save(
+          values(),
+          onSave: completion.submit,
+          onCompleted: navigate,
+        ),
+        isTrue,
+      );
+      expect(saves, 1);
+      expect(completions, 2);
+      expect(navigations, 2);
+    },
+  );
+
+  test('disposed form finishes committed work without navigating', () async {
+    final pending = Completer<PracticeSession>();
+    var completed = false, navigated = false;
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    final provider = sessionFormControllerProvider(Object());
+    final subscription = container.listen(provider, (_, _) {});
+    final completion = ReviewSaveCompletion(
+      save: (_) => pending.future,
+      complete: () async => completed = true,
+    );
+    final operation = container
+        .read(provider.notifier)
+        .save(
+          values(),
+          onSave: completion.submit,
+          onCompleted: () => navigated = true,
+        );
+    subscription.close();
+    await container.pump();
+    pending.complete(
+      PracticeSession(
+        id: 'saved',
+        profileId: 'profile',
+        date: values().date,
+        title: 'Saved',
+        duration: const Duration(seconds: 60),
+      ),
+    );
+    expect(await operation, isFalse);
+    expect(completed, isTrue);
+    expect(navigated, isFalse);
+    expect(completion.saved!.id, 'saved');
+  });
   test(
     'injected save locks immediately, exposes errors and allows retry',
     () async {

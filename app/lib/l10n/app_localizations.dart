@@ -1676,6 +1676,12 @@ abstract class AppLocalizations {
   /// **'Chưa thể lưu buổi luyện. Nội dung của bạn vẫn ở đây. Vui lòng thử lại.'**
   String get saveSessionFailed;
 
+  /// No description provided for @savedSessionCompletionFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Buổi luyện đã được lưu. Chưa thể hoàn tất bước tiếp theo. Vui lòng thử lại.'**
+  String get savedSessionCompletionFailed;
+
   /// No description provided for @catalogTitle.
   ///
   /// In vi, this message translates to:
@@ -2305,6 +2311,288 @@ abstract class AppLocalizations {
   /// In vi, this message translates to:
   /// **'Một công cụ âm thanh hoạt động mỗi lúc; bộ đếm giờ vẫn tiếp tục.'**
   String get practiceToolsTimingHint;
+
+  /// No description provided for @recordingTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ghi âm luyện tập'**
+  String get recordingTitle;
+
+  /// No description provided for @sessionRecordingsTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bản ghi của buổi luyện'**
+  String get sessionRecordingsTitle;
+
+  /// No description provided for @sessionRecordingsHeading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lắng nghe\nhành trình của bạn.'**
+  String get sessionRecordingsHeading;
+
+  /// No description provided for @sessionRecordingsSubtitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Những âm thanh bạn muốn giữ lại.'**
+  String get sessionRecordingsSubtitle;
+
+  /// No description provided for @sessionRecordingsEmptyMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ghi lại một đoạn trong buổi luyện để nghe lại sau.'**
+  String get sessionRecordingsEmptyMessage;
+
+  /// No description provided for @recordPracticeSession.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ghi âm buổi luyện'**
+  String get recordPracticeSession;
+
+  /// No description provided for @sessionRecordingsDeleteHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xóa một bản ghi không xóa nhật ký buổi luyện.'**
+  String get sessionRecordingsDeleteHint;
+
+  /// No description provided for @recordingDefaultTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Buổi luyện của tôi'**
+  String get recordingDefaultTitle;
+
+  /// No description provided for @recordingEmptyHeading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giữ lại âm thanh\ncủa hôm nay.'**
+  String get recordingEmptyHeading;
+
+  /// No description provided for @recordingEmptyTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bắt đầu một buổi luyện trước.'**
+  String get recordingEmptyTitle;
+
+  /// No description provided for @recordingEmptyDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bản ghi sẽ đi cùng nhật ký buổi luyện đang diễn ra.'**
+  String get recordingEmptyDescription;
+
+  /// No description provided for @recordingStart.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bắt đầu ghi âm'**
+  String get recordingStart;
+
+  /// No description provided for @recordingStop.
+  ///
+  /// In vi, this message translates to:
+  /// **'Dừng ghi âm'**
+  String get recordingStop;
+
+  /// No description provided for @recordingPending.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bản ghi chưa được giữ'**
+  String get recordingPending;
+
+  /// No description provided for @recordingMute.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tắt âm'**
+  String get recordingMute;
+
+  /// No description provided for @recordingUnmute.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bật âm'**
+  String get recordingUnmute;
+
+  /// No description provided for @recordingPlaybackOptions.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tùy chọn bản ghi'**
+  String get recordingPlaybackOptions;
+
+  /// No description provided for @recordingRestartPlayback.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nghe lại từ đầu'**
+  String get recordingRestartPlayback;
+
+  /// No description provided for @recordingPendingHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nghe lại rồi giữ hoặc bỏ bản ghi này trước khi bắt đầu bản mới.'**
+  String get recordingPendingHint;
+
+  /// No description provided for @recordingActive.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang ghi âm · Tối đa {minutes} phút'**
+  String recordingActive(int minutes);
+
+  /// No description provided for @recordingReady.
+  ///
+  /// In vi, this message translates to:
+  /// **'Micro sẵn sàng · Tối đa {minutes} phút'**
+  String recordingReady(int minutes);
+
+  /// No description provided for @recordingMicrophoneOff.
+  ///
+  /// In vi, this message translates to:
+  /// **'Micro chưa bật · Tối đa {minutes} phút'**
+  String recordingMicrophoneOff(int minutes);
+
+  /// No description provided for @recordingFootnote.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bản ghi được lưu trên thiết bị của bạn.\nGhi âm không kết thúc đồng hồ buổi luyện.'**
+  String get recordingFootnote;
+
+  /// No description provided for @recordingFreeQuota.
+  ///
+  /// In vi, this message translates to:
+  /// **'Free · {count}/{limit} bản ghi'**
+  String recordingFreeQuota(int count, int limit);
+
+  /// No description provided for @recordingProQuota.
+  ///
+  /// In vi, this message translates to:
+  /// **'Pro · Tối đa {minutes} phút mỗi bản ghi'**
+  String recordingProQuota(int minutes);
+
+  /// No description provided for @recordingViewPro.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem Meloop Pro'**
+  String get recordingViewPro;
+
+  /// No description provided for @recordingProTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm không gian cho đam mê.'**
+  String get recordingProTitle;
+
+  /// No description provided for @recordingProDescription.
+  ///
+  /// In vi, this message translates to:
+  /// **'Meloop Pro mở rộng thời lượng và số bản ghi cho những buổi luyện của bạn.'**
+  String get recordingProDescription;
+
+  /// No description provided for @recordingProJournalHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn luôn có thể tiếp tục luyện tập và lưu nhật ký với Free, kể cả khi không cấp quyền micro.'**
+  String get recordingProJournalHint;
+
+  /// No description provided for @recordingContinuePractice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tiếp tục luyện tập'**
+  String get recordingContinuePractice;
+
+  /// No description provided for @recordingReviewTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nghe lại một chút.'**
+  String get recordingReviewTitle;
+
+  /// No description provided for @recordingKeep.
+  ///
+  /// In vi, this message translates to:
+  /// **'Giữ bản ghi'**
+  String get recordingKeep;
+
+  /// No description provided for @recordingDiscard.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bỏ bản ghi'**
+  String get recordingDiscard;
+
+  /// No description provided for @recordingDiscardTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bỏ bản ghi vừa rồi?'**
+  String get recordingDiscardTitle;
+
+  /// No description provided for @recordingDiscardMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bản ghi chưa được giữ sẽ bị xóa.'**
+  String get recordingDiscardMessage;
+
+  /// No description provided for @recordingKept.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã giữ bản ghi trên thiết bị.'**
+  String get recordingKept;
+
+  /// No description provided for @recordingPausePlayback.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tạm dừng nghe lại'**
+  String get recordingPausePlayback;
+
+  /// No description provided for @recordingMicrophoneDenied.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bạn chưa cấp quyền micro. Bật quyền micro trong Cài đặt của thiết bị rồi thử lại. Bạn vẫn có thể lưu nhật ký buổi luyện.'**
+  String get recordingMicrophoneDenied;
+
+  /// No description provided for @recordingMicrophoneUnavailable.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không tìm thấy micro trên thiết bị. Kiểm tra micro rồi thử lại. Bạn vẫn có thể tiếp tục luyện tập và lưu nhật ký.'**
+  String get recordingMicrophoneUnavailable;
+
+  /// No description provided for @recordingStorageFull.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không đủ dung lượng để ghi âm. Giải phóng bộ nhớ rồi thử lại. Nhật ký buổi luyện vẫn có thể lưu.'**
+  String get recordingStorageFull;
+
+  /// No description provided for @recordingAudioBusy.
+  ///
+  /// In vi, this message translates to:
+  /// **'Một công cụ âm thanh khác đang hoạt động. Dừng công cụ đó rồi thử ghi âm lại.'**
+  String get recordingAudioBusy;
+
+  /// No description provided for @recordingStartFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể bắt đầu ghi âm. Thử lại khi micro sẵn sàng. Trạng thái buổi luyện vẫn được giữ.'**
+  String get recordingStartFailed;
+
+  /// No description provided for @recordingSaveFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa giữ được bản ghi. Bản ghi vẫn ở đây để bạn nghe lại hoặc thử giữ lần nữa.'**
+  String get recordingSaveFailed;
+
+  /// No description provided for @recordingInterrupted.
+  ///
+  /// In vi, this message translates to:
+  /// **'Ghi âm đã dừng do gián đoạn. Nghe lại rồi giữ hoặc bỏ bản ghi trước khi ghi tiếp.'**
+  String get recordingInterrupted;
+
+  /// No description provided for @recordingDurationLimit.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã đạt giới hạn {minutes} phút. Bản ghi đã dừng để bạn nghe lại và giữ. Bạn vẫn có thể lưu nhật ký buổi luyện.'**
+  String recordingDurationLimit(int minutes);
+
+  /// No description provided for @recordingFileLimit.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đã đủ {limit} bản ghi Free. Xóa bớt bản ghi hoặc xem Meloop Pro để ghi thêm. Bạn vẫn có thể lưu nhật ký buổi luyện.'**
+  String recordingFileLimit(int limit);
+
+  /// No description provided for @recordingPracticePaused.
+  ///
+  /// In vi, this message translates to:
+  /// **'Buổi luyện đang tạm dừng. Tiếp tục buổi luyện trước khi ghi âm.'**
+  String get recordingPracticePaused;
 
   /// No description provided for @privacyTitle.
   ///

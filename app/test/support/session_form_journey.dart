@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meloop/app/journal_providers.dart';
 import 'package:meloop/app/profile_preview_app.dart';
 import 'package:meloop/backend/database/journal_database_owner.dart';
@@ -8,6 +9,8 @@ import 'package:meloop/backend/journal/sqlite_instrument_profile_service.dart';
 import 'package:meloop/backend/journal/sqlite_journal_readers.dart';
 import 'package:meloop/backend/journal/sqlite_practice_timer_store.dart';
 import 'package:meloop/frontend/components/meloop_ui.dart';
+import 'package:meloop/frontend/application/practice_timer_service.dart';
+import 'package:meloop/frontend/application/startup_controller.dart';
 import 'package:meloop/frontend/practice_sessions/practice_session_card.dart';
 import 'package:meloop/frontend/practice_sessions/practice_session_detail_page.dart';
 import 'package:meloop/frontend/showcase/home_example.dart';
@@ -23,6 +26,7 @@ Future<void> runSessionFormJourney(
   required JournalDatabaseOwner Function() createOwner,
   required PracticeScreenAwake Function() createScreenAwake,
   Future<void> Function(String)? screenshot,
+  bool failCompletionOnce = false,
 }) async {
   const profile = '00000000-0000-4000-8000-000000000001';
   var owner = createOwner();
@@ -34,12 +38,21 @@ Future<void> runSessionFormJourney(
     schedulePulses: false,
   );
   var timer = createTimer();
+  var completionFailed = false;
   SqliteJournalSessionReader reader() => SqliteJournalSessionReader(owner);
   Future<void> mount() => tester.pumpWidget(
     createJournalProfileApp(
       overrides: [
         journalDatabaseOwnerProvider.overrideWithValue(owner),
         journalPracticeTimerProvider.overrideWithValue(timer),
+        if (failCompletionOnce)
+          practiceTimerCompleteProvider.overrideWithValue((id) async {
+            if (!completionFailed) {
+              completionFailed = true;
+              throw StateError('Injected completion failure');
+            }
+            if (timer.snapshot?.sessionId == id) await timer.complete(id);
+          }),
       ],
     ),
   );
@@ -48,7 +61,12 @@ Future<void> runSessionFormJourney(
       await Future<void>.delayed(const Duration(milliseconds: 20));
       await tester.pump(const Duration(milliseconds: 50));
       if (finder.evaluate().isNotEmpty &&
-          find.byType(CircularProgressIndicator).evaluate().isEmpty &&
+          // A route being covered can still have a pending SQLite action.
+          // Let real I/O finish before settling animations with fake time.
+          find
+              .byType(CircularProgressIndicator, skipOffstage: false)
+              .evaluate()
+              .isEmpty &&
           timer.snapshot?.busy != true) {
         break;
       }
@@ -193,7 +211,31 @@ Future<void> runSessionFormJourney(
     await enter(find.byType(TextFormField).at(7), '');
     await screenshot?.call('task19-review');
     await tap(find.widgetWithText(MeloopButton, 'Lưu buổi luyện'));
+    if (failCompletionOnce) {
+      await waitFor(find.textContaining('Buổi luyện đã được lưu.'));
+      expect((await reader().saved(profileId: profile)).single.id, id);
+      expect(await reader().unfinished(profileId: profile), isNull);
+      expect(timer.snapshot!.sessionId, id);
+      final fields = find.byType(TextField);
+      for (final field in tester.widgetList<TextField>(fields)) {
+        expect(field.enabled, isFalse);
+      }
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump();
+      await tap(find.widgetWithText(MeloopButton, 'Thử lại'));
+    }
     await waitFor(find.byType(PracticeSessionDetailPage));
+    final shell = ProviderScope.containerOf(
+      tester.element(find.byType(PracticeSessionDetailPage)),
+    ).read(meloopShellControllerProvider);
+    expect(shell.profiles.single.savedSessionCount, 1);
+    expect(shell.draft, isNull);
+    expect(timer.snapshot, isNull);
     final saved = (await reader().saved(profileId: profile)).single;
     expect(saved.id, id);
     expect(saved.durationSeconds, 30);

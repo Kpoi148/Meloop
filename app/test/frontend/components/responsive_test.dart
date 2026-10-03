@@ -51,7 +51,7 @@ void main() {
                 onCreate: () {},
                 onProgress: () {},
                 onRetry: () {},
-                onCatalog: () {},
+                onTools: () {},
               ),
             ),
             const WelcomeExample(),

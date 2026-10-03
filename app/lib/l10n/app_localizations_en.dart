@@ -892,6 +892,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not save the practice session. Your content is still here. Please try again.';
 
   @override
+  String get savedSessionCompletionFailed =>
+      'The practice session is saved. Could not finish the next step. Please try again.';
+
+  @override
   String get catalogTitle => 'Shared components';
 
   @override
@@ -1237,6 +1241,177 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get practiceToolsTimingHint =>
       'One audio tool runs at a time; the practice timer continues.';
+
+  @override
+  String get recordingTitle => 'Practice recording';
+
+  @override
+  String get sessionRecordingsTitle => 'Session recordings';
+
+  @override
+  String get sessionRecordingsHeading => 'Listen to\nyour journey.';
+
+  @override
+  String get sessionRecordingsSubtitle => 'The sounds you want to keep.';
+
+  @override
+  String get sessionRecordingsEmptyMessage =>
+      'Record a passage during practice to listen back later.';
+
+  @override
+  String get recordPracticeSession => 'Record a practice session';
+
+  @override
+  String get sessionRecordingsDeleteHint =>
+      'Deleting a recording does not delete your practice journal.';
+
+  @override
+  String get recordingDefaultTitle => 'My practice session';
+
+  @override
+  String get recordingEmptyHeading => 'Keep the sound\nof today.';
+
+  @override
+  String get recordingEmptyTitle => 'Start a practice session first.';
+
+  @override
+  String get recordingEmptyDescription =>
+      'The recording will go with the journal of your ongoing practice session.';
+
+  @override
+  String get recordingStart => 'Start recording';
+
+  @override
+  String get recordingStop => 'Stop recording';
+
+  @override
+  String get recordingPending => 'Recording not kept yet';
+
+  @override
+  String get recordingMute => 'Mute';
+
+  @override
+  String get recordingUnmute => 'Unmute';
+
+  @override
+  String get recordingPlaybackOptions => 'Recording options';
+
+  @override
+  String get recordingRestartPlayback => 'Listen from the beginning';
+
+  @override
+  String get recordingPendingHint =>
+      'Listen back and keep or discard this recording before starting another.';
+
+  @override
+  String recordingActive(int minutes) {
+    return 'Recording · Up to $minutes minutes';
+  }
+
+  @override
+  String recordingReady(int minutes) {
+    return 'Microphone ready · Up to $minutes minutes';
+  }
+
+  @override
+  String recordingMicrophoneOff(int minutes) {
+    return 'Microphone off · Up to $minutes minutes';
+  }
+
+  @override
+  String get recordingFootnote =>
+      'Recordings are stored on your device.\nRecording does not end the practice timer.';
+
+  @override
+  String recordingFreeQuota(int count, int limit) {
+    return 'Free · $count/$limit recordings';
+  }
+
+  @override
+  String recordingProQuota(int minutes) {
+    return 'Pro · Up to $minutes minutes per recording';
+  }
+
+  @override
+  String get recordingViewPro => 'View Meloop Pro';
+
+  @override
+  String get recordingProTitle => 'More room for your passion.';
+
+  @override
+  String get recordingProDescription =>
+      'Meloop Pro expands recording duration and capacity for your practice sessions.';
+
+  @override
+  String get recordingProJournalHint =>
+      'You can always keep practicing and save your journal with Free, even without microphone permission.';
+
+  @override
+  String get recordingContinuePractice => 'Keep practicing';
+
+  @override
+  String get recordingReviewTitle => 'Listen back for a moment.';
+
+  @override
+  String get recordingKeep => 'Keep recording';
+
+  @override
+  String get recordingDiscard => 'Discard recording';
+
+  @override
+  String get recordingDiscardTitle => 'Discard this recording?';
+
+  @override
+  String get recordingDiscardMessage =>
+      'The recording you have not kept will be deleted.';
+
+  @override
+  String get recordingKept => 'Recording kept on your device.';
+
+  @override
+  String get recordingPausePlayback => 'Pause playback';
+
+  @override
+  String get recordingMicrophoneDenied =>
+      'Microphone permission has not been granted. Enable it in your device settings and try again. You can still save your practice journal.';
+
+  @override
+  String get recordingMicrophoneUnavailable =>
+      'No microphone found. Check your microphone and try again. You can still practice and save your journal.';
+
+  @override
+  String get recordingStorageFull =>
+      'Not enough storage to record. Free up space and try again. You can still save your practice journal.';
+
+  @override
+  String get recordingAudioBusy =>
+      'Another audio tool is running. Stop it before recording again.';
+
+  @override
+  String get recordingStartFailed =>
+      'Could not start recording. Try again when the microphone is ready. Your practice state is unchanged.';
+
+  @override
+  String get recordingSaveFailed =>
+      'Could not keep this recording. It is still here to listen to or try keeping again.';
+
+  @override
+  String get recordingInterrupted =>
+      'Recording stopped after an interruption. Listen back and keep or discard it before recording again.';
+
+  @override
+  String recordingDurationLimit(int minutes) {
+    return 'Reached the $minutes-minute limit. Recording has stopped so you can listen back and keep it. You can still save your practice journal.';
+  }
+
+  @override
+  String recordingFileLimit(int limit) {
+    return 'You have reached $limit Free recordings. Remove a recording or view Meloop Pro to record more. You can still save your practice journal.';
+  }
+
+  @override
+  String get recordingPracticePaused =>
+      'Practice is paused. Resume your practice session before recording.';
 
   @override
   String get privacyTitle => 'Privacy';

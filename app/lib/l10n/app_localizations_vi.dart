@@ -888,6 +888,10 @@ class AppLocalizationsVi extends AppLocalizations {
       'Chưa thể lưu buổi luyện. Nội dung của bạn vẫn ở đây. Vui lòng thử lại.';
 
   @override
+  String get savedSessionCompletionFailed =>
+      'Buổi luyện đã được lưu. Chưa thể hoàn tất bước tiếp theo. Vui lòng thử lại.';
+
+  @override
   String get catalogTitle => 'Thành phần dùng chung';
 
   @override
@@ -1231,6 +1235,176 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get practiceToolsTimingHint =>
       'Một công cụ âm thanh hoạt động mỗi lúc; bộ đếm giờ vẫn tiếp tục.';
+
+  @override
+  String get recordingTitle => 'Ghi âm luyện tập';
+
+  @override
+  String get sessionRecordingsTitle => 'Bản ghi của buổi luyện';
+
+  @override
+  String get sessionRecordingsHeading => 'Lắng nghe\nhành trình của bạn.';
+
+  @override
+  String get sessionRecordingsSubtitle => 'Những âm thanh bạn muốn giữ lại.';
+
+  @override
+  String get sessionRecordingsEmptyMessage =>
+      'Ghi lại một đoạn trong buổi luyện để nghe lại sau.';
+
+  @override
+  String get recordPracticeSession => 'Ghi âm buổi luyện';
+
+  @override
+  String get sessionRecordingsDeleteHint =>
+      'Xóa một bản ghi không xóa nhật ký buổi luyện.';
+
+  @override
+  String get recordingDefaultTitle => 'Buổi luyện của tôi';
+
+  @override
+  String get recordingEmptyHeading => 'Giữ lại âm thanh\ncủa hôm nay.';
+
+  @override
+  String get recordingEmptyTitle => 'Bắt đầu một buổi luyện trước.';
+
+  @override
+  String get recordingEmptyDescription =>
+      'Bản ghi sẽ đi cùng nhật ký buổi luyện đang diễn ra.';
+
+  @override
+  String get recordingStart => 'Bắt đầu ghi âm';
+
+  @override
+  String get recordingStop => 'Dừng ghi âm';
+
+  @override
+  String get recordingPending => 'Bản ghi chưa được giữ';
+
+  @override
+  String get recordingMute => 'Tắt âm';
+
+  @override
+  String get recordingUnmute => 'Bật âm';
+
+  @override
+  String get recordingPlaybackOptions => 'Tùy chọn bản ghi';
+
+  @override
+  String get recordingRestartPlayback => 'Nghe lại từ đầu';
+
+  @override
+  String get recordingPendingHint =>
+      'Nghe lại rồi giữ hoặc bỏ bản ghi này trước khi bắt đầu bản mới.';
+
+  @override
+  String recordingActive(int minutes) {
+    return 'Đang ghi âm · Tối đa $minutes phút';
+  }
+
+  @override
+  String recordingReady(int minutes) {
+    return 'Micro sẵn sàng · Tối đa $minutes phút';
+  }
+
+  @override
+  String recordingMicrophoneOff(int minutes) {
+    return 'Micro chưa bật · Tối đa $minutes phút';
+  }
+
+  @override
+  String get recordingFootnote =>
+      'Bản ghi được lưu trên thiết bị của bạn.\nGhi âm không kết thúc đồng hồ buổi luyện.';
+
+  @override
+  String recordingFreeQuota(int count, int limit) {
+    return 'Free · $count/$limit bản ghi';
+  }
+
+  @override
+  String recordingProQuota(int minutes) {
+    return 'Pro · Tối đa $minutes phút mỗi bản ghi';
+  }
+
+  @override
+  String get recordingViewPro => 'Xem Meloop Pro';
+
+  @override
+  String get recordingProTitle => 'Thêm không gian cho đam mê.';
+
+  @override
+  String get recordingProDescription =>
+      'Meloop Pro mở rộng thời lượng và số bản ghi cho những buổi luyện của bạn.';
+
+  @override
+  String get recordingProJournalHint =>
+      'Bạn luôn có thể tiếp tục luyện tập và lưu nhật ký với Free, kể cả khi không cấp quyền micro.';
+
+  @override
+  String get recordingContinuePractice => 'Tiếp tục luyện tập';
+
+  @override
+  String get recordingReviewTitle => 'Nghe lại một chút.';
+
+  @override
+  String get recordingKeep => 'Giữ bản ghi';
+
+  @override
+  String get recordingDiscard => 'Bỏ bản ghi';
+
+  @override
+  String get recordingDiscardTitle => 'Bỏ bản ghi vừa rồi?';
+
+  @override
+  String get recordingDiscardMessage => 'Bản ghi chưa được giữ sẽ bị xóa.';
+
+  @override
+  String get recordingKept => 'Đã giữ bản ghi trên thiết bị.';
+
+  @override
+  String get recordingPausePlayback => 'Tạm dừng nghe lại';
+
+  @override
+  String get recordingMicrophoneDenied =>
+      'Bạn chưa cấp quyền micro. Bật quyền micro trong Cài đặt của thiết bị rồi thử lại. Bạn vẫn có thể lưu nhật ký buổi luyện.';
+
+  @override
+  String get recordingMicrophoneUnavailable =>
+      'Không tìm thấy micro trên thiết bị. Kiểm tra micro rồi thử lại. Bạn vẫn có thể tiếp tục luyện tập và lưu nhật ký.';
+
+  @override
+  String get recordingStorageFull =>
+      'Không đủ dung lượng để ghi âm. Giải phóng bộ nhớ rồi thử lại. Nhật ký buổi luyện vẫn có thể lưu.';
+
+  @override
+  String get recordingAudioBusy =>
+      'Một công cụ âm thanh khác đang hoạt động. Dừng công cụ đó rồi thử ghi âm lại.';
+
+  @override
+  String get recordingStartFailed =>
+      'Chưa thể bắt đầu ghi âm. Thử lại khi micro sẵn sàng. Trạng thái buổi luyện vẫn được giữ.';
+
+  @override
+  String get recordingSaveFailed =>
+      'Chưa giữ được bản ghi. Bản ghi vẫn ở đây để bạn nghe lại hoặc thử giữ lần nữa.';
+
+  @override
+  String get recordingInterrupted =>
+      'Ghi âm đã dừng do gián đoạn. Nghe lại rồi giữ hoặc bỏ bản ghi trước khi ghi tiếp.';
+
+  @override
+  String recordingDurationLimit(int minutes) {
+    return 'Đã đạt giới hạn $minutes phút. Bản ghi đã dừng để bạn nghe lại và giữ. Bạn vẫn có thể lưu nhật ký buổi luyện.';
+  }
+
+  @override
+  String recordingFileLimit(int limit) {
+    return 'Đã đủ $limit bản ghi Free. Xóa bớt bản ghi hoặc xem Meloop Pro để ghi thêm. Bạn vẫn có thể lưu nhật ký buổi luyện.';
+  }
+
+  @override
+  String get recordingPracticePaused =>
+      'Buổi luyện đang tạm dừng. Tiếp tục buổi luyện trước khi ghi âm.';
 
   @override
   String get privacyTitle => 'Quyền riêng tư';

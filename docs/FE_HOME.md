@@ -12,11 +12,11 @@
 - Mục tiêu đọc từ `weekly_goals`, không đổi schema hay tự bật. Chưa cấu hình/đang tắt hiện **Đang tắt**, cùng số ngày đã luyện trong tuần. Khi bật, hiện số ngày thực tế/target đã lưu; thanh tiến độ tối đa 100%.
 - Tiến độ mặc định có cùng tổng quan 7 ngày, mục tiêu và cảm xúc/tập trung. Điểm chỉ lấy phản hồi đã nhập, làm tròn một chữ số sau khi cộng; thiếu phản hồi hiện **Chưa có đánh giá**. Có điểm thì kèm số lượt. Bộ lọc khoảng thời gian Pro và form điều chỉnh mục tiêu thuộc task khác.
 - Tải, lỗi đọc/Thử lại và trống là trạng thái riêng. Lưu/sửa/xóa dùng invalidation hiện có; đổi ngày và trở lại app làm mới số liệu. Không seed dữ liệu mẫu trong app thật.
-- **Công cụ luyện tập** mở màn thẻ công cụ theo prototype. Mở từ Home không tạo session ID/bản nháp. Máy đếm nhịp dùng luồng hiện có; công cụ chưa tích hợp/cần session dùng trạng thái chưa khả dụng hiện có.
+- **Công cụ luyện tập** mở màn thẻ công cụ theo prototype. Mở từ Home không tạo session ID/bản nháp. Máy đếm nhịp dùng luồng hiện có. Ghi âm dùng luồng UC-10: khi chưa có buổi luyện, hiện màn trống và cho mở form tạo buổi; chỉ tạo bản nháp khi người dùng bắt đầu từ form. Công cụ chưa tích hợp dùng trạng thái chưa khả dụng hiện có.
 
 ## Ranh giới
 
-`frontend/home/` chứa state và widget tổng quan; `HomeExample` giữ composition Trang chủ đang được app sử dụng. Widget không đọc SQLite. App inject loader Saved và `SqliteWeeklyPracticeGoalReader`; contract/model mục tiêu ở `shared/journal/`. Bản ghi minh họa chỉ ở test hoặc showcase riêng.
+`frontend/home/` chứa state và widget tổng quan; `HomeExample` giữ composition Trang chủ đang được app sử dụng. Widget không đọc SQLite. App inject loader Saved và `SqliteWeeklyPracticeGoalReader`; contract/model mục tiêu ở `shared/journal/`. `PracticeSessionSummary` chuyển dữ liệu Saved của hồ sơ đang chọn vào `PracticeStatistics` dùng chung với backend; frontend chỉ bổ sung buổi gần nhất và thống kê đánh giá. Bản ghi minh họa chỉ ở test hoặc showcase riêng.
 
 ## Kiểm chứng
 

@@ -20,14 +20,14 @@ class HomeExample extends StatelessWidget {
     required this.overview,
     required this.onCreate,
     required this.onProgress,
-    required this.onCatalog,
+    required this.onTools,
     required this.onRetry,
     this.draft,
     this.onInstrument,
   });
   final PreviewInstrumentProfile profile;
   final AsyncValue<PracticeOverview> overview;
-  final VoidCallback onCreate, onProgress, onCatalog, onRetry;
+  final VoidCallback onCreate, onProgress, onTools, onRetry;
   final PreviewPracticeDraft? draft;
   final VoidCallback? onInstrument;
   PracticeSessionSummary? get sessionSummary => overview.value?.summary;
@@ -86,7 +86,7 @@ class HomeExample extends StatelessWidget {
             side: const BorderSide(color: TempoColors.line),
           ),
           child: InkWell(
-            onTap: onCatalog,
+            onTap: onTools,
             borderRadius: BorderRadius.circular(TempoRadius.action),
             child: Padding(
               padding: const EdgeInsets.symmetric(

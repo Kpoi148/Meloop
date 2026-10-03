@@ -14,6 +14,7 @@ import 'package:meloop/frontend/metronome/metronome_page.dart';
 import 'package:meloop/frontend/metronome/metronome_ui_state.dart';
 import 'package:meloop/frontend/components/meloop_ui.dart';
 import 'package:meloop/frontend/practice/practice_tools_page.dart';
+import 'package:meloop/frontend/recording/recording_empty_page.dart';
 import 'package:meloop/frontend/showcase/home_example.dart';
 import 'package:meloop/frontend/showcase/meloop_ui_showcase.dart';
 import 'package:meloop/frontend/showcase/metronome_example.dart';
@@ -49,6 +50,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     await tap(tester, find.text('Công cụ luyện tập'));
+    expect(find.byType(PracticeToolsPage), findsOneWidget);
+    expect(find.byType(MetronomeExample), findsNothing);
     await tap(tester, find.text('Máy đếm nhịp'));
   }
 
@@ -154,7 +157,7 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('back returns home and retains metronome settings', (
+  testWidgets('Home opens tools without a session and back retains settings', (
     tester,
   ) async {
     await openFromHome(tester);
@@ -162,7 +165,20 @@ void main() {
     scope.read(metronomePreviewControllerProvider.notifier).setBpm(96);
     await tap(tester, find.byTooltip('Quay lại'));
     expect(find.byType(PracticeToolsPage), findsOneWidget);
-    await tap(tester, find.byTooltip('Quay lại'));
+    expect(scope.read(meloopShellControllerProvider).selectedDraft, isNull);
+    expect(find.text('Máy đếm nhịp'), findsOneWidget);
+    expect(find.text('Kiểm tra cao độ'), findsOneWidget);
+    expect(find.text('Ghi âm'), findsOneWidget);
+    expect(find.text('Bản ghi âm'), findsOneWidget);
+    await tap(tester, find.text('Ghi âm'));
+    expect(find.byType(RecordingEmptyPage), findsOneWidget);
+    expect(find.text('Bắt đầu một buổi luyện trước.'), findsOneWidget);
+    expect(scope.read(meloopShellControllerProvider).selectedDraft, isNull);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.byType(PracticeToolsPage), findsOneWidget);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
     expect(find.byType(HomeExample), findsOneWidget);
     await tap(tester, find.text('Công cụ luyện tập'));
     await tap(tester, find.text('Máy đếm nhịp'));
@@ -170,8 +186,8 @@ void main() {
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
     expect(find.byType(PracticeToolsPage), findsOneWidget);
-    await tester.binding.handlePopRoute();
-    await tester.pumpAndSettle();
+    await tap(tester, find.text('Máy đếm nhịp'));
+    await tap(tester, find.byTooltip('Trang chủ'));
     expect(find.byType(HomeExample), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox.shrink());

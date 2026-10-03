@@ -25,6 +25,7 @@ class PracticeSessionsTab extends ConsumerStatefulWidget {
     required this.scrollController,
     this.draft,
     this.onHome,
+    this.onOpenRecording,
   });
 
   final PreviewInstrumentProfile profile;
@@ -32,6 +33,7 @@ class PracticeSessionsTab extends ConsumerStatefulWidget {
   final Future<void> Function() onCreate;
   final VoidCallback onContinue, onInstrument;
   final VoidCallback? onHome;
+  final Future<void> Function(BuildContext)? onOpenRecording;
   final Widget bottomNavigation;
   final ScrollController scrollController;
 
@@ -69,6 +71,7 @@ class _PracticeSessionsTabState extends ConsumerState<PracticeSessionsTab> {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => PracticeSessionDetailPage(
+          onOpenRecording: widget.onOpenRecording,
           session: session,
           profile: widget.profile,
           now: ref.read(practiceSessionsClockProvider)(),
@@ -128,6 +131,9 @@ class _PracticeSessionsTabState extends ConsumerState<PracticeSessionsTab> {
         dimension: PracticeTempo.fabSize,
         child: FloatingActionButton(
           key: const Key('practice-create'),
+          // This action belongs to the list, with no shared route transition.
+          // Keyboard hide/show can briefly retain both FAB animation children.
+          heroTag: null,
           tooltip: draft == null
               ? strings.createPractice
               : strings.continuePractice,

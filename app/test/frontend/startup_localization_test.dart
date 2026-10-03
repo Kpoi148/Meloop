@@ -9,6 +9,31 @@ import 'package:meloop/frontend/showcase/meloop_ui_showcase.dart';
 import 'package:meloop/shared/settings/app_settings_store.dart';
 
 void main() {
+  test('saved counts refresh preserves selection and another draft', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+    final controller = container.read(meloopShellControllerProvider.notifier);
+    final profile = container
+        .read(meloopShellControllerProvider)
+        .profiles
+        .single;
+    controller.openStoredDraft(
+      PreviewPracticeDraft(
+        profileId: profile.id,
+        sessionId: 'new-draft',
+        title: 'In progress',
+      ),
+    );
+    controller.refreshSavedSessionCounts({profile.id: 1});
+    controller.completeDraft(sessionId: 'older-saved-session');
+    final state = container.read(meloopShellControllerProvider);
+    expect(state.selectedProfileId, profile.id);
+    expect(state.profiles.single.savedSessionCount, 1);
+    expect(state.draft!.sessionId, 'new-draft');
+    expect(state.destination, StartupDestination.recoveredTimer);
+    controller.completeDraft(sessionId: 'new-draft');
+    expect(container.read(meloopShellControllerProvider).draft, isNull);
+  });
   test('entry rule selects 0, 1, many and recovered-draft destinations', () {
     MeloopShellState read(StartupSnapshot snapshot) {
       final container = ProviderContainer(

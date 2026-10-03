@@ -58,6 +58,7 @@ final practiceOverviewProvider = Provider.autoDispose
                 .where((session) => session.profileId == profile.id)
                 .toList(),
             today,
+            profileId: profile.id,
           ),
           goal: goal.requireValue,
         ),

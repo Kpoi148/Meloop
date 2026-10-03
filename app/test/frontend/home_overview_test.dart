@@ -9,6 +9,7 @@ import 'package:meloop/frontend/components/meloop_ui.dart';
 import 'package:meloop/frontend/home/practice_overview_provider.dart';
 import 'package:meloop/frontend/home/practice_progress_page.dart';
 import 'package:meloop/frontend/practice/practice_tools_page.dart';
+import 'package:meloop/frontend/recording/recording_empty_page.dart';
 import 'package:meloop/frontend/practice_sessions/practice_session.dart';
 import 'package:meloop/frontend/showcase/meloop_ui_showcase.dart';
 import 'package:meloop/shared/journal/weekly_practice_goal.dart';
@@ -158,11 +159,12 @@ void main() {
             .sessionId,
         isNull,
       );
-      await tap(tester, find.text('Ghi âm'));
-      expect(find.textContaining('chưa khả dụng'), findsOneWidget);
       final scope = ProviderScope.containerOf(
         tester.element(find.byType(PracticeToolsPage)),
       );
+      await tap(tester, find.text('Ghi âm'));
+      expect(find.byType(RecordingEmptyPage), findsOneWidget);
+      expect(find.text('Bắt đầu một buổi luyện trước.'), findsOneWidget);
       expect(scope.read(meloopShellControllerProvider).selectedDraft, isNull);
       await tester.pumpWidget(const SizedBox.shrink());
     },
