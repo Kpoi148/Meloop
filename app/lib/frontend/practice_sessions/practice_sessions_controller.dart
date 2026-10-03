@@ -72,8 +72,13 @@ class PracticeSessionsViewState {
       ].any((field) => JournalText.searchKey(field).contains(queryText));
     }).toList();
     result.sort((a, b) {
-      final dateOrder = a.date.compareTo(b.date);
-      final order = dateOrder == 0 ? a.id.compareTo(b.id) : dateOrder;
+      var order = a.date.year.compareTo(b.date.year);
+      if (order == 0) order = a.date.month.compareTo(b.date.month);
+      if (order == 0) order = a.date.day.compareTo(b.date.day);
+      if (order == 0) {
+        order = (a.createdAt ?? a.date).compareTo(b.createdAt ?? b.date);
+      }
+      if (order == 0) order = a.id.compareTo(b.id);
       return filters.order == PracticeOrder.newest ? -order : order;
     });
     return result;

@@ -8,6 +8,7 @@ import '../application/instrument_profile_service.dart';
 import '../application/startup_controller.dart';
 import '../application/practice_start_service.dart';
 import '../application/practice_timer_service.dart';
+import '../practice_sessions/practice_sessions_controller.dart';
 import '../components/meloop_ui.dart';
 import '../showcase/meloop_ui_showcase.dart';
 import '../showcase/pro_preview_page.dart';
@@ -208,6 +209,11 @@ class _JournalProfileEntryState extends ConsumerState<JournalProfileEntry> {
           ),
         ),
         meloopShellControllerProvider.overrideWith(MeloopShellController.new),
+        // List context survives tabs/details inside this entry, but a new
+        // instrument entry must not resurrect the previous query/filter.
+        practiceSessionsControllerProvider.overrideWith(
+          PracticeSessionsController.new,
+        ),
       ],
       child: MeloopUiShowcase(
         developmentTools: false,

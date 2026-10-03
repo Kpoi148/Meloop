@@ -15,8 +15,9 @@ import 'package:meloop/shared/journal/practice_date.dart';
 /// Disposable SQLite fixtures exercise the production loader and existing UI.
 Future<void> runSessionSearchJourney(
   WidgetTester tester,
-  JournalDatabaseOwner owner,
-) async {
+  JournalDatabaseOwner owner, {
+  Future<void> Function()? afterSearch,
+}) async {
   const profile = '00000000-0000-4000-8000-000000000001';
   const other = '00000000-0000-4000-8000-000000000002';
   final today = DateTime(2026, 10, 3);
@@ -56,8 +57,8 @@ Future<void> runSessionSearchJourney(
         'difficulty_search': JournalText.searchKey(difficulty),
         'next_note': next,
         'next_search': JournalText.searchKey(next),
-        'created_at': today.millisecondsSinceEpoch,
-        'updated_at': today.millisecondsSinceEpoch,
+        'created_at': today.millisecondsSinceEpoch + (i == 0 ? 60000 : 0),
+        'updated_at': today.millisecondsSinceEpoch + (i == 0 ? 60000 : 0),
       });
     }
   });
@@ -65,6 +66,16 @@ Future<void> runSessionSearchJourney(
   final records = (await reader.saved(profileId: profile))
       .map(presentPracticeSession)
       .toList();
+  expect(
+    records
+        .singleWhere((s) => s.id.endsWith('010'))
+        .withRecordings(const [])
+        .createdAt,
+    DateTime.fromMillisecondsSinceEpoch(
+      today.millisecondsSinceEpoch + 60000,
+      isUtc: true,
+    ),
+  );
   for (final period in PracticePeriod.values) {
     final days = period.days;
     final from = days == null
@@ -85,6 +96,10 @@ Future<void> runSessionSearchJourney(
       '\\',
       'foo bar',
       'không có',
+      '  kho doi  ',
+      '   ',
+      'CHUYỂN',
+      '100%_\\',
     ]) {
       final state = PracticeSessionsViewState(
         query: query,
@@ -102,10 +117,23 @@ Future<void> runSessionSearchJourney(
         query: query,
       );
       expect(
-        visible.map((s) => s.id).toSet(),
-        stored.map((s) => s.id).toSet(),
+        visible.map((s) => s.id).toList(),
+        stored.map((s) => s.id).toList(),
         reason: '$period / $query',
       );
+      // Independent expected identities prevent both implementations agreeing
+      // on the same incorrect empty/multi-field/wildcard result.
+      final matchingIndex = switch (query) {
+        'chuyen' || 'kho doi' || 'on doan' || '  kho doi  ' || 'CHUYỂN' => 0,
+        'ĐÀN' || 'STRASSE' || '%' || '_' || '\\' || '100%_\\' => 7,
+        _ => null,
+      };
+      if (matchingIndex != null) {
+        expect(visible.map((s) => s.id), [
+          '00000000-0000-4000-8000-00000000001$matchingIndex',
+        ]);
+      }
+      if (query == 'foo bar' || query == 'không có') expect(visible, isEmpty);
     }
     final recent = PracticeSessionsViewState(
       filters: PracticeSessionFilters(period: period),
@@ -175,6 +203,7 @@ Future<void> runSessionSearchJourney(
   await tester.enterText(find.byType(TextField), 'strasse');
   await waitFor(find.widgetWithText(PracticeSessionCard, 'Đàn Straße 100%_\\'));
   expect(find.byType(PracticeSessionCard), findsOneWidget);
+  if (afterSearch != null) await afterSearch();
   await tester.pumpWidget(const SizedBox.shrink());
   await tester.pump();
 }

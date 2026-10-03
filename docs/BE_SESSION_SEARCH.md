@@ -4,7 +4,7 @@ Trên baseline main `76d5118`, tab Buổi luyện đã có UI tìm kiếm, bộ 
 
 `PracticeSessionsViewState` dùng `JournalText.searchKey` chung với BE: Unicode case folding, bỏ dấu và đ/Đ→d. Tìm substring riêng trong title/practiced/difficulty/next, không ghép trường để tạo kết quả khớp qua ranh giới ghi chú. Query được trim như UI hiện có; nội dung gốc giữ nguyên. `%`, `_`, `\` là ký tự literal khi lọc trong bộ nhớ; reader SQLite hiện có escape chúng khi dùng LIKE.
 
-Cửa sổ ngày gồm hôm nay và 6/29 ngày lịch trước, loại ngày tương lai cả ở Tất cả. Giữ thứ tự FE theo ngày/ID, chiều mới nhất/cũ nhất, state query/filter riêng từng hồ sơ, không thay widget/layout/asset/theme. Bước này dùng chung normalization với reader; chưa chuyển tìm kiếm xuống SQLite hoặc phân trang.
+Cửa sổ ngày gồm hôm nay và 6/29 ngày lịch trước, loại ngày tương lai cả ở Tất cả. B08.1 ban đầu giữ thứ tự FE theo ngày/ID, chiều mới nhất/cũ nhất, state query/filter riêng từng hồ sơ. B08.2 bổ sung metadata thời điểm tạo và reset context khi đổi instrument theo SRS; xem `BE_SESSION_SEARCH_ACCEPTANCE.md`. Không thay widget/layout/asset/theme, chưa chuyển tìm kiếm xuống SQLite hoặc phân trang.
 
 `session_search_journey.dart` dùng database thử riêng: đối chiếu tập ID của UI filter với reader SQLite cho 12 queries × 3 periods; bao gồm title và cả ba notes, Unicode dạng phân rã, đ/Đ, Straße/STRASSE, ký tự LIKE literal, không khớp qua hai trường, cận ngày, owner, Review và thứ tự đảo chiều. Sau matrix, dọn fixture Review để luồng UI Saved không kích hoạt phục hồi timer; dùng production loader và ô tìm kiếm hiện có để kiểm tra `kho doi`/`strasse`. Cùng journey chạy host và Android qua `session_search_smoke_test.dart`.
 

@@ -5,7 +5,7 @@ import 'package:meloop/backend/database/journal_database_owner.dart';
 import 'package:meloop/shared/journal/journal_runtime.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../test/support/session_search_journey.dart';
+import '../test/support/session_search_acceptance_journey.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +18,7 @@ void main() {
       open: () => JournalDatabase.open(path: path),
     );
     try {
-      await runSessionSearchJourney(tester, owner);
+      await runSessionSearchAcceptanceJourney(tester, owner);
     } finally {
       await owner.close();
       await deleteDatabase(path);

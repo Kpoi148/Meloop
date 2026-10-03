@@ -10,6 +10,7 @@ class PracticeSession {
     required this.date,
     required this.title,
     required this.duration,
+    this.createdAt,
     this.practiced = '',
     this.difficulty = '',
     this.nextPractice = '',
@@ -22,6 +23,10 @@ class PracticeSession {
 
   final String id, profileId, title, practiced, difficulty, nextPractice;
   final DateTime date;
+
+  /// Original journal creation instant for deterministic same-day ordering.
+  /// Preview records may omit this metadata.
+  final DateTime? createdAt;
   final Duration duration;
   final int? bpm, mood, focus;
   final int recordingCount;
@@ -34,6 +39,7 @@ class PracticeSession {
         date: date,
         title: title,
         duration: duration,
+        createdAt: createdAt,
         practiced: practiced,
         difficulty: difficulty,
         nextPractice: nextPractice,
