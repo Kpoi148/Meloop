@@ -319,7 +319,27 @@ class MeloopShellController extends Notifier<MeloopShellState> {
     state = state.copyWith(draft: state.draft!.copyWith(title: title));
   }
 
-  void completeDraft() {
+  void refreshSavedSessionCounts(Map<String, int> counts) {
+    if (!ref.mounted) return;
+    state = state.copyWith(
+      profiles: List.unmodifiable([
+        for (final profile in state.profiles)
+          PreviewInstrumentProfile(
+            id: profile.id,
+            name: profile.name,
+            instrument: profile.instrument,
+            customInstrumentName: profile.customInstrumentName,
+            savedSessionCount: counts[profile.id] ?? profile.savedSessionCount,
+          ),
+      ]),
+    );
+  }
+
+  void completeDraft({String? sessionId}) {
+    if (!ref.mounted ||
+        (sessionId != null && state.draft?.sessionId != sessionId)) {
+      return;
+    }
     state = state.copyWith(
       clearDraft: true,
       selectedTab: 0,

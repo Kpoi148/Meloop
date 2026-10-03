@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'session_form_values.dart';
@@ -26,7 +28,11 @@ class SessionFormController extends Notifier<AsyncValue<void>> {
 
   /// Coordinates UI state only; validation and persistence belong to the backend.
   /// The optional callback preserves the standalone component examples' API.
-  Future<bool> save(SessionFormValues values, {SessionFormSave? onSave}) async {
+  Future<bool> save(
+    SessionFormValues values, {
+    SessionFormSave? onSave,
+    FutureOr<void> Function()? onCompleted,
+  }) async {
     if (state.isLoading) return false;
     final operationRef = ref;
     state = const AsyncLoading();
@@ -35,7 +41,8 @@ class SessionFormController extends Notifier<AsyncValue<void>> {
           onSave ?? operationRef.read<SessionFormSave>(sessionFormSaveProvider);
       await save(values);
       if (!operationRef.mounted) return false;
-      state = const AsyncData(null);
+      await onCompleted?.call();
+      if (operationRef.mounted) state = const AsyncData(null);
       return true;
     } catch (error, stackTrace) {
       if (operationRef.mounted) state = AsyncError(error, stackTrace);

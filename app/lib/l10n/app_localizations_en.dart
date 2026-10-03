@@ -842,6 +842,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not save the practice session. Your content is still here. Please try again.';
 
   @override
+  String get savedSessionCompletionFailed =>
+      'The practice session is saved. Could not finish the next step. Please try again.';
+
+  @override
   String get catalogTitle => 'Shared components';
 
   @override

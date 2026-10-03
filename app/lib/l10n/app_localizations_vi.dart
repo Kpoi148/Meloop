@@ -838,6 +838,10 @@ class AppLocalizationsVi extends AppLocalizations {
       'Chưa thể lưu buổi luyện. Nội dung của bạn vẫn ở đây. Vui lòng thử lại.';
 
   @override
+  String get savedSessionCompletionFailed =>
+      'Buổi luyện đã được lưu. Chưa thể hoàn tất bước tiếp theo. Vui lòng thử lại.';
+
+  @override
   String get catalogTitle => 'Thành phần dùng chung';
 
   @override

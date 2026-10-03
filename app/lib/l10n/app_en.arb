@@ -274,6 +274,7 @@
   "discardChanges": "Discard changes",
   "continueEditing": "Keep editing",
   "saveSessionFailed": "Could not save the practice session. Your content is still here. Please try again.",
+  "savedSessionCompletionFailed": "The practice session is saved. Could not finish the next step. Please try again.",
 
   "catalogTitle": "Shared components",
   "catalogHeading": "One design\nrhythm.",

@@ -22,6 +22,7 @@ void main() {
         createOwner: () =>
             JournalDatabaseOwner(open: () => JournalDatabase.open(path: path)),
         createScreenAwake: AndroidPracticeScreenAwake.new,
+        failCompletionOnce: true,
         screenshot: (name) async {
           if (!converted) {
             await binding.convertFlutterSurfaceToImage();

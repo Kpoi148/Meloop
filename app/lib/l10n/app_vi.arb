@@ -286,6 +286,7 @@
   "discardChanges": "Bỏ thay đổi",
   "continueEditing": "Tiếp tục sửa",
   "saveSessionFailed": "Chưa thể lưu buổi luyện. Nội dung của bạn vẫn ở đây. Vui lòng thử lại.",
+  "savedSessionCompletionFailed": "Buổi luyện đã được lưu. Chưa thể hoàn tất bước tiếp theo. Vui lòng thử lại.",
 
   "catalogTitle": "Thành phần dùng chung",
   "catalogHeading": "Cùng một nhịp\nthiết kế.",

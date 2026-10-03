@@ -30,6 +30,7 @@ void main() {
               ),
             ),
             createScreenAwake: TestAwake.new,
+            failCompletionOnce: true,
           );
         } finally {
           await temp.delete(recursive: true);

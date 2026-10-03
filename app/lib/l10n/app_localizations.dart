@@ -1598,6 +1598,12 @@ abstract class AppLocalizations {
   /// **'Chưa thể lưu buổi luyện. Nội dung của bạn vẫn ở đây. Vui lòng thử lại.'**
   String get saveSessionFailed;
 
+  /// No description provided for @savedSessionCompletionFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Buổi luyện đã được lưu. Chưa thể hoàn tất bước tiếp theo. Vui lòng thử lại.'**
+  String get savedSessionCompletionFailed;
+
   /// No description provided for @catalogTitle.
   ///
   /// In vi, this message translates to:

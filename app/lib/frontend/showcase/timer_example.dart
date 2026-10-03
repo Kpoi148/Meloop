@@ -8,6 +8,7 @@ import '../../shared/journal/journal_models.dart';
 import '../../shared/journal/practice_timer_service.dart';
 import '../application/practice_timer_service.dart';
 import '../application/practice_review_provider.dart';
+import '../application/review_save_completion.dart';
 import '../application/startup_controller.dart';
 import '../components/meloop_ui.dart';
 import '../practice/practice_duration.dart';
@@ -91,7 +92,21 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
         isRunning: false,
       );
       final container = ProviderScope.containerOf(context);
-      ui.PracticeSession? saved;
+      final save = container.read(practiceReviewSaveProvider);
+      final complete = container.read(practiceReviewCompleteProvider);
+      final persist = container.read(practiceReviewPersistProvider);
+      final filters = container.read(
+        practiceSessionsControllerProvider.notifier,
+      );
+      final now = container.read(ui.practiceSessionsClockProvider);
+      final completion = ReviewSaveCompletion(
+        save: (values) => save(id, values),
+        complete: () async {
+          final counts = await complete(id);
+          shell.refreshSavedSessionCounts(counts);
+          shell.completeDraft(sessionId: id);
+        },
+      );
       await Navigator.of(context).push<void>(
         MaterialPageRoute(
           builder: (routeContext) => UncontrolledProviderScope(
@@ -100,8 +115,8 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
               sessionId: id,
               initialReviewInput: draft.reviewInput,
               instrumentName: profileDisplayName(context.l10n, profile),
-              onPersistInput: (input) =>
-                  container.read(practiceReviewPersistProvider)(id, input),
+              onPersistInput: (input) => persist(id, input),
+              isSaveCommitted: () => completion.saved != null,
               initialTitle: draft.session.title,
               initialDurationSeconds:
                   draft.accumulatedMilliseconds ~/
@@ -119,19 +134,10 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
                 focus: draft.session.focus,
                 bpm: draft.session.bpm,
               ),
-              onSave: (values) async {
-                saved = await container.read(practiceReviewSaveProvider)(
-                  id,
-                  values,
-                );
-                await service.complete(id);
-                container.invalidate(ui.practiceSessionsProvider(profile));
-              },
+              onSave: completion.submit,
               onSaved: () {
-                container
-                    .read(practiceSessionsControllerProvider.notifier)
-                    .clear(profile.id);
-                shell.completeDraft();
+                if (!routeContext.mounted) return;
+                filters.clear(profile.id);
                 shell.selectProfile(profile.id);
                 shell.selectTab(1);
                 Navigator.of(routeContext).pushReplacement<void, void>(
@@ -139,9 +145,9 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
                     builder: (detailContext) => UncontrolledProviderScope(
                       container: container,
                       child: PracticeSessionDetailPage(
-                        session: saved!,
+                        session: completion.saved!,
                         profile: profile,
-                        now: container.read(ui.practiceSessionsClockProvider)(),
+                        now: now(),
                         onHome: () {
                           Navigator.of(detailContext)
                               .popUntil((route) => route.isFirst);
@@ -156,7 +162,9 @@ class _TimerExampleState extends ConsumerState<TimerExample> {
           ),
         ),
       );
-      if (saved == null && service.snapshot?.sessionId == id) {
+      if (completion.saved == null &&
+          !completion.isSubmitting &&
+          service.snapshot?.sessionId == id) {
         await service.leaveReview();
       }
     } catch (_) {
