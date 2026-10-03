@@ -1624,4 +1624,160 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get supportCopyFailed =>
       'Could not copy. Try again or select the text to copy it.';
+
+  @override
+  String pitchRange(String lowest, String highest) {
+    return 'Chromatic · $lowest – $highest';
+  }
+
+  @override
+  String pitchReference(String note, String frequency) {
+    return '$note = $frequency Hz';
+  }
+
+  @override
+  String get pitchEmptyNote => '—';
+
+  @override
+  String get pitchNoSignal => 'No signal yet';
+
+  @override
+  String get pitchListening => 'Listening…';
+
+  @override
+  String get pitchRequestingPermission => 'Waiting for microphone permission…';
+
+  @override
+  String get pitchWeakSignal => 'Not enough signal';
+
+  @override
+  String get pitchWeakSignalHint =>
+      'The signal is weak or unstable. Play one clear, steady note a little closer to the microphone.';
+
+  @override
+  String pitchMeasurement(String frequency, String cents) {
+    return '$frequency Hz · $cents cents';
+  }
+
+  @override
+  String pitchCentsNegative(int cents) {
+    return '−$cents cents';
+  }
+
+  @override
+  String pitchCentsPositive(int cents) {
+    return '+$cents cents';
+  }
+
+  @override
+  String get pitchGaugeCenter => 'In tune';
+
+  @override
+  String get pitchInstruction =>
+      'Play one clear, steady note in a quiet space.';
+
+  @override
+  String get pitchLow => 'Slightly low · raise the pitch a little.';
+
+  @override
+  String get pitchInTune => 'In tune. Keep the note steady.';
+
+  @override
+  String get pitchHigh => 'Slightly high · lower the pitch a little.';
+
+  @override
+  String get pitchStart => 'Turn on microphone';
+
+  @override
+  String get pitchStop => 'Turn off microphone';
+
+  @override
+  String get pitchStopping => 'Turning off microphone…';
+
+  @override
+  String get pitchPermissionDenied =>
+      'Microphone permission has not been granted. Try granting it again or open settings. You can keep practicing and save your journal.';
+
+  @override
+  String get pitchPermissionBlocked =>
+      'Microphone permission is blocked. Allow it in app settings, then try again. You can still practice and save your journal.';
+
+  @override
+  String get pitchSettingsGuide =>
+      'In Android Settings, go to Apps → Meloop → Permissions → Microphone and allow access while using the app. Return and turn on the microphone.';
+
+  @override
+  String get pitchOpenSettings => 'Open settings';
+
+  @override
+  String get pitchOpeningSettings => 'Opening settings…';
+
+  @override
+  String get pitchSettingsFailed =>
+      'Could not open settings automatically. Follow the Android Settings steps above; you can still return to your practice.';
+
+  @override
+  String get pitchUnavailable =>
+      'Pitch checking is unavailable on this device. You can still return to your practice and save your journal.';
+
+  @override
+  String get pitchAudioBusy =>
+      'Another audio tool is active. Stop it and try again; your practice timer keeps running.';
+
+  @override
+  String get pitchFailed =>
+      'Could not listen to the microphone. Try again. Your practice data is still here.';
+
+  @override
+  String get pitchStopFailed =>
+      'Could not confirm that the microphone stopped. Turn it off again to retry; the reading has been cleared.';
+
+  @override
+  String get pitchPrivacy =>
+      'The microphone is used only with your permission. Audio is analyzed on this device, without being saved or sent anywhere.';
+
+  @override
+  String get pitchLimitations =>
+      'The tool detects single notes, not chords, and may not work with every instrument.';
+
+  @override
+  String get pitchPreviewTitle => 'Pitch UI preview';
+
+  @override
+  String get pitchPreviewExplanation =>
+      'Review listening, detected notes, weak signals and denied permissions using simulated data. This preview does not use the microphone or access your journal.';
+
+  @override
+  String get pitchPreviewOpen => 'Open pitch screen';
+
+  @override
+  String get pitchPreviewBadge => 'UI preview · Simulated data · No microphone';
+
+  @override
+  String get pitchPreviewScenario => 'State to preview';
+
+  @override
+  String get pitchPreviewStartHint =>
+      'Choose a state, then turn on the microphone to preview it. Turning it off clears the note and needle.';
+
+  @override
+  String get pitchPreviewListening => 'Listening, waiting for audio';
+
+  @override
+  String get pitchPreviewInTune => 'Note detected, in tune';
+
+  @override
+  String get pitchPreviewLow => 'Note detected, slightly low';
+
+  @override
+  String get pitchPreviewHigh => 'Note detected, slightly high';
+
+  @override
+  String get pitchPreviewWeakSignal => 'Not enough signal';
+
+  @override
+  String get pitchPreviewDenied => 'Microphone permission denied';
+
+  @override
+  String get pitchPreviewBlocked => 'Microphone permission blocked';
 }

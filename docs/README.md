@@ -9,3 +9,5 @@ Chứa tài liệu yêu cầu, kiến trúc, quyết định kỹ thuật, kiể
 - [`FE_RIVERPOD.md`](FE_RIVERPOD.md): quản lý trạng thái frontend, cấp dependency qua app và nối backend sau.
 - [`FE_INSTRUMENT_PROFILES.md`](FE_INSTRUMENT_PROFILES.md): task 14, luồng hồ sơ nhạc cụ và bản xem thử FE.
 - [`FE_PRIVACY_SUPPORT.md`](FE_PRIVACY_SUPPORT.md): task 44, màn riêng tư/hỗ trợ, bản nháp email và cấu hình PM còn thiếu.
+- [`FE_PITCH_UI.md`](FE_PITCH_UI.md): task 29 / UC-09, giao diện cao độ và bản xem thử FE.
+- [`BE_PITCH_SERVICE.md`](BE_PITCH_SERVICE.md): hướng dẫn backend nối service cao độ, trạng thái, quyền micro, Start/Stop và kiểm tra Android thật.
