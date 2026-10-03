@@ -114,7 +114,12 @@ Future<void> runSessionFormJourney(
       '7',
     );
     await enter(duration('seconds'), '1.5');
+    await enter(duration('hours'), '');
+    await enter(duration('minutes'), '-1');
     await enter(practiced(), 'Ghi chú\nchưa lưu');
+    await enter(find.byType(TextFormField).at(5), 'Khó\nchưa xong');
+    await enter(find.byType(TextFormField).at(6), '  Lần sau  ');
+    await enter(find.byType(TextFormField).at(7), 'bad');
     await owner.read((_) async {});
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
@@ -129,6 +134,9 @@ Future<void> runSessionFormJourney(
     await waitFor(find.byType(TimerExample));
     final draft = (await reader().unfinished(sessionId: id))!;
     expect(draft.reviewInput!.durationSecondsInput, '1.5');
+    expect(draft.reviewInput!.durationHoursInput, '');
+    expect(draft.reviewInput!.durationMinutesInput, '-1');
+    expect(draft.reviewInput!.bpmInput, 'bad');
     expect(draft.reviewInput!.practiced, 'Ghi chú\nchưa lưu');
     expect(await reader().saved(profileId: profile), isEmpty);
     // Reopen the actual app/storage before reviewing again.
@@ -150,7 +158,39 @@ Future<void> runSessionFormJourney(
       tester.widget<TextFormField>(practiced()).controller!.text,
       'Ghi chú\nchưa lưu',
     );
+    expect(
+      tester.widget<TextFormField>(duration('hours')).controller!.text,
+      '',
+    );
+    expect(
+      tester.widget<TextFormField>(duration('minutes')).controller!.text,
+      '-1',
+    );
+    expect(
+      tester
+          .widget<TextFormField>(find.byType(TextFormField).at(5))
+          .controller!
+          .text,
+      'Khó\nchưa xong',
+    );
+    expect(
+      tester
+          .widget<TextFormField>(find.byType(TextFormField).at(6))
+          .controller!
+          .text,
+      '  Lần sau  ',
+    );
+    expect(
+      tester
+          .widget<TextFormField>(find.byType(TextFormField).at(7))
+          .controller!
+          .text,
+      'bad',
+    );
+    await enter(duration('hours'), '0');
+    await enter(duration('minutes'), '0');
     await enter(duration('seconds'), '30');
+    await enter(find.byType(TextFormField).at(7), '');
     await screenshot?.call('task19-review');
     await tap(find.widgetWithText(MeloopButton, 'Lưu buổi luyện'));
     await waitFor(find.byType(PracticeSessionDetailPage));

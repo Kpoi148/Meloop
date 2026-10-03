@@ -213,10 +213,10 @@ void main() {
       durationMinutesInput: '',
       durationSecondsInput: '1.5',
       practiced: 'Dòng một\nDòng hai',
-      difficulty: '',
-      next: '  ',
-      mood: null,
-      focus: null,
+      difficulty: 'Khó\nchưa xong',
+      next: '  Lần sau  ',
+      mood: 4,
+      focus: 2,
       bpmInput: 'bad',
     );
     await review.persistInput(id(10), input);
@@ -237,10 +237,47 @@ void main() {
     expect(draft.reviewInput!.durationMinutesInput, '');
     expect(draft.reviewInput!.durationSecondsInput, '1.5');
     expect(draft.reviewInput!.practiced, 'Dòng một\nDòng hai');
-    expect(draft.reviewInput!.mood, isNull);
-    expect(draft.reviewInput!.focus, isNull);
+    expect(draft.reviewInput!.practiceDate, '2026-09-29');
+    expect(draft.reviewInput!.durationHoursInput, '0');
+    expect(draft.reviewInput!.difficulty, 'Khó\nchưa xong');
+    expect(draft.reviewInput!.next, '  Lần sau  ');
+    expect(draft.reviewInput!.mood, 4);
+    expect(draft.reviewInput!.focus, 2);
     expect(draft.reviewInput!.bpmInput, 'bad');
   });
+
+  test(
+    'malformed draft date is rejected without replacing recoverable raw input',
+    () async {
+      mono.advance(5000);
+      await timer.finish();
+      ReviewInput input(String date) => ReviewInput(
+        title: 'Nháp',
+        practiceDate: date,
+        durationHoursInput: '',
+        durationMinutesInput: '-1',
+        durationSecondsInput: 'bad',
+        practiced: '',
+        difficulty: '',
+        next: '',
+        mood: null,
+        focus: null,
+      );
+      await review.persistInput(id(10), input('2026-09-30'));
+      final before = await owner.read((db) => db.query('session_drafts'));
+      for (final date in ['bad', '2026-02-30', '1999-12-31']) {
+        await expectLater(
+          review.persistInput(id(10), input(date)),
+          throwsA(isA<JournalFailure>()),
+        );
+      }
+      expect(await owner.read((db) => db.query('session_drafts')), before);
+      expect(
+        (await review.read(id(10))).reviewInput!.durationSecondsInput,
+        'bad',
+      );
+    },
+  );
 
   test('Review rejects a future date and preserves draft for retry; optional ratings save as SQL null', () async {
     mono.advance(5000);

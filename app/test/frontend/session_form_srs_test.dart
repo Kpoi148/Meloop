@@ -228,6 +228,36 @@ void main() {
   });
 
   testWidgets(
+    'background flush retries pending raw input and retains the form',
+    (tester) async {
+      var fail = true;
+      ReviewInput? stored;
+      await openForm(
+        tester,
+        save: (_) async {},
+        persist: (input) async {
+          if (fail) throw StateError('Injected draft failure');
+          stored = input;
+        },
+      );
+      await tester.enterText(duration('seconds'), '1.5');
+      await tester.pumpAndSettle();
+      fail = false;
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      await tester.pumpAndSettle();
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+      expect(stored!.durationSecondsInput, '1.5');
+      expect(find.byType(SessionFormExample), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
     'Android Back protects edits; keep editing retains input and discard leaves original',
     (tester) async {
       var saves = 0;

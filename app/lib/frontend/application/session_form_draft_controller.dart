@@ -17,13 +17,32 @@ class SessionFormDraftController extends ChangeNotifier {
   bool _disposed = false;
 
   void update(ReviewInput input) {
+    if (_disposed) return;
     _pending = input;
     if (_active == null) unawaited(_start());
   }
 
   Future<void> _start() {
     error = null;
-    return _active = _drain().whenComplete(() => _active = null);
+    final completion = Completer<void>();
+    _active = completion.future;
+    unawaited(_run(completion));
+    return completion.future;
+  }
+
+  Future<void> _run(Completer<void> completion) async {
+    try {
+      await _drain();
+    } finally {
+      _active = null;
+      if (!_disposed) notifyListeners();
+      // A completion listener may submit another snapshot. Do not strand it
+      // behind the operation that has just finished, or start two writers.
+      if (_active == null && _pending != null && error == null) {
+        unawaited(_start());
+      }
+      completion.complete();
+    }
   }
 
   Future<void> _drain() async {
@@ -38,13 +57,14 @@ class SessionFormDraftController extends ChangeNotifier {
         break;
       }
     }
-    if (!_disposed) notifyListeners();
   }
 
   Future<void> flush() async {
-    if (_active == null && _pending != null) _start();
-    await _active;
-    if (error != null) throw error!;
+    while (_active != null || _pending != null) {
+      if (_active == null) _start();
+      await _active;
+      if (error != null) throw error!;
+    }
   }
 
   @override

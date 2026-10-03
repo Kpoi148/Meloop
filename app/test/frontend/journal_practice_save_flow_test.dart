@@ -93,9 +93,16 @@ void main() {
             schedulePulses: false,
           );
           Future<void> waitFor(Finder finder) async {
-            for (var i = 0; i < 100 && finder.evaluate().isEmpty; i++) {
+            for (var i = 0; i < 100; i++) {
               await Future<void>.delayed(const Duration(milliseconds: 20));
               await tester.pump(const Duration(milliseconds: 50));
+              // The page can exist before its SQLite read finishes. Allow real
+              // I/O to complete before pumpAndSettle advances fake frame time.
+              if (finder.evaluate().isNotEmpty &&
+                  find.byType(CircularProgressIndicator).evaluate().isEmpty &&
+                  timer.snapshot?.busy != true) {
+                break;
+              }
             }
             await tester.pumpAndSettle();
             expect(finder, findsOneWidget);

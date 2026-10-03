@@ -48,7 +48,8 @@ class SessionFormExample extends ConsumerStatefulWidget {
   ConsumerState<SessionFormExample> createState() => _SessionFormExampleState();
 }
 
-class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
+class _SessionFormExampleState extends ConsumerState<SessionFormExample>
+    with WidgetsBindingObserver {
   final _saveId = Object();
   final _form = GlobalKey<FormState>();
   late final _seed =
@@ -120,6 +121,7 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
   void initState() {
     super.initState();
     if (widget.onPersistInput case final persist?) {
+      WidgetsBinding.instance.addObserver(this);
       _draftController = SessionFormDraftController(persist)
         ..addListener(_draftChanged);
       for (final input in _inputs) {
@@ -130,6 +132,21 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
 
   void _draftChanged() {
     if (mounted) setState(() {});
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed && !_saving) {
+      unawaited(_flushBackgroundDraft());
+    }
+  }
+
+  Future<void> _flushBackgroundDraft() async {
+    try {
+      await _draftController?.flush();
+    } catch (_) {
+      // The draft controller keeps the snapshot and exposes the existing retry UI.
+    }
   }
 
   void _inputChanged() => _draftController?.update(
@@ -171,6 +188,7 @@ class _SessionFormExampleState extends ConsumerState<SessionFormExample> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _draftController?.dispose();
     for (final controller in _inputs) {
       controller.dispose();
