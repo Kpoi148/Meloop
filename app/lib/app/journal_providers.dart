@@ -10,6 +10,8 @@ import '../backend/journal/sqlite_practice_review_service.dart';
 import '../backend/journal/sqlite_practice_session_delete_service.dart';
 import '../shared/journal/practice_review_service.dart';
 import '../shared/journal/practice_session_delete_service.dart';
+import '../shared/journal/practice_session_update_service.dart';
+import '../backend/journal/sqlite_practice_session_update_service.dart';
 import '../backend/journal/practice_timer.dart';
 import '../backend/journal/practice_screen_awake.dart';
 import '../shared/journal/practice_timer_service.dart';
@@ -53,6 +55,13 @@ final journalSessionDeleteServiceProvider =
 final journalMonotonicClockProvider = Provider<MonotonicClock>(
   (ref) => StopwatchMonotonicClock(),
 );
+final journalSessionUpdateServiceProvider =
+    Provider<PracticeSessionUpdateService>(
+      (ref) => SqlitePracticeSessionUpdateService(
+        owner: ref.watch(journalDatabaseOwnerProvider),
+        clock: ref.watch(journalClockProvider),
+      ),
+    );
 final journalScreenAwakeProvider = Provider<PracticeScreenAwake>(
   (ref) => AndroidPracticeScreenAwake(),
 );

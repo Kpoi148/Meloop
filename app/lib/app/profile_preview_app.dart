@@ -88,6 +88,20 @@ MeloopApp createJournalProfileApp({List<Override> overrides = const []}) =>
             sessionId: session.id,
           );
         }),
+        practiceSessionUpdateProvider.overrideWith((ref) {
+          final service = ref.watch(journalSessionUpdateServiceProvider);
+          return (session, values) async {
+            final updated = presentPracticeSession(
+              await service.update(
+                profileId: session.profileId,
+                sessionId: session.id,
+                values: journalReviewValues(values),
+              ),
+            );
+            if (ref.mounted) ref.invalidate(practiceSessionsProvider);
+            return updated.withRecordings(session.recordings);
+          };
+        }),
         ...overrides,
       ],
       home: const JournalPracticeLifecycle(child: _JournalProfiles()),

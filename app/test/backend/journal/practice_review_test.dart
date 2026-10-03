@@ -31,7 +31,7 @@ void main() {
     int? bpm = 80,
   }) => PracticeReviewValues(
     title: title,
-    date: PracticeDate.parse('2026-10-02'),
+    date: PracticeDate.parse('2026-09-30'),
     durationSeconds: duration,
     practiced: 'Âm dài',
     difficulty: 'Hơi thở',

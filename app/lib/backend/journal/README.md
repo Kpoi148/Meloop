@@ -32,6 +32,10 @@ Cập nhật Finish cho FE: nút Kết thúc journal đã mở để vào Sessio
 
 ## Tích hợp UC-04
 
+Sửa buổi Saved dùng `PracticeSessionUpdateService` và `SqlitePracticeSessionUpdateService`, được app inject vào port chỉnh sửa FE. Transaction chỉ cập nhật buổi Saved chưa xóa và đúng hồ sơ; giữ ID, thời gian đo, ngày tạo, offset và liên kết recording. Save và Edit dùng chung validation trường (ngày không vượt hôm nay theo clock được inject) và cập nhật search keys. Lỗi giữ bản saved cũ để retry; không có migration mới. Thành công làm mới history/Home, detail dùng kết quả đã commit. Count hồ sơ không đổi vì edit không chuyển hồ sơ hoặc thêm buổi. Progress chưa có query để cập nhật.
+
+Kiểm thử: `practice_session_update_test.dart` kiểm tra ownership, giới hạn, rollback/retry, search và reopen trên SQLite. `journal_saved_session_update_test.dart` và `integration_test/saved_session_update_smoke_test.dart` dùng chung luồng form thực: lỗi giữ input, retry, cập nhật detail/history/Home và reopen. Android chạy package `.qa` với database UUID riêng.
+
 Review/Save đã nối SQLite journal thật qua `PracticeReviewService`. Finish ghi Review bằng timer service, Save cập nhật cùng session ID và trả bản lưu đầu tiên khi retry. Save thành công mở chi tiết, xóa draft và cho phép Start buổi tiếp theo. Phần mô tả B04/B05 phía trên là mốc lịch sử; chi tiết trạng thái hiện tại ở `docs/FE_PRACTICE_SESSION.md`. Các công cụ audio/metronome/tuner vẫn dùng port riêng; form chưa autosave nội dung trước Save.
 
 `SqlitePracticeSessionDeleteService` nối nút Xóa buổi luyện trong app thật qua contract shared. Transaction kiểm tra UUID, owner và state Saved; không hủy draft. Buổi không có recording được xóa khỏi bảng; buổi có recording được đánh dấu `deleted_at` (v4) và loại khỏi history/detail/statistics, giữ nguyên metadata/liên kết audio, không tạo tác vụ dọn file. Retry sau commit là no-op; lỗi SQLite rollback và trả storage error an toàn. Save retry không mở lại buổi đã xóa. Count hồ sơ dùng cùng saved view. Xóa hồ sơ có recording vẫn chặn như trước.
