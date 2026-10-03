@@ -91,7 +91,12 @@ class PracticeToolsPage extends ConsumerWidget {
           ),
           const Divider(),
           Text(strings.practiceToolsFree, style: TempoType.label),
-          Text(strings.practiceToolsTimingHint, style: TempoType.caption),
+          Text(
+            sessionId == null
+                ? strings.practiceToolsStandaloneHint
+                : strings.practiceToolsTimingHint,
+            style: TempoType.caption,
+          ),
         ],
       ),
     );

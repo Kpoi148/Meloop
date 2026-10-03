@@ -6,6 +6,7 @@ import '../../shared/journal/journal_readers.dart';
 import '../../shared/journal/journal_runtime.dart';
 import '../../shared/journal/journal_text.dart';
 import '../../shared/journal/practice_date.dart';
+import '../../shared/journal/weekly_practice_goal.dart';
 import '../database/journal_database_owner.dart';
 import 'journal_row_mapper.dart';
 
@@ -167,6 +168,33 @@ class SqliteJournalPreferencesReader implements JournalPreferencesReader {
       updatedAt: storedUtc(row['updated_at']),
     );
   });
+}
+
+class SqliteWeeklyPracticeGoalReader implements WeeklyPracticeGoalReader {
+  const SqliteWeeklyPracticeGoalReader(this.owner);
+  final JournalDatabaseOwner owner;
+
+  @override
+  Future<WeeklyPracticeGoal?> read(String profileId) {
+    _requireId(profileId);
+    return _readStored(owner, (db) async {
+      final rows = await db.query(
+        'weekly_goals',
+        where: 'profile_id = ?',
+        whereArgs: [profileId],
+        limit: 1,
+      );
+      if (rows.isEmpty) return null;
+      final row = rows.single;
+      if (row['enabled'] != 0 && row['enabled'] != 1) {
+        throw const FormatException('Invalid weekly goal state');
+      }
+      return WeeklyPracticeGoal(
+        enabled: row['enabled'] == 1,
+        targetDays: row['target_days'] as int,
+      );
+    });
+  }
 }
 
 Future<PracticeDraft?> readUnfinishedDraft(

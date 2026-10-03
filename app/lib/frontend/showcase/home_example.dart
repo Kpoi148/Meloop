@@ -1,87 +1,81 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../l10n/l10n.dart';
 import '../application/startup_controller.dart';
 import '../components/meloop_ui.dart';
+import '../home/overview_tokens.dart';
+import '../home/overview_widgets.dart';
+import '../home/practice_overview_provider.dart';
+import '../practice_sessions/practice_session.dart';
+import '../practice_sessions/practice_session_copy.dart';
 import '../practice_sessions/practice_session_summary.dart';
 import 'preview_copy.dart';
 
-/// Synthetic content matching the Tempo screenshot; never persisted.
+/// Tempo Home renders supplied saved records; it never creates sample data.
 class HomeExample extends StatelessWidget {
   const HomeExample({
     super.key,
+    required this.profile,
+    required this.overview,
     required this.onCreate,
-    required this.onHistory,
+    required this.onProgress,
     required this.onTools,
-    this.profile,
+    required this.onRetry,
     this.draft,
     this.onInstrument,
-    this.showSampleData = true,
-    this.sessionSummary,
   });
-  final VoidCallback onCreate, onHistory;
-  final VoidCallback? onTools;
-  final PreviewInstrumentProfile? profile;
+  final PreviewInstrumentProfile profile;
+  final AsyncValue<PracticeOverview> overview;
+  final VoidCallback onCreate, onProgress, onTools, onRetry;
   final PreviewPracticeDraft? draft;
   final VoidCallback? onInstrument;
-  final bool showSampleData;
-  final PracticeSessionSummary? sessionSummary;
+  PracticeSessionSummary? get sessionSummary => overview.value?.summary;
+
   @override
   Widget build(BuildContext context) {
     final strings = context.l10n;
+    final currentDraft = draft?.profileId == profile.id ? draft : null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _HomeHeader(profile: profile, onInstrument: onInstrument),
-        _StatisticsCard(
-          showSampleData: showSampleData,
-          summary: sessionSummary,
-        ),
-        const SizedBox(height: TempoSpace.lg),
-        Row(
-          children: [
-            MeloopIcon(MeloopIcons.target, size: 57),
-            SizedBox(width: TempoSpace.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Wrap(
-                    alignment: WrapAlignment.spaceBetween,
-                    spacing: 8,
-                    children: [
-                      Text(strings.weeklyGoal, style: TempoType.label),
-                      Text(
-                        strings.goalProgress(showSampleData ? 3 : 0, 5),
-                        style: TempoType.caption,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: TempoSpace.sm),
-                  LinearProgressIndicator(
-                    value: showSampleData ? .6 : 0,
-                    minHeight: 10,
-                    color: TempoColors.yellow,
-                    backgroundColor: TempoColors.line,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  const SizedBox(height: TempoSpace.xs),
-                  Text(strings.mondayToSunday, style: TempoType.caption),
-                ],
+        overview.when(
+          skipLoadingOnRefresh: false,
+          data: (data) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              PracticeStatisticsCard(
+                summary: data.summary,
+                onProgress: onProgress,
               ),
-            ),
-          ],
+              const SizedBox(height: TempoSpace.lg),
+              WeeklyGoalStrip(summary: data.summary, goal: data.goal),
+            ],
+          ),
+          error: (_, _) => MeloopStateView(
+            state: MeloopViewState.error,
+            title: strings.practiceOverviewLoadFailed,
+            actionLabel: strings.retry,
+            onAction: onRetry,
+          ),
+          loading: () => MeloopStateView(
+            state: MeloopViewState.loading,
+            title: strings.practiceOverviewLoading,
+          ),
         ),
         const SizedBox(height: TempoSpace.md),
         MeloopButton(
-          label: draft == null
+          label: currentDraft == null
               ? strings.createPractice
-              : draft?.instrumentName == null
+              : currentDraft.instrumentName == null
               ? strings.continuePractice
-              : strings.continueInstrumentPractice(draft!.instrumentName!),
+              : strings.continueInstrumentPractice(
+                  currentDraft.instrumentName!,
+                ),
           prominent: true,
           style: MeloopButtonStyle.yellow,
-          icon: MeloopIcons.plus,
+          icon: currentDraft == null ? MeloopIcons.plus : MeloopIcons.play,
           onPressed: onCreate,
         ),
         const SizedBox(height: TempoSpace.sm),
@@ -95,10 +89,16 @@ class HomeExample extends StatelessWidget {
             onTap: onTools,
             borderRadius: BorderRadius.circular(TempoRadius.action),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              padding: const EdgeInsets.symmetric(
+                horizontal: TempoSpace.md,
+                vertical: TempoSpace.xs,
+              ),
               child: Row(
                 children: [
-                  const MeloopArt.tool(MeloopTool.metro, size: 43),
+                  const MeloopArt.tool(
+                    MeloopTool.metro,
+                    size: OverviewTokens.toolsArtSize,
+                  ),
                   const SizedBox(width: TempoSpace.md),
                   Expanded(
                     child: Text(
@@ -113,86 +113,74 @@ class HomeExample extends StatelessWidget {
           ),
         ),
         const SizedBox(height: TempoSpace.md),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            final title = Text(strings.recentSession, style: TempoType.section);
-            final action = TextButton(
-              onPressed: onHistory,
-              child: Text(strings.viewAll, style: TempoType.caption),
-            );
-            if (MediaQuery.textScalerOf(context).scale(16) > 20) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [title, action],
-              );
-            }
-            return Row(
-              children: [
-                Expanded(child: title),
-                Flexible(child: action),
-              ],
-            );
-          },
+        // Intentionally no history link, status badge or interaction in this block.
+        Column(
+          key: const Key('home-recent-session'),
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(strings.recentSession, style: TempoType.section),
+            const SizedBox(height: TempoSpace.sm),
+            if (overview.hasValue) ...[
+              if (overview.requireValue.summary.latest case final session?)
+                _RecentCard(
+                  session: session,
+                  profile: profile,
+                  today: overview.requireValue.summary.days.last,
+                )
+              else
+                MeloopStateView(
+                  state: MeloopViewState.empty,
+                  title: strings.noPracticeSessions,
+                  message: strings.profileSessionsEmptyMessage,
+                ),
+            ],
+          ],
         ),
-        const SizedBox(height: TempoSpace.sm),
-        if (showSampleData)
-          const _RecentCard()
-        else
-          MeloopStateView(
-            state: MeloopViewState.empty,
-            title: strings.noPracticeSessions,
-            message: strings.profileSessionsEmptyMessage,
-          ),
       ],
     );
   }
 }
 
 class _HomeHeader extends StatelessWidget {
-  const _HomeHeader({this.profile, this.onInstrument});
-  final PreviewInstrumentProfile? profile;
+  const _HomeHeader({required this.profile, this.onInstrument});
+  final PreviewInstrumentProfile profile;
   final VoidCallback? onInstrument;
   @override
   Widget build(BuildContext context) {
     final strings = context.l10n;
-    final selected =
-        profile ??
-        const PreviewInstrumentProfile(
-          id: 'guitar-preview',
-          instrument: MeloopInstrument.guitar,
-        );
-    final copy = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        MeloopTopBar(
+          trailing: SelectedInstrumentChip(
+            profile: profile,
+            onPressed: onInstrument,
+          ),
+        ),
+        const SizedBox(height: TempoSpace.page),
         Text(strings.overview, style: TempoType.heading),
-        Text(profileDisplayName(strings, selected)),
+        Text(profileDisplayName(strings, profile)),
+        const SizedBox(height: TempoSpace.lg),
       ],
     );
-    final top = MeloopTopBar(
-      trailing: _InstrumentChip(profile: selected, onPressed: onInstrument),
-    );
-    if (MediaQuery.textScalerOf(context).scale(16) > 20) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          top,
-          const SizedBox(height: TempoSpace.page),
-          copy,
-          const SizedBox(height: TempoSpace.page),
-        ],
-      );
-    }
+    if (MediaQuery.textScalerOf(context).scale(16) > 20) return content;
     return Stack(
       clipBehavior: Clip.none,
       children: [
         Positioned(
-          right: -51,
-          top: -32,
+          right: OverviewTokens.heroRight,
+          top: OverviewTokens.heroTop,
           child: Transform.rotate(
-            angle: .105,
-            child: selected.instrument == MeloopInstrument.guitar
-                ? const MeloopArt.scene(MeloopScene.guitar, size: 285)
-                : MeloopArt.instrument(selected.instrument, size: 285),
+            angle: OverviewTokens.heroAngle,
+            child: profile.instrument == MeloopInstrument.guitar
+                ? const MeloopArt.scene(
+                    MeloopScene.guitar,
+                    size: OverviewTokens.heroArtSize,
+                  )
+                : MeloopArt.instrument(
+                    profile.instrument,
+                    size: OverviewTokens.heroArtSize,
+                  ),
           ),
         ),
         Positioned.fill(
@@ -211,223 +199,80 @@ class _HomeHeader extends StatelessWidget {
             ),
           ),
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            top,
-            const SizedBox(height: 19),
-            copy,
-            const SizedBox(height: 16),
-          ],
-        ),
+        content,
       ],
     );
   }
 }
 
-class _InstrumentChip extends StatelessWidget {
-  const _InstrumentChip({required this.profile, this.onPressed});
-  final PreviewInstrumentProfile profile;
-  final VoidCallback? onPressed;
-  @override
-  Widget build(BuildContext context) => Semantics(
-    label: context.l10n.changeInstrument,
-    button: true,
-    child: InkWell(
-      key: const Key('choose-profile'),
-      onTap: onPressed,
-      borderRadius: BorderRadius.circular(TempoRadius.pill),
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(3, 3, 11, 3),
-        decoration: BoxDecoration(
-          color: TempoColors.paper.withValues(alpha: .9),
-          border: Border.all(color: TempoColors.line),
-          borderRadius: BorderRadius.circular(TempoRadius.pill),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            MeloopArt.instrument(profile.instrument, size: 39),
-            const SizedBox(width: 7),
-            Flexible(
-              child: Text(profileInstrumentLabel(context.l10n, profile)),
-            ),
-            const SizedBox(width: 7),
-            const MeloopIcon(MeloopIcons.down, size: 18),
-          ],
-        ),
-      ),
-    ),
-  );
-}
-
-class _StatisticsCard extends StatelessWidget {
-  const _StatisticsCard({required this.showSampleData, this.summary});
-  final bool showSampleData;
-  final PracticeSessionSummary? summary;
-  List<int> get values =>
-      summary?.minutesByDay ??
-      (showSampleData
-          ? const [20, 0, 25, 0, 30, 25, 35]
-          : List<int>.filled(7, 0));
-  @override
-  Widget build(BuildContext context) {
-    final strings = context.l10n;
-    final weekdays = MaterialLocalizations.of(context).narrowWeekdays;
-    return MeloopCard(
-      color: TempoColors.teal,
-      padding: const EdgeInsets.fromLTRB(14, 13, 14, 10),
-      child: DefaultTextStyle.merge(
-        style: const TextStyle(color: TempoColors.white),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              spacing: 8,
-              children: [
-                Text(strings.lastSevenDays, style: TempoType.compactTitle),
-                Text(strings.details, style: TempoType.caption),
-              ],
-            ),
-            const SizedBox(height: 9),
-            MeloopResponsiveRow(
-              children: [
-                _Metric(
-                  summary?.minutes.toString() ?? (showSampleData ? '135' : '0'),
-                  strings.practiceMinutes,
-                ),
-                _Metric(
-                  summary?.count.toString() ?? (showSampleData ? '5' : '0'),
-                  strings.practiceSessions,
-                ),
-                _Metric(
-                  summary?.consecutiveDays.toString() ??
-                      (showSampleData ? '3' : '0'),
-                  strings.consecutiveDays,
-                ),
-              ],
-            ),
-            const SizedBox(height: TempoSpace.xs),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                for (var i = 0; i < 7; i++)
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Column(
-                        children: [
-                          Text('${values[i]}', style: TempoType.caption),
-                          Container(
-                            height: values[i] == 0 ? 2 : values[i] * .9,
-                            decoration: BoxDecoration(
-                              color: i == 6
-                                  ? TempoColors.yellow
-                                  : TempoColors.chart,
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(5),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            [
-                              weekdays[4],
-                              weekdays[5],
-                              weekdays[6],
-                              weekdays[0],
-                              weekdays[1],
-                              weekdays[2],
-                              weekdays[3],
-                            ][i],
-                            style: TempoType.caption,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Metric extends StatelessWidget {
-  const _Metric(this.value, this.label);
-  final String value, label;
-  @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      Text(value, style: TempoType.metric),
-      Text(
-        label,
-        style: TempoType.caption.copyWith(height: 1.1),
-        textAlign: TextAlign.center,
-      ),
-    ],
-  );
-}
-
 class _RecentCard extends StatelessWidget {
-  const _RecentCard();
+  const _RecentCard({
+    required this.session,
+    required this.profile,
+    required this.today,
+  });
+  final PracticeSession session;
+  final PreviewInstrumentProfile profile;
+  final DateTime today;
   @override
   Widget build(BuildContext context) {
     final strings = context.l10n;
-    final body = Padding(
-      padding: const EdgeInsets.fromLTRB(0, 9, 9, 9),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(strings.sampleSessionTitle, style: TempoType.title),
-          const SizedBox(height: 3),
-          Text(strings.sampleSessionMeta, style: TempoType.compactBody),
-          Text(strings.sampleSessionNotes, style: TempoType.compactBody),
-          const Divider(height: 16),
-          Text(strings.nextPracticeUpper, style: TempoType.caption),
-          Text(strings.sampleNextNotes, style: TempoType.compactBody),
-        ],
-      ),
+    final duration = practiceDuration(strings, session.duration);
+    final body = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: TempoSpace.xs,
+      children: [
+        Text(
+          session.title,
+          style: TempoType.title,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        Text(
+          practiceDayLabel(strings, session.date, today),
+          style: TempoType.compactBody,
+        ),
+        Text(
+          session.bpm == null
+              ? duration
+              : strings.practiceDurationWithBpm(duration, session.bpm!),
+          style: TempoType.compactBody,
+        ),
+        if (session.practiced.isNotEmpty)
+          Text(
+            session.practiced,
+            style: TempoType.compactBody,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ),
+      ],
     );
     return MeloopCard(
-      padding: EdgeInsets.zero,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          if (constraints.maxWidth < 300 ||
+          if (constraints.maxWidth < OverviewTokens.compactRecentWidth ||
               MediaQuery.textScalerOf(context).scale(16) > 20) {
-            return Padding(
-              padding: const EdgeInsets.all(TempoSpace.md),
-              child: body,
-            );
+            return body;
           }
-          return IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(
-                  width: 106,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.horizontal(
-                      left: Radius.circular(TempoRadius.recent),
-                    ),
-                    child: OverflowBox(
-                      maxWidth: 220,
-                      maxHeight: 220,
-                      alignment: const Alignment(.5, -.4),
-                      child: const MeloopArt.scene(
-                        MeloopScene.guitar,
-                        size: 220,
-                      ),
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: OverviewTokens.recentArtWidth,
+                height: OverviewTokens.recentArtHeight,
+                child: ClipRect(
+                  child: FittedBox(
+                    fit: BoxFit.cover,
+                    child: MeloopArt.instrument(
+                      profile.instrument,
+                      size: OverviewTokens.recentArtHeight,
                     ),
                   ),
                 ),
-                const SizedBox(width: TempoSpace.md),
-                Expanded(child: body),
-              ],
-            ),
+              ),
+              const SizedBox(width: TempoSpace.md),
+              Expanded(child: body),
+            ],
           );
         },
       ),

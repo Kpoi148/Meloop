@@ -554,6 +554,84 @@ abstract class AppLocalizations {
   /// **'Tổng quan'**
   String get overview;
 
+  /// No description provided for @practiceOverviewLoading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang đọc dữ liệu luyện tập…'**
+  String get practiceOverviewLoading;
+
+  /// No description provided for @practiceOverviewLoadFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Không thể đọc dữ liệu luyện tập. Hãy thử lại.'**
+  String get practiceOverviewLoadFailed;
+
+  /// No description provided for @weeklyGoalOff.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đang tắt'**
+  String get weeklyGoalOff;
+
+  /// No description provided for @qualifyingDaysThisWeek.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tuần này đã luyện {days} ngày'**
+  String qualifyingDaysThisWeek(int days);
+
+  /// No description provided for @qualifyingPracticeDayHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Một ngày được tính khi có ít nhất một buổi đã lưu từ 1 phút. Tuần tính từ thứ Hai đến Chủ nhật.'**
+  String get qualifyingPracticeDayHint;
+
+  /// No description provided for @practiceChartDay.
+  ///
+  /// In vi, this message translates to:
+  /// **'{date}: {minutes} phút luyện'**
+  String practiceChartDay(String date, int minutes);
+
+  /// No description provided for @practiceRatingsHeading.
+  ///
+  /// In vi, this message translates to:
+  /// **'Cảm xúc & tập trung'**
+  String get practiceRatingsHeading;
+
+  /// No description provided for @practiceRatingsPeriod.
+  ///
+  /// In vi, this message translates to:
+  /// **'7 ngày gần nhất · Do bạn tự đánh giá sau buổi luyện'**
+  String get practiceRatingsPeriod;
+
+  /// No description provided for @practiceRatingsDisclaimer.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đây là cảm nhận của bạn, không phải điểm kỹ năng.'**
+  String get practiceRatingsDisclaimer;
+
+  /// No description provided for @practiceNoRatings.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa có đánh giá'**
+  String get practiceNoRatings;
+
+  /// No description provided for @practiceRatingAverage.
+  ///
+  /// In vi, this message translates to:
+  /// **'{average}/5 · {count} lượt đánh giá'**
+  String practiceRatingAverage(String average, int count);
+
+  /// No description provided for @practiceViewHistory.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem nhật ký luyện tập'**
+  String get practiceViewHistory;
+
+  /// No description provided for @practiceToolsStandaloneHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mở công cụ từ Trang chủ không tạo buổi luyện. Công cụ cần buổi luyện sẽ khả dụng khi bạn bắt đầu một buổi.'**
+  String get practiceToolsStandaloneHint;
+
   /// No description provided for @changeInstrument.
   ///
   /// In vi, this message translates to:
@@ -2177,7 +2255,7 @@ abstract class AppLocalizations {
   /// No description provided for @practiceToolUnavailable.
   ///
   /// In vi, this message translates to:
-  /// **'Công cụ này chưa khả dụng. Bạn vẫn có thể tiếp tục buổi luyện.'**
+  /// **'Công cụ này chưa khả dụng.'**
   String get practiceToolUnavailable;
 
   /// No description provided for @renamePractice.

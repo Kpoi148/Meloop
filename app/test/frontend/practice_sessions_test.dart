@@ -118,6 +118,7 @@ Future<void> _mount(
   PracticeSessionsLoader? loader,
   PreviewPracticeDraft? draft,
   GlobalKey? boundaryKey,
+  bool waitForHome = true,
 }) async {
   final child = const MeloopUiShowcase(developmentTools: false);
   await tester.pumpWidget(
@@ -141,7 +142,12 @@ Future<void> _mount(
       home: child,
     ),
   );
-  await tester.pumpAndSettle();
+  if (waitForHome) {
+    await tester.pumpAndSettle();
+  } else {
+    // Navigate while Home's shared journal read is intentionally unresolved.
+    await tester.pump();
+  }
   if (draft != null) {
     final container = ProviderScope.containerOf(
       tester.element(find.byType(MeloopUiShowcase)),
@@ -269,6 +275,29 @@ void main() {
         );
     expect(notes.single.id, 'note');
   });
+
+  testWidgets(
+    'opening details during keyboard dismissal keeps navigation valid',
+    (tester) async {
+      await _mount(tester);
+      addTearDown(tester.view.resetViewInsets);
+      final card = find.widgetWithText(PracticeSessionCard, 'Luyện gam C');
+      await tester.ensureVisible(card);
+      tester.view.viewInsets = const FakeViewPadding(bottom: 280);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 30));
+      tester.view.viewInsets = FakeViewPadding.zero;
+      await tester.pump();
+      await tester.tap(card);
+      await tester.pumpAndSettle();
+      expect(find.byType(PracticeSessionDetailPage), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.byTooltip('Quay lại'));
+      await tester.pumpAndSettle();
+      expect(find.byType(PracticeSessionsTab), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('period filters and details retain search and scroll position', (
     tester,
@@ -436,6 +465,7 @@ void main() {
     var calls = 0;
     await _mount(
       tester,
+      waitForHome: false,
       loader: (_) {
         calls++;
         return calls == 1 ? pending.future : Future.value(const []);

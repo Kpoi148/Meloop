@@ -15,6 +15,8 @@ import 'package:meloop/frontend/showcase/settings_example.dart';
 import 'package:meloop/frontend/showcase/setup_example.dart';
 import 'package:meloop/frontend/showcase/welcome_example.dart';
 
+import '../support/home_fixture.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() async {
@@ -38,7 +40,14 @@ void main() {
             selectedIndex: 0,
             onSelected: (_) {},
           ),
-          child: HomeExample(onCreate: () {}, onHistory: () {}, onTools: () {}),
+          child: HomeExample(
+            profile: homeTestProfile,
+            overview: homeTestOverview,
+            onCreate: () {},
+            onProgress: () {},
+            onRetry: () {},
+            onTools: () {},
+          ),
         ),
         'welcome': const WelcomeExample(),
         'setup': SetupExample(onSave: (_) async {}),

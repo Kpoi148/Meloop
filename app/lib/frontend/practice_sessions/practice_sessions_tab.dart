@@ -131,6 +131,9 @@ class _PracticeSessionsTabState extends ConsumerState<PracticeSessionsTab> {
         dimension: PracticeTempo.fabSize,
         child: FloatingActionButton(
           key: const Key('practice-create'),
+          // This action belongs to the list, with no shared route transition.
+          // Keyboard hide/show can briefly retain both FAB animation children.
+          heroTag: null,
           tooltip: draft == null
               ? strings.createPractice
               : strings.continuePractice,

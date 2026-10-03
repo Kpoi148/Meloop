@@ -61,7 +61,12 @@ Future<void> runSessionFormJourney(
       await Future<void>.delayed(const Duration(milliseconds: 20));
       await tester.pump(const Duration(milliseconds: 50));
       if (finder.evaluate().isNotEmpty &&
-          find.byType(CircularProgressIndicator).evaluate().isEmpty &&
+          // A route being covered can still have a pending SQLite action.
+          // Let real I/O finish before settling animations with fake time.
+          find
+              .byType(CircularProgressIndicator, skipOffstage: false)
+              .evaluate()
+              .isEmpty &&
           timer.snapshot?.busy != true) {
         break;
       }
