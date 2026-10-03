@@ -11,6 +11,7 @@ ui.PracticeSession presentPracticeSession(
   id: session.id,
   profileId: session.profileId,
   date: DateTime.parse(session.practiceDate.value),
+  createdAt: session.createdAt,
   title: session.title,
   duration: Duration(seconds: session.durationSeconds!),
   practiced: session.practiced,

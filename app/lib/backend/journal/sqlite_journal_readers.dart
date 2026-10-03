@@ -115,11 +115,12 @@ class SqliteJournalSessionReader implements JournalSessionReader {
       clauses.add('practice_date <= ?');
       args.add(through.value);
     }
-    if (query.isNotEmpty) {
+    final queryText = query.trim();
+    if (queryText.isNotEmpty) {
       clauses.add(
         r"(title_search LIKE ? ESCAPE '\' OR practiced_search LIKE ? ESCAPE '\' OR difficulty_search LIKE ? ESCAPE '\' OR next_search LIKE ? ESCAPE '\')",
       );
-      args.addAll(List.filled(4, JournalText.literalLikePattern(query)));
+      args.addAll(List.filled(4, JournalText.literalLikePattern(queryText)));
     }
     return _readStored(
       owner,
