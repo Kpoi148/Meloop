@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../backend/database/journal_database_owner.dart';
 import '../backend/database/journal_database.dart';
 import '../backend/journal/sqlite_journal_readers.dart';
+import '../backend/journal/sqlite_practice_statistics_reader.dart';
+import '../shared/journal/practice_statistics.dart';
 import '../backend/journal/sqlite_practice_timer_store.dart';
 import '../backend/journal/sqlite_practice_review_service.dart';
 import '../backend/journal/sqlite_practice_session_delete_service.dart';
@@ -82,6 +84,12 @@ final journalProfileReaderProvider = Provider<JournalProfileReader>(
 );
 final journalSessionReaderProvider = Provider<JournalSessionReader>(
   (ref) => SqliteJournalSessionReader(ref.watch(journalDatabaseOwnerProvider)),
+);
+final journalStatisticsReaderProvider = Provider<PracticeStatisticsReader>(
+  (ref) => SqlitePracticeStatisticsReader(
+    owner: ref.watch(journalDatabaseOwnerProvider),
+    clock: ref.watch(journalClockProvider),
+  ),
 );
 final journalPreferencesReaderProvider = Provider<JournalPreferencesReader>(
   (ref) =>

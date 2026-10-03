@@ -11,6 +11,25 @@ PracticeSession session(int day, int seconds) => PracticeSession(
 );
 
 void main() {
+  test('explicit selected profile ignores records from another owner', () {
+    final summary = PracticeSessionSummary(
+      [
+        session(30, 600),
+        PracticeSession(
+          id: 'flute',
+          profileId: 'selected-flute',
+          date: DateTime(2026, 9, 30),
+          title: 'Flute',
+          duration: const Duration(seconds: 30),
+        ),
+      ],
+      DateTime(2026, 9, 30),
+      profileId: 'selected-flute',
+    );
+    expect(summary.count, 1);
+    expect(summary.minutes, 0);
+    expect(summary.consecutiveDays, 0);
+  });
   final today = DateTime(2026, 9, 30);
   test('editing 60 seconds to 30 removes its qualifying-day contribution', () {
     expect(PracticeSessionSummary([session(30, 60)], today).consecutiveDays, 1);
