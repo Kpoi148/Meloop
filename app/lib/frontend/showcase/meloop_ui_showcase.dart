@@ -18,7 +18,8 @@ import '../support/contact_support_page.dart';
 import '../practice_sessions/practice_sessions_tab.dart';
 import '../practice_sessions/practice_session.dart';
 import '../home/practice_overview_provider.dart';
-import '../home/practice_progress_page.dart';
+import '../progress/practice_progress_page.dart';
+import '../progress/progress_tokens.dart';
 import 'component_catalog.dart';
 import 'home_example.dart';
 import 'instrument_profile_preview.dart';
@@ -340,7 +341,7 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase>
     final navigation = MeloopBottomNavigation(
       selectedIndex: shell.selectedTab,
       onSelected: shellController.selectTab,
-      compact: shell.selectedTab == 1,
+      compact: shell.selectedTab == 1 || shell.selectedTab == 2,
     );
     if (shell.selectedTab == 1) {
       return PracticeSessionsTab(
@@ -362,6 +363,9 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase>
       );
     }
     return MeloopPage(
+      padding: shell.selectedTab == 2
+          ? ProgressTokens.pagePadding(MediaQuery.sizeOf(context).width)
+          : null,
       bottomNavigation: navigation,
       child: switch (shell.selectedTab) {
         0 => HomeExample(
@@ -378,7 +382,8 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase>
         ),
         2 => PracticeProgressPage(
           profile: profile,
-          overview: ref.watch(practiceOverviewProvider(profile)),
+          isPro: widget.isPro,
+          onViewPro: widget.onViewPro,
           onRetry: () => _reloadOverview(profile),
           onHistory: () => shellController.selectTab(1),
           onInstrument: () => _openProfilePage(

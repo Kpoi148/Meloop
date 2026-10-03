@@ -1445,8 +1445,206 @@ abstract class AppLocalizations {
   /// No description provided for @progressHeading.
   ///
   /// In vi, this message translates to:
-  /// **'Mỗi ngày,\nmột bước tiến.'**
+  /// **'Mỗi buổi,\nmột bước tiến.'**
   String get progressHeading;
+
+  /// No description provided for @progressEyebrow.
+  ///
+  /// In vi, this message translates to:
+  /// **'NHỮNG ĐIỀU BẠN TÍCH LŨY'**
+  String get progressEyebrow;
+
+  /// No description provided for @progressMusicMinutes.
+  ///
+  /// In vi, this message translates to:
+  /// **'phút dành cho âm nhạc'**
+  String get progressMusicMinutes;
+
+  /// No description provided for @progressSavedSessions.
+  ///
+  /// In vi, this message translates to:
+  /// **'buổi luyện đã lưu'**
+  String get progressSavedSessions;
+
+  /// No description provided for @progressStreak.
+  ///
+  /// In vi, this message translates to:
+  /// **'Liên tiếp'**
+  String get progressStreak;
+
+  /// No description provided for @progressDays.
+  ///
+  /// In vi, this message translates to:
+  /// **'{count} ngày'**
+  String progressDays(int count);
+
+  /// No description provided for @progressQualifyingDayHint.
+  ///
+  /// In vi, this message translates to:
+  /// **'Một buổi đã lưu từ 1 phút được tính là một ngày luyện.'**
+  String get progressQualifyingDayHint;
+
+  /// No description provided for @progressFocus.
+  ///
+  /// In vi, this message translates to:
+  /// **'Mức tập trung'**
+  String get progressFocus;
+
+  /// No description provided for @progressRatingsPeriod.
+  ///
+  /// In vi, this message translates to:
+  /// **'{period} · Do bạn tự đánh giá sau buổi luyện'**
+  String progressRatingsPeriod(String period);
+
+  /// No description provided for @progressRatingCaption.
+  ///
+  /// In vi, this message translates to:
+  /// **'Trung bình · {count} buổi có đánh giá'**
+  String progressRatingCaption(int count);
+
+  /// No description provided for @progressAdjustGoal.
+  ///
+  /// In vi, this message translates to:
+  /// **'Điều chỉnh mục tiêu'**
+  String get progressAdjustGoal;
+
+  /// No description provided for @progressHistory.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lịch sử buổi luyện'**
+  String get progressHistory;
+
+  /// No description provided for @progressFilter.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lọc'**
+  String get progressFilter;
+
+  /// No description provided for @progressProBadge.
+  ///
+  /// In vi, this message translates to:
+  /// **'PRO'**
+  String get progressProBadge;
+
+  /// No description provided for @progressDateRange.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khoảng thời gian'**
+  String get progressDateRange;
+
+  /// No description provided for @progressApplyRange.
+  ///
+  /// In vi, this message translates to:
+  /// **'Xem tiến độ'**
+  String get progressApplyRange;
+
+  /// No description provided for @progressFilterTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Lọc tiến độ'**
+  String get progressFilterTitle;
+
+  /// No description provided for @progressFilterThisMonth.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tháng này'**
+  String get progressFilterThisMonth;
+
+  /// No description provided for @progressFilterCustom.
+  ///
+  /// In vi, this message translates to:
+  /// **'Tùy chọn'**
+  String get progressFilterCustom;
+
+  /// No description provided for @progressFilterFrom.
+  ///
+  /// In vi, this message translates to:
+  /// **'Từ ngày'**
+  String get progressFilterFrom;
+
+  /// No description provided for @progressFilterTo.
+  ///
+  /// In vi, this message translates to:
+  /// **'Đến ngày'**
+  String get progressFilterTo;
+
+  /// No description provided for @progressFilterPickStart.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn ngày bắt đầu trên lịch.'**
+  String get progressFilterPickStart;
+
+  /// No description provided for @progressFilterPickEnd.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chọn ngày kết thúc trên lịch.'**
+  String get progressFilterPickEnd;
+
+  /// No description provided for @progressFilterSelectedDays.
+  ///
+  /// In vi, this message translates to:
+  /// **'{count} ngày trong khoảng đã chọn'**
+  String progressFilterSelectedDays(int count);
+
+  /// No description provided for @progressFilterProTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thêm góc nhìn\ncho hành trình.'**
+  String get progressFilterProTitle;
+
+  /// No description provided for @progressFilterProMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Bộ lọc nâng cao dành cho Meloop Pro. Xem 30 ngày, từng tháng hoặc khoảng ngày bạn chọn.'**
+  String get progressFilterProMessage;
+
+  /// No description provided for @progressFilterExplorePro.
+  ///
+  /// In vi, this message translates to:
+  /// **'Khám phá Meloop Pro'**
+  String get progressFilterExplorePro;
+
+  /// No description provided for @progressPeriod.
+  ///
+  /// In vi, this message translates to:
+  /// **'{from} – {to}'**
+  String progressPeriod(String from, String to);
+
+  /// No description provided for @progressMissingValue.
+  ///
+  /// In vi, this message translates to:
+  /// **'—'**
+  String get progressMissingValue;
+
+  /// No description provided for @progressRatingDenominator.
+  ///
+  /// In vi, this message translates to:
+  /// **'/5'**
+  String get progressRatingDenominator;
+
+  /// No description provided for @progressSunday.
+  ///
+  /// In vi, this message translates to:
+  /// **'CN'**
+  String get progressSunday;
+
+  /// No description provided for @progressWeekday.
+  ///
+  /// In vi, this message translates to:
+  /// **'T{number}'**
+  String progressWeekday(int number);
+
+  /// No description provided for @progressRatedDay.
+  ///
+  /// In vi, this message translates to:
+  /// **'{date}: {label} {value} trên 5'**
+  String progressRatedDay(String date, String label, String value);
+
+  /// No description provided for @progressUnratedDay.
+  ///
+  /// In vi, this message translates to:
+  /// **'{date}: {label}, chưa có đánh giá'**
+  String progressUnratedDay(String date, String label);
 
   /// No description provided for @noProgressTitle.
   ///

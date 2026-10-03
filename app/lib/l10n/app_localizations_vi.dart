@@ -768,7 +768,124 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get progressHeading => 'Mỗi ngày,\nmột bước tiến.';
+  String get progressHeading => 'Mỗi buổi,\nmột bước tiến.';
+
+  @override
+  String get progressEyebrow => 'NHỮNG ĐIỀU BẠN TÍCH LŨY';
+
+  @override
+  String get progressMusicMinutes => 'phút dành cho âm nhạc';
+
+  @override
+  String get progressSavedSessions => 'buổi luyện đã lưu';
+
+  @override
+  String get progressStreak => 'Liên tiếp';
+
+  @override
+  String progressDays(int count) {
+    return '$count ngày';
+  }
+
+  @override
+  String get progressQualifyingDayHint =>
+      'Một buổi đã lưu từ 1 phút được tính là một ngày luyện.';
+
+  @override
+  String get progressFocus => 'Mức tập trung';
+
+  @override
+  String progressRatingsPeriod(String period) {
+    return '$period · Do bạn tự đánh giá sau buổi luyện';
+  }
+
+  @override
+  String progressRatingCaption(int count) {
+    return 'Trung bình · $count buổi có đánh giá';
+  }
+
+  @override
+  String get progressAdjustGoal => 'Điều chỉnh mục tiêu';
+
+  @override
+  String get progressHistory => 'Lịch sử buổi luyện';
+
+  @override
+  String get progressFilter => 'Lọc';
+
+  @override
+  String get progressProBadge => 'PRO';
+
+  @override
+  String get progressDateRange => 'Khoảng thời gian';
+
+  @override
+  String get progressApplyRange => 'Xem tiến độ';
+
+  @override
+  String get progressFilterTitle => 'Lọc tiến độ';
+
+  @override
+  String get progressFilterThisMonth => 'Tháng này';
+
+  @override
+  String get progressFilterCustom => 'Tùy chọn';
+
+  @override
+  String get progressFilterFrom => 'Từ ngày';
+
+  @override
+  String get progressFilterTo => 'Đến ngày';
+
+  @override
+  String get progressFilterPickStart => 'Chọn ngày bắt đầu trên lịch.';
+
+  @override
+  String get progressFilterPickEnd => 'Chọn ngày kết thúc trên lịch.';
+
+  @override
+  String progressFilterSelectedDays(int count) {
+    return '$count ngày trong khoảng đã chọn';
+  }
+
+  @override
+  String get progressFilterProTitle => 'Thêm góc nhìn\ncho hành trình.';
+
+  @override
+  String get progressFilterProMessage =>
+      'Bộ lọc nâng cao dành cho Meloop Pro. Xem 30 ngày, từng tháng hoặc khoảng ngày bạn chọn.';
+
+  @override
+  String get progressFilterExplorePro => 'Khám phá Meloop Pro';
+
+  @override
+  String progressPeriod(String from, String to) {
+    return '$from – $to';
+  }
+
+  @override
+  String get progressMissingValue => '—';
+
+  @override
+  String get progressRatingDenominator => '/5';
+
+  @override
+  String get progressSunday => 'CN';
+
+  @override
+  String progressWeekday(int number) {
+    return 'T$number';
+  }
+
+  @override
+  String progressRatedDay(String date, String label, String value) {
+    return '$date: $label $value trên 5';
+  }
+
+  @override
+  String progressUnratedDay(String date, String label) {
+    return '$date: $label, chưa có đánh giá';
+  }
 
   @override
   String get noProgressTitle => 'Chưa có dữ liệu tiến độ.';

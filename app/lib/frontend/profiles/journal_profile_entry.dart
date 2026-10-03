@@ -93,7 +93,7 @@ class _JournalProfileEntryState extends ConsumerState<JournalProfileEntry> {
   Future<void> _pro() => Navigator.of(context).push<void>(
     MaterialPageRoute(
       builder: (_) => ProPreviewPage(
-        isPro: false,
+        isPro: _snapshot?.directory.isPro ?? false,
         onEnablePreview: () async {
           throw const ProfileServiceException(ProfileServiceError.storage);
         },
@@ -218,6 +218,7 @@ class _JournalProfileEntryState extends ConsumerState<JournalProfileEntry> {
       child: MeloopUiShowcase(
         developmentTools: false,
         profile: _selected,
+        isPro: snapshot.directory.isPro,
         journalRecoveryReadOnly:
             draft != null && ref.read(practiceTimerServiceProvider) == null,
         allowProfileBrowsingWithDraft: true,

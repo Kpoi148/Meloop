@@ -8,6 +8,7 @@ import 'package:meloop/frontend/application/instrument_profile_service.dart';
 import 'package:meloop/frontend/components/meloop_ui.dart';
 import 'package:meloop/frontend/profiles/journal_profile_entry.dart';
 import 'package:meloop/frontend/profiles/profile_screens.dart';
+import 'package:meloop/frontend/progress/progress_filter_popup.dart';
 import 'package:meloop/frontend/showcase/meloop_ui_showcase.dart';
 import 'package:meloop/frontend/showcase/profile_preview_service.dart';
 import 'package:meloop/frontend/showcase/timer_example.dart';
@@ -90,6 +91,33 @@ void main() {
       },
     );
   }
+  testWidgets('Progress filter follows the loaded journal Pro status', (
+    tester,
+  ) async {
+    for (final isPro in [true, false]) {
+      final service = await profiles(1);
+      if (isPro) await service.enableProPreview();
+      await pump(
+        tester,
+        service,
+        () async => JournalBootstrapSnapshot(directory: await service.load()),
+      );
+      await tap(tester, find.text('Tiến độ'));
+      await tap(tester, find.byKey(const Key('progress-filter')));
+      expect(find.byType(Dialog), findsOneWidget);
+      expect(
+        find.byType(ProgressFilterPopup),
+        isPro ? findsOneWidget : findsNothing,
+      );
+      expect(
+        find.byKey(const Key('progress-filter-upgrade')),
+        isPro ? findsNothing : findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+    }
+  });
+
   testWidgets(
     'load error has retry and cannot look like zero profiles; disposed load is safe',
     (tester) async {

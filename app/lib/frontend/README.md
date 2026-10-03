@@ -5,7 +5,8 @@ Lớp giao diện của ứng dụng: hiển thị state, nhận thao tác ngư�
 - `theme/`: cấu hình `ThemeData` và bộ design tokens chuẩn hóa từ thiết kế Tempo.
 - `components/`: các thành phần giao diện dùng chung (nút, ô nhập, lựa chọn, hộp thoại, điều hướng, trạng thái tải/trống/lỗi và khung bố cục).
 - `showcase/`: màn hình mẫu và ví dụ sử dụng các thành phần dùng chung.
-- `home/`: tổng quan theo hồ sơ đang chọn, thẻ thống kê/mục tiêu dùng chung với Tiến độ và trạng thái tải/trống/lỗi. Xem `docs/FE_HOME.md` tại gốc repository.
+- `home/`: tổng quan theo hồ sơ đang chọn, nguồn buổi đã lưu/mục tiêu dùng chung với Tiến độ và trạng thái tải/trống/lỗi. Xem `docs/FE_HOME.md` tại gốc repository.
+- `progress/`: giao diện Tiến độ UC-14 theo prototype Tempo, popup lọc khoảng ngày cho Pro với ảnh gốc Tempo, biểu đồ thời gian/cảm xúc/tập trung và adapter trình bày từ cùng nguồn buổi đã lưu với Trang chủ. Hướng dẫn xem giao diện và kiểm chứng: [`../../../docs/FE_PROGRESS_UI.md`](../../../docs/FE_PROGRESS_UI.md).
 - `application/`: controller Riverpod, trạng thái thao tác và dependency frontend được app cấp; không triển khai nghiệp vụ hoặc lưu trữ backend.
 - `practice_sessions/`: giao diện UC-06, tìm kiếm và bộ lọc theo hồ sơ, danh sách nhóm theo ngày và chi tiết chỉ xem. Nguồn danh sách được cấp qua `practiceSessionsLoaderProvider`; nội dung tạm để duyệt giao diện nằm trong `showcase/practice_session_examples.dart` và không ghi storage.
 
