@@ -261,6 +261,56 @@ class AppLocalizationsVi extends AppLocalizations {
   String get overview => 'Tổng quan';
 
   @override
+  String get practiceOverviewLoading => 'Đang đọc dữ liệu luyện tập…';
+
+  @override
+  String get practiceOverviewLoadFailed =>
+      'Không thể đọc dữ liệu luyện tập. Hãy thử lại.';
+
+  @override
+  String get weeklyGoalOff => 'Đang tắt';
+
+  @override
+  String qualifyingDaysThisWeek(int days) {
+    return 'Tuần này đã luyện $days ngày';
+  }
+
+  @override
+  String get qualifyingPracticeDayHint =>
+      'Một ngày được tính khi có ít nhất một buổi đã lưu từ 1 phút. Tuần tính từ thứ Hai đến Chủ nhật.';
+
+  @override
+  String practiceChartDay(String date, int minutes) {
+    return '$date: $minutes phút luyện';
+  }
+
+  @override
+  String get practiceRatingsHeading => 'Cảm xúc & tập trung';
+
+  @override
+  String get practiceRatingsPeriod =>
+      '7 ngày gần nhất · Do bạn tự đánh giá sau buổi luyện';
+
+  @override
+  String get practiceRatingsDisclaimer =>
+      'Đây là cảm nhận của bạn, không phải điểm kỹ năng.';
+
+  @override
+  String get practiceNoRatings => 'Chưa có đánh giá';
+
+  @override
+  String practiceRatingAverage(String average, int count) {
+    return '$average/5 · $count lượt đánh giá';
+  }
+
+  @override
+  String get practiceViewHistory => 'Xem nhật ký luyện tập';
+
+  @override
+  String get practiceToolsStandaloneHint =>
+      'Mở công cụ từ Trang chủ không tạo buổi luyện. Công cụ cần buổi luyện sẽ khả dụng khi bạn bắt đầu một buổi.';
+
+  @override
   String get changeInstrument => 'Đổi nhạc cụ';
 
   @override
@@ -296,7 +346,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get continuePractice => 'Tiếp tục buổi luyện';
 
   @override
-  String get practiceTools => 'Công cụ';
+  String get practiceTools => 'Công cụ luyện tập';
 
   @override
   String get recentSession => 'Buổi gần nhất';
@@ -1152,8 +1202,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get pitchTool => 'Kiểm tra cao độ';
 
   @override
-  String get practiceToolUnavailable =>
-      'Công cụ này chưa khả dụng. Bạn vẫn có thể tiếp tục buổi luyện.';
+  String get practiceToolUnavailable => 'Công cụ này chưa khả dụng.';
 
   @override
   String get renamePractice => 'Đổi tên buổi luyện';

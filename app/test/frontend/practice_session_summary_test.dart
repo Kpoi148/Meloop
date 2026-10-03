@@ -12,6 +12,48 @@ PracticeSession session(int day, int seconds) => PracticeSession(
 
 void main() {
   final today = DateTime(2026, 9, 30);
+  test(
+    'calendar week, seven-day chart and streak have independent boundaries',
+    () {
+      final monday = DateTime(2026, 10, 5);
+      final summary = PracticeSessionSummary([
+        session(30, 60),
+        session(31, 60),
+        session(32, 60),
+        session(33, 60),
+        session(34, 60),
+        session(35, 30),
+        session(35, 30),
+        session(36, 60),
+      ], monday);
+      expect(summary.days.first, DateTime(2026, 9, 29));
+      expect(summary.days.last, monday);
+      expect(summary.minutes, 6);
+      expect(summary.count, 7);
+      expect(summary.consecutiveDays, 5);
+      expect(summary.qualifyingDaysThisWeek, 0);
+      expect(summary.latest!.date, monday);
+    },
+  );
+  test(
+    'empty data and missing ratings have no invented totals or zero scores',
+    () {
+      final summary = PracticeSessionSummary([], today);
+      expect(summary.count, 0);
+      expect(summary.minutesByDay, List.filled(7, 0));
+      expect(summary.latest, isNull);
+      expect(summary.qualifyingDaysThisWeek, 0);
+      expect(summary.mood.average, isNull);
+      expect(summary.focus.count, 0);
+    },
+  );
+  test(
+    'ratings count actual responses and round half-up only after aggregation',
+    () {
+      expect(PracticeRatingSummary([1, 1, 1, 2]).average, 1.3);
+      expect(PracticeRatingSummary([5, 4, 3]).count, 3);
+    },
+  );
   test('editing 60 seconds to 30 removes its qualifying-day contribution', () {
     expect(PracticeSessionSummary([session(30, 60)], today).consecutiveDays, 1);
     expect(PracticeSessionSummary([session(30, 30)], today).consecutiveDays, 0);

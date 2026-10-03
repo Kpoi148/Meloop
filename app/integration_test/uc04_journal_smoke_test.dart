@@ -126,7 +126,7 @@ void main() {
         );
         final sessionId = timer.snapshot!.sessionId;
         await tester.pump(const Duration(seconds: 2));
-        await tap(find.text('Công cụ'));
+        await tap(find.text('Công cụ luyện tập'));
         expect(find.byType(PracticeToolsPage), findsOneWidget);
         expect(timer.snapshot!.sessionId, sessionId);
         await tap(find.byTooltip('Quay lại'));

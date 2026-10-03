@@ -6,6 +6,7 @@ import 'package:meloop/app/profile_preview_app.dart';
 import 'package:meloop/frontend/application/instrument_profile_service.dart';
 import 'package:meloop/frontend/application/startup_controller.dart';
 import 'package:meloop/frontend/components/meloop_ui.dart';
+import 'package:meloop/frontend/showcase/practice_session_examples.dart';
 import 'package:meloop/frontend/profiles/instrument_profiles_feature.dart';
 import 'package:meloop/frontend/showcase/component_catalog.dart';
 import 'package:meloop/frontend/showcase/meloop_ui_showcase.dart';
@@ -16,11 +17,23 @@ import 'package:meloop/shared/settings/app_settings_store.dart';
 import 'support/profile_preview_test_storage.dart';
 
 void main() {
-  MeloopApp previewApp(MemoryProfilePreviewStorage storage) =>
-      createProfilePreviewApp(
-        storage: storage,
-        settingsStore: InMemoryAppSettingsStore(languageCode: 'vi'),
-      );
+  MeloopApp previewApp(MemoryProfilePreviewStorage storage) {
+    final preview = createProfilePreviewApp(
+      storage: storage,
+      settingsStore: InMemoryAppSettingsStore(languageCode: 'vi'),
+    );
+    // Profile creation tests use an empty journal, not the component sample loader.
+    return MeloopApp(
+      overrides: [
+        ...preview.overrides,
+        practiceSessionsPreviewLoaderProvider.overrideWithValue(
+          (_) async => const [],
+        ),
+      ],
+      home: preview.home,
+    );
+  }
+
   Future<void> tapVisible(WidgetTester tester, Finder finder) async {
     await tester.ensureVisible(finder);
     await tester.pumpAndSettle();

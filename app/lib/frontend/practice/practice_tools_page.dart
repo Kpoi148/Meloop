@@ -8,12 +8,8 @@ import '../theme/tokens/practice_tokens.dart';
 
 /// Opening this route leaves the service's active timer and session ID intact.
 class PracticeToolsPage extends ConsumerWidget {
-  const PracticeToolsPage({
-    super.key,
-    required this.sessionId,
-    this.onOpenMetronome,
-  });
-  final String sessionId;
+  const PracticeToolsPage({super.key, this.sessionId, this.onOpenMetronome});
+  final String? sessionId;
   final Future<void> Function()? onOpenMetronome;
 
   @override
@@ -66,13 +62,13 @@ class PracticeToolsPage extends ConsumerWidget {
                             return;
                           }
                           final open = ref.read(practiceToolOpenProvider);
-                          if (open == null) {
+                          if (open == null || sessionId == null) {
                             MeloopNotifications.show(
                               context,
                               strings.practiceToolUnavailable,
                             );
                           } else {
-                            await open(context, sessionId, tools[index].$1);
+                            await open(context, sessionId!, tools[index].$1);
                           }
                         },
                       ),
@@ -83,7 +79,12 @@ class PracticeToolsPage extends ConsumerWidget {
           ),
           const Divider(),
           Text(strings.practiceToolsFree, style: TempoType.label),
-          Text(strings.practiceToolsTimingHint, style: TempoType.caption),
+          Text(
+            sessionId == null
+                ? strings.practiceToolsStandaloneHint
+                : strings.practiceToolsTimingHint,
+            style: TempoType.caption,
+          ),
         ],
       ),
     );

@@ -263,6 +263,56 @@ class AppLocalizationsEn extends AppLocalizations {
   String get overview => 'Overview';
 
   @override
+  String get practiceOverviewLoading => 'Loading practice data…';
+
+  @override
+  String get practiceOverviewLoadFailed =>
+      'Unable to load practice data. Please try again.';
+
+  @override
+  String get weeklyGoalOff => 'Off';
+
+  @override
+  String qualifyingDaysThisWeek(int days) {
+    return 'Practiced on $days days this week';
+  }
+
+  @override
+  String get qualifyingPracticeDayHint =>
+      'A day counts when at least one saved session lasts 1 minute or more. The week runs Monday to Sunday.';
+
+  @override
+  String practiceChartDay(String date, int minutes) {
+    return '$date: $minutes practice minutes';
+  }
+
+  @override
+  String get practiceRatingsHeading => 'Mood & focus';
+
+  @override
+  String get practiceRatingsPeriod =>
+      'Last 7 days · Your own ratings after practice';
+
+  @override
+  String get practiceRatingsDisclaimer =>
+      'These are your feelings, not skill scores.';
+
+  @override
+  String get practiceNoRatings => 'No ratings yet';
+
+  @override
+  String practiceRatingAverage(String average, int count) {
+    return '$average/5 · $count ratings';
+  }
+
+  @override
+  String get practiceViewHistory => 'View practice journal';
+
+  @override
+  String get practiceToolsStandaloneHint =>
+      'Opening tools from Home does not create a practice session. Session tools become available when you start practicing.';
+
+  @override
   String get changeInstrument => 'Change instrument';
 
   @override
@@ -298,7 +348,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continuePractice => 'Continue practice session';
 
   @override
-  String get practiceTools => 'Tools';
+  String get practiceTools => 'Practice tools';
 
   @override
   String get recentSession => 'Latest session';
@@ -1158,8 +1208,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pitchTool => 'Check pitch';
 
   @override
-  String get practiceToolUnavailable =>
-      'This tool is not available yet. You can continue your practice session.';
+  String get practiceToolUnavailable => 'This tool is not available yet.';
 
   @override
   String get renamePractice => 'Rename practice session';

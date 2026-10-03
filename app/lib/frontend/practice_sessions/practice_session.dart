@@ -73,7 +73,7 @@ final practiceSessionsLoaderProvider = Provider<PracticeSessionsLoader>(
       (profile) async => const [],
 );
 
-final practiceSessionsProvider =
-    FutureProvider.family<List<PracticeSession>, PreviewInstrumentProfile>(
+final practiceSessionsProvider = FutureProvider.autoDispose
+    .family<List<PracticeSession>, PreviewInstrumentProfile>(
       (ref, profile) => ref.watch(practiceSessionsLoaderProvider)(profile),
     );

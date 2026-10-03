@@ -13,7 +13,9 @@ import '../support/privacy_policy_page.dart';
 import '../support/contact_support_page.dart';
 import '../practice_sessions/practice_sessions_tab.dart';
 import '../practice_sessions/practice_session.dart';
-import '../practice_sessions/practice_session_summary.dart';
+import '../home/practice_overview_provider.dart';
+import '../home/practice_progress_page.dart';
+import '../practice/practice_tools_page.dart';
 import 'component_catalog.dart';
 import 'home_example.dart';
 import 'instrument_profile_preview.dart';
@@ -66,11 +68,28 @@ class MeloopUiShowcase extends ConsumerStatefulWidget {
   ConsumerState<MeloopUiShowcase> createState() => _MeloopUiShowcaseState();
 }
 
-class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
+class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase>
+    with WidgetsBindingObserver {
   final _practiceScrollControllers = <String, ScrollController>{};
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      ref.invalidate(practiceCalendarDayProvider);
+      ref.invalidate(practiceSessionsProvider);
+      ref.invalidate(weeklyPracticeGoalProvider);
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     for (final controller in _practiceScrollControllers.values) {
       controller.dispose();
     }
@@ -93,11 +112,20 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
     MaterialPageRoute(builder: (_) => ContactSupportPage(onHome: _contactHome)),
   );
 
-  void _metronome() => Navigator.of(context).push<void>(
+  void _tools() => Navigator.of(context).push<void>(
     MaterialPageRoute(
-      builder: (_) => MetronomeExample(
-        onHome: () =>
-            ref.read(meloopShellControllerProvider.notifier).selectTab(0),
+      builder: (toolsContext) => PracticeToolsPage(
+        onOpenMetronome: () => Navigator.of(toolsContext).push<void>(
+          MaterialPageRoute(
+            builder: (_) => MetronomeExample(
+              onHome: () {
+                Navigator.of(toolsContext).pop();
+                Navigator.of(context).pop();
+                ref.read(meloopShellControllerProvider.notifier).selectTab(0);
+              },
+            ),
+          ),
+        ),
       ),
     ),
   );
@@ -259,44 +287,35 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
       bottomNavigation: navigation,
       child: switch (shell.selectedTab) {
         0 => HomeExample(
-          sessionSummary: widget.profile == null
-              ? null
-              : PracticeSessionSummary(
-                  ref.watch(practiceSessionsProvider(profile)).value ??
-                      const [],
-                  ref.read(practiceSessionsClockProvider)(),
-                ),
-          showSampleData: widget.profile == null,
+          overview: ref.watch(practiceOverviewProvider(profile)),
           profile: profile,
           draft: shell.selectedDraft,
           onCreate: () => _setup(profile),
-          onHistory: () => shellController.selectTab(1),
-          onCatalog: _metronome,
+          onProgress: () => shellController.selectTab(2),
+          onCatalog: _tools,
+          onRetry: () => _reloadOverview(profile),
           onInstrument: () => _openProfilePage(
             widget.onChooseProfile ?? shellController.showProfilePicker,
           ),
         ),
-        2 => _progress(),
+        2 => PracticeProgressPage(
+          profile: profile,
+          overview: ref.watch(practiceOverviewProvider(profile)),
+          onRetry: () => _reloadOverview(profile),
+          onHistory: () => shellController.selectTab(1),
+          onInstrument: () => _openProfilePage(
+            widget.onChooseProfile ?? shellController.showProfilePicker,
+          ),
+        ),
         _ => _settings(profile, showcase, showcaseController),
       },
     );
   }
 
-  Widget _progress() {
-    final strings = context.l10n;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: TempoSpace.page,
-      children: [
-        MeloopTopBar(title: strings.navProgress),
-        Text(strings.progressHeading, style: TempoType.heading),
-        MeloopStateView(
-          state: MeloopViewState.empty,
-          title: strings.noProgressTitle,
-          message: strings.noProgressMessage,
-        ),
-      ],
-    );
+  void _reloadOverview(PreviewInstrumentProfile profile) {
+    ref.invalidate(practiceSessionsProvider(profile));
+    ref.invalidate(weeklyPracticeGoalProvider(profile.id));
+    ref.invalidate(practiceCalendarDayProvider);
   }
 
   Widget _settings(

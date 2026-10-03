@@ -14,6 +14,8 @@ import '../frontend/profiles/journal_profile_entry.dart';
 
 import '../frontend/application/app_settings_controller.dart';
 import '../frontend/practice_sessions/practice_session.dart';
+import '../frontend/home/practice_overview_provider.dart';
+import '../backend/journal/sqlite_journal_readers.dart';
 import '../frontend/practice_sessions/practice_session_actions.dart';
 import '../shared/settings/app_settings_store.dart';
 import '../frontend/showcase/instrument_profile_preview.dart';
@@ -71,6 +73,11 @@ MeloopApp createJournalProfileApp({List<Override> overrides = const []}) =>
                           .saved(profileId: profile.id))
                       .map(presentPracticeSession)
                       .toList(),
+        ),
+        weeklyPracticeGoalLoaderProvider.overrideWith(
+          (ref) => SqliteWeeklyPracticeGoalReader(
+            ref.watch(journalDatabaseOwnerProvider),
+          ).read,
         ),
         practiceReviewLoadProvider.overrideWith(
           (ref) => ref.watch(journalReviewServiceProvider).read,

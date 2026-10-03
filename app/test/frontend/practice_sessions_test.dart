@@ -118,6 +118,7 @@ Future<void> _mount(
   PracticeSessionsLoader? loader,
   PreviewPracticeDraft? draft,
   GlobalKey? boundaryKey,
+  bool waitForHome = true,
 }) async {
   final child = const MeloopUiShowcase(developmentTools: false);
   await tester.pumpWidget(
@@ -141,7 +142,12 @@ Future<void> _mount(
       home: child,
     ),
   );
-  await tester.pumpAndSettle();
+  if (waitForHome) {
+    await tester.pumpAndSettle();
+  } else {
+    // Navigate while Home's shared journal read is intentionally unresolved.
+    await tester.pump();
+  }
   if (draft != null) {
     final container = ProviderScope.containerOf(
       tester.element(find.byType(MeloopUiShowcase)),
@@ -436,6 +442,7 @@ void main() {
     var calls = 0;
     await _mount(
       tester,
+      waitForHome: false,
       loader: (_) {
         calls++;
         return calls == 1 ? pending.future : Future.value(const []);

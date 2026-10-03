@@ -48,7 +48,8 @@ void main() {
       const MeloopApp(home: MeloopUiShowcase(developmentTools: false)),
     );
     await tester.pumpAndSettle();
-    await tap(tester, find.text('Công cụ'));
+    await tap(tester, find.text('Công cụ luyện tập'));
+    await tap(tester, find.text('Máy đếm nhịp'));
   }
 
   testWidgets('tempo controls stay in sync and reject out-of-range changes', (
@@ -160,9 +161,15 @@ void main() {
     final scope = container(tester);
     scope.read(metronomePreviewControllerProvider.notifier).setBpm(96);
     await tap(tester, find.byTooltip('Quay lại'));
+    expect(find.byType(PracticeToolsPage), findsOneWidget);
+    await tap(tester, find.byTooltip('Quay lại'));
     expect(find.byType(HomeExample), findsOneWidget);
-    await tap(tester, find.text('Công cụ'));
+    await tap(tester, find.text('Công cụ luyện tập'));
+    await tap(tester, find.text('Máy đếm nhịp'));
     expect(find.text('96'), findsOneWidget);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.byType(PracticeToolsPage), findsOneWidget);
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
     expect(find.byType(HomeExample), findsOneWidget);
@@ -209,7 +216,10 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        await tap(tester, find.widgetWithText(MeloopButton, 'Công cụ'));
+        await tap(
+          tester,
+          find.widgetWithText(MeloopButton, 'Công cụ luyện tập'),
+        );
         expect(find.byType(PracticeToolsPage), findsOneWidget);
         await tap(tester, find.text('Máy đếm nhịp'));
         expect(find.byType(MetronomeExample), findsOneWidget);
@@ -233,7 +243,10 @@ void main() {
           scope.read(meloopShellControllerProvider).draft!.sessionId,
           session.id,
         );
-        await tap(tester, find.widgetWithText(MeloopButton, 'Công cụ'));
+        await tap(
+          tester,
+          find.widgetWithText(MeloopButton, 'Công cụ luyện tập'),
+        );
         await tap(tester, find.text('Máy đếm nhịp'));
         await tap(tester, find.byTooltip('Trang chủ'));
         expect(find.byType(HomeExample), findsOneWidget);

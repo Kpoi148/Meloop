@@ -11,6 +11,8 @@ import 'package:meloop/frontend/showcase/settings_example.dart';
 import 'package:meloop/frontend/showcase/setup_example.dart';
 import 'package:meloop/frontend/showcase/welcome_example.dart';
 
+import '../../support/home_fixture.dart';
+
 Widget harness(Widget screen, {double scale = 1, double keyboard = 0}) =>
     MeloopApp(
       key: UniqueKey(),
@@ -44,8 +46,11 @@ void main() {
                 onSelected: (_) {},
               ),
               child: HomeExample(
+                profile: homeTestProfile,
+                overview: homeTestOverview,
                 onCreate: () {},
-                onHistory: () {},
+                onProgress: () {},
+                onRetry: () {},
                 onCatalog: () {},
               ),
             ),

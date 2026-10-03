@@ -226,6 +226,16 @@ void main() {
             );
             await tap(find.byTooltip('Trang chủ'));
             await waitFor(find.byType(HomeExample));
+            await waitFor(find.byKey(const Key('overview-count')));
+            expect(find.text(title), findsOneWidget);
+            expect(
+              tester
+                  .widget<HomeExample>(find.byType(HomeExample))
+                  .sessionSummary!
+                  .count,
+              1,
+            );
+            expect(find.textContaining('Tiếp tục'), findsNothing);
             await tap(tab('Buổi luyện'));
             await waitFor(find.widgetWithText(PracticeSessionCard, title));
             await tap(find.widgetWithText(PracticeSessionCard, title));
