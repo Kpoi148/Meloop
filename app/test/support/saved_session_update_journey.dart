@@ -81,7 +81,10 @@ Future<void> runSavedSessionUpdateJourney(
     await tap(find.text('Sửa nhật ký'));
     await waitFor(find.byType(SessionFormExample));
     await tester.enterText(find.byType(TextFormField).at(0), 'Đã sửa QA');
-    await tester.enterText(find.byType(TextFormField).at(1), '2');
+    await tester.enterText(
+      find.byKey(const Key('session-duration-minutes')),
+      '2',
+    );
     await owner.read(
       (db) => db.execute(
         "CREATE TRIGGER injected_edit BEFORE UPDATE ON practice_sessions BEGIN SELECT RAISE(ABORT,'injected'); END",

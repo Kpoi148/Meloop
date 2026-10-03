@@ -202,4 +202,80 @@ void main() {
     expect(await reader.saved(profileId: id(1)), hasLength(1));
     expect(await reader.saved(profileId: id(2)), isEmpty);
   });
+
+  test('Review retains raw invalid duration and optional nulls across pause and reopen', () async {
+    mono.advance(5000);
+    await timer.finish();
+    const input = ReviewInput(
+      title: '',
+      practiceDate: '2026-09-29',
+      durationHoursInput: '0',
+      durationMinutesInput: '',
+      durationSecondsInput: '1.5',
+      practiced: 'Dòng một\nDòng hai',
+      difficulty: '',
+      next: '  ',
+      mood: null,
+      focus: null,
+      bpmInput: 'bad',
+    );
+    await review.persistInput(id(10), input);
+    await timer.leaveReview();
+    await timer.close();
+    await owner.close();
+    owner = JournalDatabaseOwner(
+      open: () => JournalDatabase.open(
+        factory: databaseFactoryFfi,
+        path: '${temp.path}/journal.db',
+      ),
+    );
+    final draft = (await SqliteJournalSessionReader(owner)
+        .unfinished(sessionId: id(10)))!;
+    expect(draft.session.state, PracticeState.paused);
+    expect(draft.accumulatedMilliseconds, 5000);
+    expect(draft.reviewInput!.title, '');
+    expect(draft.reviewInput!.durationMinutesInput, '');
+    expect(draft.reviewInput!.durationSecondsInput, '1.5');
+    expect(draft.reviewInput!.practiced, 'Dòng một\nDòng hai');
+    expect(draft.reviewInput!.mood, isNull);
+    expect(draft.reviewInput!.focus, isNull);
+    expect(draft.reviewInput!.bpmInput, 'bad');
+  });
+
+  test('Review rejects a future date and preserves draft for retry; optional ratings save as SQL null', () async {
+    mono.advance(5000);
+    await timer.finish();
+    await expectLater(
+      review.save(
+        id(10),
+        PracticeReviewValues(
+          title: 'Buổi thử',
+          date: PracticeDate.parse('2026-10-01'),
+          durationSeconds: 5,
+          practiced: '',
+          difficulty: '',
+          next: '',
+        ),
+      ),
+      throwsA(isA<JournalFailure>()),
+    );
+    expect((await review.read(id(10))).accumulatedMilliseconds, 5000);
+    await review.save(
+      id(10),
+      PracticeReviewValues(
+        title: 'Buổi thử',
+        date: PracticeDate.parse('2026-09-30'),
+        durationSeconds: 5,
+        practiced: '   ',
+        difficulty: '',
+        next: '',
+      ),
+    );
+    final row = (await owner.read((db) => db.query('practice_sessions')))
+        .single;
+    expect(row['mood'], isNull);
+    expect(row['focus'], isNull);
+    expect(row['practiced'], '');
+    expect(row['duration_seconds'], 5);
+  });
 }

@@ -14,6 +14,8 @@ class PracticeRules {
   PracticeRules._();
   static const titleMaxCodePoints = 100;
   static const maximumDuration = Duration(hours: 24);
+  static const minimumDurationSeconds = 1;
+  static const qualifyingDayDuration = Duration(minutes: 1);
   static const checkpointInterval = Duration(seconds: 5);
   static const timerRefreshInterval = Duration(seconds: 1);
   static const noteMaxCodePoints = 2000;
@@ -49,6 +51,16 @@ class JournalText {
 
   static String sessionTitle(String input) =>
       profileName(input, maxCodePoints: PracticeRules.titleMaxCodePoints);
+
+  static final _noteControls = RegExp(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]');
+
+  static String note(String input) {
+    if (input.runes.length > PracticeRules.noteMaxCodePoints ||
+        _noteControls.hasMatch(input)) {
+      throw const JournalFailure(JournalFailureCode.invalidInput);
+    }
+    return input.trim().isEmpty ? '' : input;
+  }
 
   static String _fold(String input) => String.fromCharCodes(
     input.runes.expand(

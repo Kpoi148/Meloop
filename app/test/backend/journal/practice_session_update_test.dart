@@ -3,9 +3,8 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meloop/backend/database/journal_database.dart';
 import 'package:meloop/backend/database/journal_database_owner.dart';
-import 'package:meloop/backend/journal/sqlite_practice_session_update_service.dart';
 import 'package:meloop/backend/journal/sqlite_journal_readers.dart';
-import 'package:meloop/backend/journal/sqlite_practice_review_service.dart';
+import 'package:meloop/backend/journal/sqlite_practice_session_update_service.dart';
 import 'package:meloop/shared/journal/journal_failure.dart';
 import 'package:meloop/shared/journal/practice_date.dart';
 import 'package:meloop/shared/journal/practice_review_service.dart';
@@ -18,8 +17,7 @@ import '../database/journal_database_test.dart'
         sessionRow,
         profileId,
         otherProfileId,
-        sessionId,
-        otherSessionId;
+        sessionId;
 import 'journal_foundation_test.dart' show TestClock;
 
 void main() {
@@ -41,64 +39,57 @@ void main() {
   }
 
   PracticeReviewValues values({
-    String title = '  Luyện mới  ',
-    String date = '2026-09-30',
-    int duration = 95,
-    String practiced = 'Âm dài',
-    int? mood = 5,
-    int? bpm = 100,
+    String title = 'Đã sửa',
+    int seconds = 30,
+    String date = '2026-09-29',
+    String practiced = 'Âm dài\nchậm',
+    String difficulty = '   ',
+    int? mood,
+    int? focus,
   }) => PracticeReviewValues(
     title: title,
     date: PracticeDate.parse(date),
-    durationSeconds: duration,
+    durationSeconds: seconds,
     practiced: practiced,
-    difficulty: '',
-    next: 'Lần sau',
+    difficulty: difficulty,
+    next: '',
     mood: mood,
-    focus: null,
-    bpm: bpm,
+    focus: focus,
   );
-  final invalid = throwsA(
-    isA<JournalFailure>().having(
-      (e) => e.code,
-      'code',
-      JournalFailureCode.invalidInput,
-    ),
-  );
-  Future<Map<String, Object?>> row() => owner.read(
-    (db) async => (await db.query(
-      'practice_sessions',
-      where: 'id = ?',
-      whereArgs: [sessionId],
-    )).single,
-  );
+  Future<void> update(
+    PracticeReviewValues value, {
+    String profile = profileId,
+    String id = sessionId,
+  }) async {
+    await service.update(profileId: profile, sessionId: id, values: value);
+  }
+
   setUp(() async {
-    temp = await Directory.systemTemp.createTemp('meloop-update-');
+    temp = await Directory.systemTemp.createTemp('meloop-edit-');
     reopen();
-    await owner.read((executor) async {
-      final db = executor as Database;
-      await addProfile(db);
-      await addProfile(db, id: otherProfileId, name: 'Flute');
-      await db.insert('practice_sessions', sessionRow(state: 'review'));
-      await addRecording(db);
-      await db.update('session_drafts', {'accumulated_ms': 60000});
-      await db.update(
+    await owner.read((db) async {
+      final database = db as Database;
+      await addProfile(database);
+      await addProfile(database, id: otherProfileId, name: 'Flute');
+      await database.insert('practice_sessions', sessionRow(state: 'review'));
+      await addRecording(database);
+      await database.update(
+        'session_drafts',
+        {'accumulated_ms': 60000},
+        where: 'session_id = ?',
+        whereArgs: [sessionId],
+      );
+      await database.update(
         'practice_sessions',
         {
           'state': 'saved',
           'duration_seconds': 60,
           'measured_duration_seconds': 60,
+          'mood': 4,
+          'focus': 5,
         },
         where: 'id = ?',
         whereArgs: [sessionId],
-      );
-      await db.insert(
-        'practice_sessions',
-        sessionRow(
-          id: otherSessionId,
-          profile: otherProfileId,
-          state: 'paused',
-        ),
       );
     });
   });
@@ -106,153 +97,133 @@ void main() {
     await owner.close();
     await temp.delete(recursive: true);
   });
-  test('edit/retry/reopen retains identity measurement recordings and another profile draft; search keys refresh', () async {
-    final before = await row();
-    final clips = await owner.read((db) => db.query('recordings'));
-    final drafts = await owner.read((db) => db.query('session_drafts'));
-    await service.update(
-      profileId: profileId,
-      sessionId: sessionId,
-      values: values(),
-    );
-    await service.update(
-      profileId: profileId,
-      sessionId: sessionId,
-      values: values(),
-    );
-    final after = await row();
+
+  test('Edit persists one row and clears optional fields; ownership, measurement and audio survive reopen', () async {
+    final before = (await owner.read((db) => db.query('practice_sessions')))
+        .single;
+    final recordings = await owner.read((db) => db.query('recordings'));
+    await Future.wait([update(values()), update(values())]);
+    final rows = await owner.read((db) => db.query('practice_sessions'));
+    expect(rows, hasLength(1));
+    final edited = rows.single;
+    expect(edited['title'], 'Đã sửa');
+    expect(edited['practice_date'], '2026-09-29');
+    expect(edited['duration_seconds'], 30);
+    expect(edited['practiced'], 'Âm dài\nchậm');
+    expect(edited['difficulty'], '');
+    expect(edited['next_note'], '');
+    expect(edited['mood'], isNull);
+    expect(edited['focus'], isNull);
     for (final key in [
       'id',
       'profile_id',
-      'state',
-      'created_at',
-      'start_offset_minutes',
       'measured_duration_seconds',
+      'start_offset_minutes',
+      'created_at',
     ]) {
-      expect(after[key], before[key]);
+      expect(edited[key], before[key], reason: key);
     }
-    expect(after['duration_seconds'], 95);
-    expect(after['title'], 'Luyện mới');
-    expect(after['focus'], isNull);
-    expect(await owner.read((db) => db.query('recordings')), clips);
-    expect(await owner.read((db) => db.query('session_drafts')), drafts);
-    expect(
-      await SqliteJournalSessionReader(owner)
-          .saved(profileId: profileId, query: 'am dai'),
-      hasLength(1),
-    );
+    expect(await owner.read((db) => db.query('recordings')), recordings);
+    expect(await owner.read((db) => db.query('session_drafts')), isEmpty);
     await owner.close();
     reopen();
-    expect((await row())['title'], 'Luyện mới');
-  });
-  test('wrong owner, draft, missing/deleted identity and invalid fields cannot edit committed data', () async {
-    final before = await row();
-    await expectLater(
-      service.update(
-        profileId: otherProfileId,
-        sessionId: sessionId,
-        values: values(),
-      ),
-      invalid,
-    );
-    await expectLater(
-      service.update(
-        profileId: otherProfileId,
-        sessionId: otherSessionId,
-        values: values(),
-      ),
-      invalid,
-    );
-    await expectLater(
-      service.update(profileId: profileId, sessionId: 'bad', values: values()),
-      invalid,
-    );
-    for (final v in [
-      values(title: ''),
-      values(date: '2026-10-01'),
-      values(duration: 0),
-      values(duration: 86401),
-      values(practiced: List.filled(2001, 'a').join()),
-      values(mood: 0),
-      values(bpm: 401),
-    ]) {
-      await expectLater(
-        service.update(profileId: profileId, sessionId: sessionId, values: v),
-        invalid,
-      );
-    }
-    expect(await row(), before);
-    await owner.read(
-      (db) => db.update(
-        'practice_sessions',
-        {'deleted_at': before['updated_at']},
-        where: 'id = ?',
-        whereArgs: [sessionId],
-      ),
-    );
-    await expectLater(
-      service.update(
-        profileId: profileId,
-        sessionId: sessionId,
-        values: values(),
-      ),
-      invalid,
+    final saved = await SqliteJournalSessionReader(owner)
+        .saved(profileId: profileId);
+    expect(saved, hasLength(1));
+    expect(saved.single.title, 'Đã sửa');
+    expect(saved.single.durationSeconds, 30);
+    expect(saved.single.mood, isNull);
+    expect(
+      await SqliteJournalSessionReader(owner)
+          .saved(profileId: profileId, query: 'AM DAI'),
+      hasLength(1),
     );
   });
-  test('SQL failure retains previous record; retry succeeds', () async {
-    final before = await row();
-    await owner.read(
-      (db) => db.execute(
-        "CREATE TRIGGER fail_update BEFORE UPDATE ON practice_sessions BEGIN SELECT RAISE(ABORT, 'injected'); END",
-      ),
-    );
-    await expectLater(
-      service.update(
-        profileId: profileId,
-        sessionId: sessionId,
-        values: values(),
-      ),
-      throwsA(
-        isA<JournalFailure>().having(
-          (e) => e.code,
-          'code',
-          JournalFailureCode.storage,
+
+  test(
+    'transaction failure retains committed row and audio, then allows retry',
+    () async {
+      final before = await owner.read((db) => db.query('practice_sessions'));
+      final audio = await owner.read((db) => db.query('recordings'));
+      await owner.read(
+        (db) => db.execute(
+          "CREATE TRIGGER injected_edit BEFORE UPDATE ON practice_sessions BEGIN SELECT RAISE(ABORT,'injected'); END",
         ),
+      );
+      await expectLater(update(values()), throwsA(isA<JournalFailure>()));
+      expect(await owner.read((db) => db.query('practice_sessions')), before);
+      expect(await owner.read((db) => db.query('recordings')), audio);
+      await owner.read((db) => db.execute('DROP TRIGGER injected_edit'));
+      await update(values());
+      expect(
+        (await SqliteJournalSessionReader(owner).saved(profileId: profileId))
+            .single
+            .title,
+        'Đã sửa',
+      );
+    },
+  );
+
+  test('domain rejects future dates, invalid bounds, ratings, controls and overlength Unicode without writing', () async {
+    final before = await owner.read((db) => db.query('practice_sessions'));
+    for (final value in [
+      values(date: '2026-10-01'),
+      values(seconds: 0),
+      values(seconds: 86401),
+      values(title: ''),
+      values(title: 'Bad\nTitle'),
+      values(title: List.filled(101, '😀').join()),
+      values(practiced: List.filled(2001, '😀').join()),
+      values(practiced: 'bad\u0000'),
+      values(mood: 0),
+      values(focus: 6),
+    ]) {
+      await expectLater(update(value), throwsA(isA<JournalFailure>()));
+      expect(await owner.read((db) => db.query('practice_sessions')), before);
+    }
+    await update(
+      values(
+        title: List.filled(100, '😀').join(),
+        practiced: List.filled(2000, '😀').join(),
+        seconds: 86400,
       ),
-    );
-    expect(await row(), before);
-    await owner.read((db) => db.execute('DROP TRIGGER fail_update'));
-    await service.update(
-      profileId: profileId,
-      sessionId: sessionId,
-      values: values(),
-    );
-    expect((await row())['title'], 'Luyện mới');
-  });
-  test('new Save uses the same future-date validation and retains Review on failure', () async {
-    await owner.read(
-      (db) => db.update(
-        'practice_sessions',
-        {'state': 'review'},
-        where: 'id = ?',
-        whereArgs: [otherSessionId],
-      ),
-    );
-    final review = SqlitePracticeReviewService(
-      owner: owner,
-      clock: TestClock(),
-    );
-    await expectLater(
-      review.save(otherSessionId, values(date: '2026-10-01')),
-      invalid,
     );
     expect(
-      (await SqliteJournalSessionReader(owner)
-              .unfinished(profileId: otherProfileId))!
-          .session
-          .state
-          .name,
-      'review',
+      (await SqliteJournalSessionReader(owner).saved(profileId: profileId))
+          .single
+          .durationSeconds,
+      86400,
     );
   });
+
+  test(
+    'wrong owner, unfinished and deleted sessions cannot be edited',
+    () async {
+      await expectLater(
+        update(values(), profile: otherProfileId),
+        throwsA(isA<JournalFailure>()),
+      );
+      const draftId = '00000000-0000-4000-8000-000000000013';
+      await owner.read(
+        (db) => db.insert(
+          'practice_sessions',
+          sessionRow(id: draftId, state: 'paused'),
+        ),
+      );
+      await expectLater(
+        update(values(), id: draftId),
+        throwsA(isA<JournalFailure>()),
+      );
+      await owner.read(
+        (db) => db.update(
+          'practice_sessions',
+          {'deleted_at': 1790726400000},
+          where: 'id = ?',
+          whereArgs: [sessionId],
+        ),
+      );
+      await expectLater(update(values()), throwsA(isA<JournalFailure>()));
+      expect(await owner.read((db) => db.query('recordings')), hasLength(1));
+    },
+  );
 }

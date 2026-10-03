@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:sqflite/sqflite.dart';
@@ -10,7 +11,7 @@ import '../../shared/journal/practice_review_service.dart';
 import '../database/journal_database_owner.dart';
 import 'journal_row_mapper.dart';
 import 'sqlite_journal_readers.dart';
-import 'practice_session_fields.dart';
+import 'practice_review_validation.dart';
 
 class SqlitePracticeReviewService implements PracticeReviewService {
   const SqlitePracticeReviewService({
@@ -19,6 +20,50 @@ class SqlitePracticeReviewService implements PracticeReviewService {
   });
   final JournalDatabaseOwner owner;
   final JournalClock clock;
+
+  @override
+  Future<void> persistInput(String sessionId, ReviewInput input) async {
+    if (!JournalId.isValid(sessionId) ||
+        !validPracticeRating(input.mood) ||
+        !validPracticeRating(input.focus)) {
+      throw const JournalFailure(JournalFailureCode.invalidInput);
+    }
+    final json = jsonEncode({
+      'title': input.title,
+      'practiceDate': input.practiceDate,
+      'durationHoursInput': input.durationHoursInput,
+      'durationMinutesInput': input.durationMinutesInput,
+      'durationSecondsInput': input.durationSecondsInput,
+      'practiced': input.practiced,
+      'difficulty': input.difficulty,
+      'next': input.next,
+      'mood': input.mood,
+      'focus': input.focus,
+      if (input.bpmInput != null) 'bpmInput': input.bpmInput,
+    });
+    try {
+      await owner.transaction((db) async {
+        final draft = await readUnfinishedDraft(db, sessionId: sessionId);
+        if (draft == null || draft.session.state != PracticeState.review) {
+          throw const JournalFailure(JournalFailureCode.invalidInput);
+        }
+        await db.update(
+          'session_drafts',
+          {
+            'review_input_json': json,
+            'updated_at': math.max(
+              clock.utcNow().millisecondsSinceEpoch,
+              draft.updatedAt.millisecondsSinceEpoch,
+            ),
+          },
+          where: 'session_id = ?',
+          whereArgs: [sessionId],
+        );
+      });
+    } on DatabaseException {
+      throw const JournalFailure(JournalFailureCode.storage);
+    }
+  }
 
   @override
   Future<String> rename(String sessionId, String title) async {
@@ -88,10 +133,7 @@ class SqlitePracticeReviewService implements PracticeReviewService {
             session.state != PracticeState.review) {
           throw const JournalFailure(JournalFailureCode.invalidInput);
         }
-        final fields = practiceSessionFields(
-          values,
-          localToday: clock.localNow(),
-        );
+        final fields = validatedReviewFields(values, clock);
         final now = math.max(
           clock.utcNow().millisecondsSinceEpoch,
           math.max(

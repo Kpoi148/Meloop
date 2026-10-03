@@ -9,7 +9,7 @@ import '../../shared/journal/practice_review_service.dart';
 import '../../shared/journal/practice_session_update_service.dart';
 import '../database/journal_database_owner.dart';
 import 'journal_row_mapper.dart';
-import 'practice_session_fields.dart';
+import 'practice_review_validation.dart';
 
 class SqlitePracticeSessionUpdateService
     implements PracticeSessionUpdateService {
@@ -29,6 +29,7 @@ class SqlitePracticeSessionUpdateService
     if (!JournalId.isValid(profileId) || !JournalId.isValid(sessionId)) {
       throw const JournalFailure(JournalFailureCode.invalidInput);
     }
+    final fields = validatedReviewFields(values, clock);
     try {
       return await owner.transaction((db) async {
         final rows = await db.query(
@@ -40,18 +41,16 @@ class SqlitePracticeSessionUpdateService
         if (rows.isEmpty) {
           throw const JournalFailure(JournalFailureCode.invalidInput);
         }
-        final existing = sessionFromRow(rows.single);
-        final fields = practiceSessionFields(
-          values,
-          localToday: clock.localNow(),
-        );
-        fields['updated_at'] = math.max(
-          clock.utcNow().millisecondsSinceEpoch,
-          existing.updatedAt.millisecondsSinceEpoch,
-        );
+        final previous = sessionFromRow(rows.single);
         await db.update(
           'practice_sessions',
-          fields,
+          {
+            ...fields,
+            'updated_at': math.max(
+              clock.utcNow().millisecondsSinceEpoch,
+              previous.updatedAt.millisecondsSinceEpoch,
+            ),
+          },
           where:
               'id = ? AND profile_id = ? AND state = ? AND deleted_at IS NULL',
           whereArgs: [sessionId, profileId, PracticeState.saved.name],

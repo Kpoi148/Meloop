@@ -479,6 +479,26 @@ class AppLocalizationsVi extends AppLocalizations {
   String get sessionDurationMinutes => 'Thời lượng (phút)';
 
   @override
+  String get sessionDuration => 'Thời lượng';
+
+  @override
+  String get instrumentLabel => 'Nhạc cụ';
+
+  @override
+  String get leaveReviewTitle => 'Quay lại buổi luyện?';
+
+  @override
+  String get leaveReviewMessage =>
+      'Nội dung bạn đã nhập sẽ được giữ để sửa tiếp khi mở lại form.';
+
+  @override
+  String get returnToPractice => 'Quay lại buổi luyện';
+
+  @override
+  String get reviewDraftFailed =>
+      'Chưa thể giữ bản nháp mới nhất. Nội dung vẫn ở form này; hãy thử lại trước khi rời đi.';
+
+  @override
   String get sessionPracticeBpm => 'Tốc độ luyện (BPM)';
 
   @override

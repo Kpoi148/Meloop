@@ -72,6 +72,24 @@ MeloopApp createJournalProfileApp({List<Override> overrides = const []}) =>
         practiceReviewLoadProvider.overrideWith(
           (ref) => ref.watch(journalReviewServiceProvider).read,
         ),
+        practiceReviewPersistProvider.overrideWith(
+          (ref) => ref.watch(journalReviewServiceProvider).persistInput,
+        ),
+        practiceSessionUpdateProvider.overrideWith((ref) {
+          final service = ref.watch(journalSessionUpdateServiceProvider);
+          return (session, values) async {
+            final updated = presentPracticeSession(
+              await service.update(
+                profileId: session.profileId,
+                sessionId: session.id,
+                values: journalReviewValues(values),
+              ),
+              original: session,
+            );
+            if (ref.mounted) ref.invalidate(practiceSessionsProvider);
+            return updated;
+          };
+        }),
         practiceTitleUpdateProvider.overrideWith(
           (ref) => ref.watch(journalReviewServiceProvider).rename,
         ),
@@ -87,20 +105,6 @@ MeloopApp createJournalProfileApp({List<Override> overrides = const []}) =>
             profileId: session.profileId,
             sessionId: session.id,
           );
-        }),
-        practiceSessionUpdateProvider.overrideWith((ref) {
-          final service = ref.watch(journalSessionUpdateServiceProvider);
-          return (session, values) async {
-            final updated = presentPracticeSession(
-              await service.update(
-                profileId: session.profileId,
-                sessionId: session.id,
-                values: journalReviewValues(values),
-              ),
-            );
-            if (ref.mounted) ref.invalidate(practiceSessionsProvider);
-            return updated.withRecordings(session.recordings);
-          };
         }),
         ...overrides,
       ],
