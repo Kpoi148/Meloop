@@ -9,6 +9,8 @@ import '../application/instrument_profile_service.dart';
 import '../application/startup_controller.dart';
 import '../application/practice_timer_service.dart';
 import '../components/meloop_ui.dart';
+import '../support/privacy_policy_page.dart';
+import '../support/contact_support_page.dart';
 import '../practice_sessions/practice_sessions_tab.dart';
 import '../practice_sessions/practice_session.dart';
 import '../practice_sessions/practice_session_summary.dart';
@@ -77,6 +79,19 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
 
   void _catalog() => Navigator.of(context)
       .push(MaterialPageRoute<void>(builder: (_) => const ComponentCatalog()));
+
+  void _contactHome() {
+    Navigator.of(context).pop();
+    ref.read(meloopShellControllerProvider.notifier).selectTab(0);
+  }
+
+  void _privacy() => Navigator.of(context).push<void>(
+    MaterialPageRoute(builder: (_) => PrivacyPolicyPage(onHome: _contactHome)),
+  );
+
+  void _support() => Navigator.of(context).push<void>(
+    MaterialPageRoute(builder: (_) => ContactSupportPage(onHome: _contactHome)),
+  );
 
   void _metronome() => Navigator.of(context).push<void>(
     MaterialPageRoute(
@@ -298,6 +313,8 @@ class _MeloopUiShowcaseState extends ConsumerState<MeloopUiShowcase> {
       isPro: widget.isPro,
       onPro: widget.onViewPro,
       onRestorePro: () => showProRestoreNotice(context),
+      onPrivacy: _privacy,
+      onSupport: _support,
     );
     if (widget.profile != null && widget.onResetData != null) {
       return Column(

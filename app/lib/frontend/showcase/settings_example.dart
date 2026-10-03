@@ -18,6 +18,8 @@ class SettingsExample extends StatelessWidget {
     this.isPro = false,
     this.onPro,
     this.onRestorePro,
+    this.onPrivacy,
+    this.onSupport,
   });
 
   final PreviewInstrumentProfile profile;
@@ -26,6 +28,7 @@ class SettingsExample extends StatelessWidget {
   final VoidCallback? onProfiles;
   final bool isPro;
   final VoidCallback? onPro, onRestorePro;
+  final VoidCallback? onPrivacy, onSupport;
 
   @override
   Widget build(BuildContext context) {
@@ -67,10 +70,12 @@ class SettingsExample extends StatelessWidget {
             _SettingsRow(
               icon: MeloopIcons.shield,
               label: strings.settingsPrivacy,
+              onTap: onPrivacy,
             ),
             _SettingsRow(
               icon: MeloopIcons.help,
               label: strings.settingsContactSupport,
+              onTap: onSupport,
             ),
             _SettingsRow(
               icon: MeloopIcons.refresh,
