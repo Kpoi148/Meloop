@@ -6,6 +6,8 @@ Mở từ **Trang chủ → Công cụ luyện tập → Kiểm tra cao độ** 
 
 ## Contract và tích hợp backend
 
+Hướng dẫn bàn giao chi tiết cho BE: [`BE_PITCH_SERVICE.md`](BE_PITCH_SERVICE.md), gồm điểm nối DI, bảng trạng thái, hợp đồng Start/Stop, quyền/settings và các bước kiểm tra trên Android thật.
+
 `shared/pitch/pitch_service.dart` định nghĩa `PitchService`, `PitchSnapshot`, `PitchReading` và `PitchConfiguration`. App cấp implementation qua `pitchServiceProvider` trong `frontend/pitch/pitch_route.dart`. `PitchPage` chỉ nhận snapshot/callback; không phân tích audio, xin quyền qua SDK, ghi file hay truy cập journal. Service cung cấp khoảng nốt, tần số tham chiếu, tên nốt, Hz, cent và phân loại thấp/đúng/cao. Widget không tự đặt ngưỡng phân loại. Cấu hình mặc định chuẩn nằm trong `PitchConfiguration.standard`; implementation có thể thay bằng cấu hình runtime.
 
 `PitchController` quản lý vòng đời cho một route: chỉ Start sau thao tác Bật micro, Stop khi Back/Home/background/dispose, bỏ event đến muộn và gọi Stop lại khi Start đang chờ quyền hoàn tất muộn. `PitchService.stop()` phải idempotent, hủy Start đang chờ và hoàn tất sau khi đã giải phóng micro. Service phải báo denied/blocked, không đủ tín hiệu, công cụ audio đang bận và lỗi qua snapshot; không ghi âm hay truyền âm thanh ra mạng.
