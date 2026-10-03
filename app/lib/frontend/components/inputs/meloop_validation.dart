@@ -80,7 +80,9 @@ abstract final class MeloopValidation {
     if (_noteControls.hasMatch(value ?? '')) {
       return strings.invalidNoteControl;
     }
-    if ((value ?? '').runes.length > 2000) return strings.noteMaxCharacters;
+    if ((value ?? '').runes.length > PracticeRules.noteMaxCodePoints) {
+      return strings.noteMaxCharacters;
+    }
     return null;
   }
 

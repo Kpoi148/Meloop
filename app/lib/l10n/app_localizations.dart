@@ -962,6 +962,42 @@ abstract class AppLocalizations {
   /// **'Thời lượng (phút)'**
   String get sessionDurationMinutes;
 
+  /// No description provided for @sessionDuration.
+  ///
+  /// In vi, this message translates to:
+  /// **'Thời lượng'**
+  String get sessionDuration;
+
+  /// No description provided for @instrumentLabel.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nhạc cụ'**
+  String get instrumentLabel;
+
+  /// No description provided for @leaveReviewTitle.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quay lại buổi luyện?'**
+  String get leaveReviewTitle;
+
+  /// No description provided for @leaveReviewMessage.
+  ///
+  /// In vi, this message translates to:
+  /// **'Nội dung bạn đã nhập sẽ được giữ để sửa tiếp khi mở lại form.'**
+  String get leaveReviewMessage;
+
+  /// No description provided for @returnToPractice.
+  ///
+  /// In vi, this message translates to:
+  /// **'Quay lại buổi luyện'**
+  String get returnToPractice;
+
+  /// No description provided for @reviewDraftFailed.
+  ///
+  /// In vi, this message translates to:
+  /// **'Chưa thể giữ bản nháp mới nhất. Nội dung vẫn ở form này; hãy thử lại trước khi rời đi.'**
+  String get reviewDraftFailed;
+
   /// No description provided for @sessionPracticeBpm.
   ///
   /// In vi, this message translates to:

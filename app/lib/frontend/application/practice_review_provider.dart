@@ -7,6 +7,15 @@ import '../practice_sessions/practice_session.dart' as ui;
 import 'session_form_values.dart';
 
 typedef PracticeReviewLoad = Future<PracticeDraft> Function(String sessionId);
+typedef PracticeReviewPersist = Future<void> Function(
+  String sessionId,
+  ReviewInput input,
+);
+final practiceReviewPersistProvider = Provider<PracticeReviewPersist>(
+  (ref) =>
+      (_, _) async =>
+          throw StateError('Review persistence has not been configured.'),
+);
 typedef PracticeReviewSave = Future<ui.PracticeSession> Function(
   String sessionId,
   SessionFormValues values,

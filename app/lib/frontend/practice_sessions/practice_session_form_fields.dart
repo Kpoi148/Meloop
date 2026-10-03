@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/l10n.dart';
+import '../../shared/journal/journal_text.dart';
 import '../components/meloop_ui.dart';
 import 'practice_session_form_tokens.dart';
 
@@ -11,6 +12,8 @@ class PracticeSessionFormFields extends StatelessWidget {
     required this.heading,
     required this.title,
     required this.minutes,
+    required this.hours,
+    required this.seconds,
     required this.practiced,
     required this.difficulty,
     required this.next,
@@ -20,16 +23,25 @@ class PracticeSessionFormFields extends StatelessWidget {
     required this.onMood,
     required this.onFocus,
     required this.titleFocus,
-    this.minimumMinutes = PracticeSessionFormLimits.minimumNewMinutes,
+    this.instrumentName,
+    this.onRetry,
     this.mood,
     this.focus,
     this.saving = false,
     this.error,
     this.durationError,
   });
-  final TextEditingController title, minutes, practiced, difficulty, next, bpm;
+  final TextEditingController title,
+      hours,
+      minutes,
+      seconds,
+      practiced,
+      difficulty,
+      next,
+      bpm;
   final String heading;
-  final int minimumMinutes;
+  final String? instrumentName;
+  final VoidCallback? onRetry;
   final FocusNode titleFocus;
   final DateTime date;
   final int? mood, focus;
@@ -109,34 +121,55 @@ class PracticeSessionFormFields extends StatelessWidget {
           context,
           strings.sessionTitle,
           title,
+          required: true,
+          codePointLimit: PracticeRules.titleMaxCodePoints,
           focusNode: titleFocus,
           validator: (value) => MeloopValidation.titleFor(value, strings),
           hint: strings.sessionFormTitleHint,
           bottom: PracticeSessionFormTokens.dateRowGap,
         ),
+        if (instrumentName != null) ...[
+          Text(
+            '${strings.instrumentLabel}: $instrumentName',
+            style: PracticeSessionFormTokens.label,
+          ),
+          const SizedBox(height: PracticeSessionFormTokens.fieldGap),
+        ],
+        MeloopDateField(
+          label: strings.practiceDate,
+          value: date,
+          enabled: !saving,
+          onChanged: onDate,
+          compact: true,
+        ),
+        const SizedBox(height: PracticeSessionFormTokens.dateRowGap),
+        Text(
+          '${strings.sessionDuration}${strings.requiredSuffix}',
+          style: PracticeSessionFormTokens.label,
+        ),
+        const SizedBox(height: PracticeSessionFormTokens.labelGap),
         MeloopResponsiveRow(
           children: [
-            MeloopDateField(
-              label: strings.practiceDate,
-              value: date,
-              enabled: !saving,
-              onChanged: onDate,
-              compact: true,
-            ),
-            _field(
+            _durationPart(
               context,
-              strings.sessionDurationMinutes,
+              strings.hours,
+              hours,
+              PracticeSessionFormLimits.maximumHours,
+              const Key('session-duration-hours'),
+            ),
+            _durationPart(
+              context,
+              strings.minutes,
               minutes,
-              required: true,
-              integer: true,
-              bottom: 0,
-              validator: (value) => MeloopValidation.integer(
-                value,
-                label: strings.sessionDurationMinutes,
-                min: minimumMinutes,
-                max: PracticeSessionFormLimits.maximumMinutes,
-                strings: strings,
-              ),
+              PracticeSessionFormLimits.maximumMinuteSecond,
+              const Key('session-duration-minutes'),
+            ),
+            _durationPart(
+              context,
+              strings.seconds,
+              seconds,
+              PracticeSessionFormLimits.maximumMinuteSecond,
+              const Key('session-duration-seconds'),
             ),
           ],
         ),
@@ -168,6 +201,7 @@ class PracticeSessionFormFields extends StatelessWidget {
           strings.practicedWhat,
           practiced,
           multiline: true,
+          codePointLimit: PracticeRules.noteMaxCodePoints,
           hint: strings.practicedHint,
           validator: (value) => MeloopValidation.noteFor(value, strings),
         ),
@@ -176,6 +210,7 @@ class PracticeSessionFormFields extends StatelessWidget {
           strings.difficulty,
           difficulty,
           multiline: true,
+          codePointLimit: PracticeRules.noteMaxCodePoints,
           hint: strings.difficultyHint,
           validator: (value) => MeloopValidation.noteFor(value, strings),
         ),
@@ -184,6 +219,7 @@ class PracticeSessionFormFields extends StatelessWidget {
           strings.nextPractice,
           next,
           multiline: true,
+          codePointLimit: PracticeRules.noteMaxCodePoints,
           hint: strings.nextPracticeHint,
           validator: (value) => MeloopValidation.noteFor(value, strings),
         ),
@@ -205,9 +241,38 @@ class PracticeSessionFormFields extends StatelessWidget {
         ),
         if (error != null)
           MeloopNotice(message: error!, kind: MeloopNoticeKind.error),
+        if (error != null && onRetry != null)
+          MeloopButton(
+            label: strings.retry,
+            onPressed: onRetry,
+            isLoading: saving,
+          ),
       ],
     );
   }
+
+  Widget _durationPart(
+    BuildContext context,
+    String label,
+    TextEditingController controller,
+    int max,
+    Key inputKey,
+  ) => _field(
+    context,
+    label,
+    controller,
+    inputKey: inputKey,
+    required: true,
+    integer: true,
+    bottom: 0,
+    validator: (value) => MeloopValidation.integer(
+      value,
+      label: label,
+      min: PracticeSessionFormLimits.minimumComponent,
+      max: max,
+      strings: context.l10n,
+    ),
+  );
 
   bool _introArtFits(BuildContext context, double width) {
     final painter = TextPainter(
@@ -231,6 +296,8 @@ class PracticeSessionFormFields extends StatelessWidget {
     bool required = false,
     bool integer = false,
     bool multiline = false,
+    int? codePointLimit,
+    Key? inputKey,
     String? hint,
     FormFieldValidator<String>? validator,
     FocusNode? focusNode,
@@ -241,11 +308,14 @@ class PracticeSessionFormFields extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          required ? '$label${context.l10n.requiredSuffix}' : label,
+          required
+              ? '$label${context.l10n.requiredSuffix}'
+              : '$label${context.l10n.sessionOptionalSuffix}',
           style: PracticeSessionFormTokens.label,
         ),
         const SizedBox(height: PracticeSessionFormTokens.labelGap),
         TextFormField(
+          key: inputKey,
           controller: controller,
           focusNode: focusNode,
           enabled: !saving,
@@ -270,6 +340,15 @@ class PracticeSessionFormFields extends StatelessWidget {
             style: TempoType.caption.copyWith(color: TempoColors.error),
           ),
         ),
+        if (codePointLimit != null)
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: controller,
+            builder: (_, value, _) => Text(
+              '${value.text.runes.length}/$codePointLimit',
+              textAlign: TextAlign.end,
+              style: TempoType.caption.copyWith(color: TempoColors.muted),
+            ),
+          ),
       ],
     ),
   );
