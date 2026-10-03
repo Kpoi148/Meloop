@@ -17,3 +17,13 @@ flutter drive --dart-define=MELOOP_TEST_APPLICATION_ID_SUFFIX=.qa --driver test_
 ```
 
 Smoke trên xác minh tính toán/SQLite. Hành trình Home và Progress được kiểm tra thêm trong `home_overview_smoke_test.dart`; xem `FE_HOME.md`.
+
+## Nghiệm thu Home sau khi FE merge
+
+Main `da650f6` đã có PR #30 (Home/Progress) và PR #32 (calculator BE). Không cần nối lại hoặc thay UI: production cấp Saved reader và weekly goal reader từ SQLite, hai tab dùng cùng overview; Save/Edit/Delete invalidate dữ liệu, mở lại app invalidate cả session/goal/ngày lịch.
+
+`home_overview_test.dart` bổ sung tình huống đổi hồ sơ khi session và goal của hồ sơ cũ còn đang tải, đọc goal lỗi rồi Retry cả hai nguồn, qua nửa đêm cập nhật cửa sổ ngày và resume đọc lại dữ liệu đã commit. Các case kiểm tra dữ liệu hiển thị, không thay thành phần/bố cục FE. Hành trình SQLite dùng chung cho host/native tiếp tục kiểm tra owner, mục tiêu bật/tắt, đánh giá, sửa 90→30 giây và xóa buổi cuối trên Home/Progress.
+
+Form cấu hình mục tiêu tuần và bộ lọc Progress 30 ngày/All chưa có UI trong phạm vi này, tiếp tục chờ FE. Việc đọc và hiển thị mục tiêu có sẵn không đồng nghĩa người dùng đã có thể bật/tắt/chỉnh mục tiêu.
+
+Kiểm chứng trên baseline `da650f6`: 294 host tests đạt với `flutter test --concurrency=2`, `flutter analyze` sạch. Android API36 x86_64 đạt `home_overview_smoke_test.dart` với package `.homeqa` và database UUID riêng; đã kiểm tra ảnh Home hồ sơ rỗng và Progress có Saved. Đổi ngày, resume, lỗi/Retry và race là widget tests với clock/loader kiểm soát; không thay cho nghiệm thu force-stop, TalkBack, cỡ chữ lớn hoặc máy OEM.
